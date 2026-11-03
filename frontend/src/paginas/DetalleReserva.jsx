@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { obtenerReserva } from '../api/reservasApi'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
+import { AccionesDeEstado } from '../components/reservas/AccionesDeEstado'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { EstadoBadge } from '../components/ui/EstadoBadge'
 import { useConsulta } from '../hooks/useConsulta'
+import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
 import { formatearFechaLarga, formatearMomento } from '../utils/fechas'
 import { TIPOS_AMBIENTE } from '../utils/formato'
@@ -12,9 +15,12 @@ import { TIPOS_AMBIENTE } from '../utils/formato'
 const MIGAS = [{ nombre: 'Reservas', ruta: '/reservas' }]
 
 // RF-06: todo sobre una reserva, agrupado por lo que el usuario busca: cuándo, dónde, quién y para qué.
+// RF-07: al lado, las acciones de estado que el usuario actual puede hacer.
 export function DetalleReserva() {
   const { idReserva } = useParams()
-  const { datos: reserva, cargando, error } = useConsulta(() => obtenerReserva(idReserva), [idReserva])
+  const { usuarioActual } = useUsuarioActual()
+  const { datos: reserva, cargando, error, recargar } = useConsulta(() => obtenerReserva(idReserva), [idReserva])
+  const [avisoDeCambio, setAvisoDeCambio] = useState(null)
 
   if (cargando && !reserva) {
     return (
@@ -46,6 +52,7 @@ export function DetalleReserva() {
         descripcion={`${reserva.nombre_ambiente} · ${reserva.hora_inicio_reserva} a ${reserva.hora_fin_reserva}`}
         migas={MIGAS}
       />
+      {avisoDeCambio && <AlertMessage tipo="exito" titulo={avisoDeCambio} className="mb-4" />}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-labelledby="titulo-datos" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
           <h2 id="titulo-datos" className="mb-4 text-lg font-semibold text-titulo">
@@ -83,6 +90,14 @@ export function DetalleReserva() {
           </dl>
         </section>
         <aside className="flex flex-col gap-4 lg:self-start">
+          <AccionesDeEstado
+            reserva={reserva}
+            usuarioActual={usuarioActual}
+            alCambiar={(respuesta) => {
+              setAvisoDeCambio(respuesta.message)
+              recargar()
+            }}
+          />
           <Button destino="/reservas">Volver a reservas</Button>
         </aside>
       </div>
