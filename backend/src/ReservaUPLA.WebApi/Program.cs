@@ -45,16 +45,20 @@ builder.Services.AddOpenApi(opciones =>
 {
     opciones.AddSchemaTransformer((esquema, contexto, _) =>
     {
+        // Los campos opcionales (TimeOnly?, Estados_Reserva?) se describen igual que los obligatorios.
+        var tipo = Nullable.GetUnderlyingType(contexto.JsonTypeInfo.Type) ?? contexto.JsonTypeInfo.Type;
+        var admite_nulo = tipo != contexto.JsonTypeInfo.Type;
+
         // Los enums viajan como texto: sin esto Swagger los muestra como "any".
-        if (contexto.JsonTypeInfo.Type.IsEnum)
+        if (tipo.IsEnum)
         {
-            esquema.Type = JsonSchemaType.String;
+            esquema.Type = admite_nulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
         }
 
         // Las horas viajan como «HH:mm» (Convertidor_Hora): el ejemplo de Swagger debe decir lo mismo.
-        if (contexto.JsonTypeInfo.Type == typeof(TimeOnly))
+        if (tipo == typeof(TimeOnly))
         {
-            esquema.Type = JsonSchemaType.String;
+            esquema.Type = admite_nulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
             esquema.Format = null;
             esquema.Pattern = "^([01][0-9]|2[0-3]):[0-5][0-9]$";
             esquema.Examples = [System.Text.Json.Nodes.JsonValue.Create("09:00")];
