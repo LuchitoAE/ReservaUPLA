@@ -17,3 +17,11 @@ export function listarReservas(filtros = {}) {
 export function obtenerReserva(idReserva) {
   return pedir(`/reservas/${idReserva}`)
 }
+
+// RF-07: Aprobada, Rechazada o Cancelada. «idUsuario» es quien hace el cambio (el usuario actual).
+export function cambiarEstadoDeReserva(idReserva, estado, idUsuario) {
+  return pedir(`/reservas/${idReserva}/estado`, {
+    method: 'PATCH',
+    body: JSON.stringify({ estado_reserva: estado, id_usuario: idUsuario }),
+  })
+}

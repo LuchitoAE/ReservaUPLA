@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
+using ReservaUPLA.Application.UseCases.Reservas.CambiarEstadoReserva;
 using ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
 using ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
 using ReservaUPLA.Domain.Enums;
@@ -73,6 +74,25 @@ public sealed class ReservasController : ControllerBase
         }
 
         return RespuestaApi.Exito(reserva, $"Reserva {reserva.Codigo_Reserva}.");
+    }
+
+    // RF-07: cambiar el estado (Aprobada, Rechazada o Cancelada). 403 si el rol no lo permite (RN-05); 409 si el
+    // estado actual no lo admite (RN-06) o si al aprobar choca con otra aprobada (RN-01).
+    [HttpPatch("{id_reserva:guid}/estado")]
+    [ProducesResponseType<RespuestaApi<ReservaDetalleDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")]
+    public async Task<ActionResult<RespuestaApi<ReservaDetalleDto>>> CambiarEstado(
+        Guid id_reserva,
+        CambiarEstadoReservaCommand comando,
+        [FromServices] CambiarEstadoReservaUseCase caso_de_uso,
+        CancellationToken cancelacion)
+    {
+        var reserva = await caso_de_uso.EjecutarAsync(id_reserva, comando, cancelacion);
+
+        return RespuestaApi.Exito(reserva, $"Reserva {reserva.Codigo_Reserva}: ahora está {reserva.Estado_Reserva}.");
     }
 
     // RF-04: ¿está libre el ambiente en ese horario? El formulario lo consulta antes de enviar.
