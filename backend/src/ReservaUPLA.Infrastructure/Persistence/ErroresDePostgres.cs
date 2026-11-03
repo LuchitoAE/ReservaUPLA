@@ -8,7 +8,14 @@ namespace ReservaUPLA.Infrastructure.Persistence;
 internal static class ErroresDePostgres
 {
     private const string Valor_Repetido = "23505";
+    private const string Exclusion_Violada = "23P01";
 
     public static bool EsValorRepetido(DbUpdateException error, string restriccion) =>
-        error.InnerException is PostgresException { SqlState: Valor_Repetido } postgres && postgres.ConstraintName == restriccion;
+        Es(error, Valor_Repetido, restriccion);
+
+    public static bool EsExclusionViolada(DbUpdateException error, string restriccion) =>
+        Es(error, Exclusion_Violada, restriccion);
+
+    private static bool Es(DbUpdateException error, string codigo, string restriccion) =>
+        error.InnerException is PostgresException postgres && postgres.SqlState == codigo && postgres.ConstraintName == restriccion;
 }

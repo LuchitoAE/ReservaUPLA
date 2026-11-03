@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IConsultaDeUsuarios, ConsultaDeUsuarios>();
         services.AddScoped<IAmbienteRepository, AmbienteRepository>();
         services.AddScoped<IConsultaDeAmbientes, ConsultaDeAmbientes>();
+        services.AddScoped<IReservaRepository, ReservaRepository>();
 
         return services;
     }

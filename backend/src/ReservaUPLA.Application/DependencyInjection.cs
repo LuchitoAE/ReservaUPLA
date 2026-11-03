@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ReservaUPLA.Application.UseCases.Ambientes.RegistrarAmbiente;
+using ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
+using ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 
 namespace ReservaUPLA.Application;
@@ -11,6 +13,8 @@ public static class DependencyInjection
     {
         services.AddScoped<RegistrarUsuarioUseCase>();
         services.AddScoped<RegistrarAmbienteUseCase>();
+        services.AddScoped<RegistrarReservaUseCase>();
+        services.AddScoped<ConsultarDisponibilidadUseCase>();
 
         return services;
     }
