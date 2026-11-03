@@ -43,6 +43,9 @@
   --color-peligro: #b91c1c;
   --color-peligro-oscuro: #991b1b;
 
+  /* Barras del dashboard: un solo tono (magnitud), el de la marca. */
+  --color-barra: #4338ca;
+
   /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */
   --color-pendiente-fondo: #fef3c7;
   --color-pendiente-texto: #78350f;
@@ -82,6 +85,8 @@
     --color-info: #a5b4fc;
     --color-info-fondo: #23254a;
     --color-info-texto: #e0e7ff;
+
+    --color-barra: #818cf8;
 
     --color-pendiente-fondo: #3a2a0c;
     --color-pendiente-texto: #fde68a;

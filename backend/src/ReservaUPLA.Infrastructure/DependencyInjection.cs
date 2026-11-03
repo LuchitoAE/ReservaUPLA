@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReservaUPLA.Application.Interfaces;
+using ReservaUPLA.Infrastructure.Consultas;
 using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Repositories;
 using ReservaUPLA.Infrastructure.Servicios;
 
 namespace ReservaUPLA.Infrastructure;
@@ -14,6 +16,15 @@ public static class DependencyInjection
         services.AddDbContext<ReservaUPLADbContext>(opciones => opciones.UseNpgsql(cadena_conexion));
 
         services.AddSingleton<IReloj, RelojDelSistema>();
+
+        // Guardar entidades (repositorios) y leer para mostrar (consultas): cada contrato con su clase.
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IConsultaDeUsuarios, ConsultaDeUsuarios>();
+        services.AddScoped<IAmbienteRepository, AmbienteRepository>();
+        services.AddScoped<IConsultaDeAmbientes, ConsultaDeAmbientes>();
+        services.AddScoped<IReservaRepository, ReservaRepository>();
+        services.AddScoped<IConsultaDeReservas, ConsultaDeReservas>();
+        services.AddScoped<IConsultaDeIndicadores, ConsultaDeIndicadores>();
 
         return services;
     }

@@ -32,9 +32,16 @@ internal static class RespuestaDeFormatoNoValido
                 error.ErrorMessage.Contains("could not be converted", StringComparison.Ordinal)
                 || error.ErrorMessage.Contains("is not valid", StringComparison.Ordinal));
 
+            // Un parámetro obligatorio de la dirección que no llegó (?fecha_reserva=…).
+            var falta_el_valor = entrada.Errors.Any(error => error.ErrorMessage.Contains("was not provided", StringComparison.Ordinal));
+
             if (valor_de_otro_tipo && es_campo)
             {
                 errores.AddModelError(campo, MensajeDeFormato(contexto, campo));
+            }
+            else if (falta_el_valor && es_campo)
+            {
+                errores.AddModelError(campo, $"Indique el valor de {campo}.");
             }
         }
 
