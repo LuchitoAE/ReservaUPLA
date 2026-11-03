@@ -24,8 +24,8 @@ export function tieneContenidoUtil(texto) {
 }
 
 // Texto obligatorio, con su longitud y con palabras de verdad.
-export function texto(valor, { nombre, minimo, maximo, obligatorio }) {
-  const normalizado = normalizarLinea(valor)
+export function texto(valor, { nombre, minimo, maximo, obligatorio, normalizar = normalizarLinea }) {
+  const normalizado = normalizar(valor)
   return (
     requerido(normalizado, obligatorio) ??
     longitud(normalizado, { nombre, minimo, maximo }) ??
@@ -37,7 +37,15 @@ export function esCorreo(correo) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)
 }
 
-// Quita los campos sin error: { nombre: null, correo: 'Escriba…' } → { correo: 'Escriba…' }.
-export function soloErrores(errores) {
-  return Object.fromEntries(Object.entries(errores).filter(([, mensaje]) => mensaje))
+// Arma el validador de un formulario a partir de sus reglas: { campo: (valor, valores) => mensaje | null }.
+// validarCampo revisa uno (al salir de él); validarTodo, todos (al enviar), en el orden en que se declararon.
+export function crearValidador(reglas) {
+  const validarCampo = (campo, valores) => reglas[campo](valores[campo], valores)
+  const validarTodo = (valores) =>
+    Object.fromEntries(
+      Object.keys(reglas)
+        .map((campo) => [campo, validarCampo(campo, valores)])
+        .filter(([, mensaje]) => mensaje),
+    )
+  return { validarCampo, validarTodo }
 }
