@@ -22,6 +22,61 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+                {
+                    b.Property<Guid>("Id_Ambiente")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_ambiente");
+
+                    b.Property<int>("Capacidad_Ambiente")
+                        .HasColumnType("integer")
+                        .HasColumnName("capacidad_ambiente");
+
+                    b.Property<string>("Estado_Ambiente")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("estado_ambiente");
+
+                    b.Property<Guid?>("Id_Responsable_Ambiente")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_responsable_ambiente");
+
+                    b.Property<string>("Nombre_Ambiente")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("nombre_ambiente");
+
+                    b.Property<string>("Tipo_Ambiente")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("tipo_ambiente");
+
+                    b.Property<string>("Ubicacion_Ambiente")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("ubicacion_ambiente");
+
+                    b.HasKey("Id_Ambiente")
+                        .HasName("pk_ambientes");
+
+                    b.HasIndex("Id_Responsable_Ambiente")
+                        .HasDatabaseName("ix_ambientes_id_responsable_ambiente");
+
+                    b.HasIndex("Nombre_Ambiente")
+                        .IsUnique()
+                        .HasDatabaseName("ux_ambientes_nombre_ambiente");
+
+                    b.ToTable("ambientes", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_ambientes_capacidad_ambiente", "capacidad_ambiente BETWEEN 1 AND 1000");
+                        });
+                });
+
             modelBuilder.Entity("ReservaUPLA.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id_Usuario")
@@ -59,6 +114,15 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasDatabaseName("ux_usuarios_correo_usuario");
 
                     b.ToTable("usuarios", (string)null);
+                });
+
+            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+                {
+                    b.HasOne("ReservaUPLA.Domain.Entities.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("Id_Responsable_Ambiente")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_ambientes_usuarios_responsable");
                 });
 #pragma warning restore 612, 618
         }
