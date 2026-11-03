@@ -1,11 +1,13 @@
 import { createBrowserRouter } from 'react-router'
 import { LayoutPrincipal } from './layouts/LayoutPrincipal'
 import { Ambientes } from './paginas/Ambientes'
+import { DetalleReserva } from './paginas/DetalleReserva'
 import { Inicio } from './paginas/Inicio'
 import { NuevaReserva } from './paginas/NuevaReserva'
 import { NuevoAmbiente } from './paginas/NuevoAmbiente'
 import { NuevoUsuario } from './paginas/NuevoUsuario'
 import { PaginaNoEncontrada } from './paginas/PaginaNoEncontrada'
+import { Reservas } from './paginas/Reservas'
 import { Usuarios } from './paginas/Usuarios'
 
 // Mapa de la SPA: cada dirección muestra su página dentro del layout principal (menú, encabezado y pie).
@@ -16,7 +18,9 @@ export const rutas = createBrowserRouter([
     element: <LayoutPrincipal />,
     children: [
       { index: true, element: <Inicio /> },
+      { path: 'reservas', element: <Reservas /> },
       { path: 'reservas/nueva', element: <NuevaReserva /> },
+      { path: 'reservas/:idReserva', element: <DetalleReserva /> },
       { path: 'ambientes', element: <Ambientes /> },
       { path: 'ambientes/nuevo', element: <NuevoAmbiente /> },
       { path: 'usuarios', element: <Usuarios /> },

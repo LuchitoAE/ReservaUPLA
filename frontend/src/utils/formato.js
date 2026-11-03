@@ -19,6 +19,13 @@ export const ESTADOS_AMBIENTE = {
   Inactivo: 'Inactivo',
 }
 
+export const ESTADOS_RESERVA = {
+  Pendiente: 'Pendiente',
+  Aprobada: 'Aprobada',
+  Rechazada: 'Rechazada',
+  Cancelada: 'Cancelada',
+}
+
 export function opcionesDe(etiquetas) {
   return Object.entries(etiquetas).map(([valor, etiqueta]) => ({ valor, etiqueta }))
 }

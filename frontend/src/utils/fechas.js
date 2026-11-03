@@ -37,7 +37,15 @@ export function formatearFechaLarga(fecha) {
 
 // Momento en UTC → '03/11/2026, 17:45' en hora de Perú.
 export function formatearMomento(momento) {
-  return new Date(momento).toLocaleString('es-PE', { timeZone: ZONA, dateStyle: 'short', timeStyle: 'short' })
+  return new Date(momento).toLocaleString('es-PE', {
+    timeZone: ZONA,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  })
 }
 
 export function formatearHorario(inicio, fin) {
