@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ReservaUPLA.Domain.Entities;
 
 namespace ReservaUPLA.Infrastructure.Persistence;
 
@@ -8,6 +9,8 @@ public sealed class ReservaUPLADbContext : DbContext
     public ReservaUPLADbContext(DbContextOptions<ReservaUPLADbContext> opciones) : base(opciones)
     {
     }
+
+    public DbSet<Usuario> Usuarios => Set<Usuario>();
 
     protected override void OnModelCreating(ModelBuilder modelo)
     {

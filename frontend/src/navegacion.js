@@ -5,5 +5,5 @@ export const SECCIONES = [
   { nombre: 'Reservas', icono: 'reservas' },
   { nombre: 'Nueva reserva', icono: 'nueva' },
   { nombre: 'Ambientes', icono: 'ambientes' },
-  { nombre: 'Usuarios', icono: 'usuarios' },
+  { ruta: '/usuarios', nombre: 'Usuarios', icono: 'usuarios' },
 ]
