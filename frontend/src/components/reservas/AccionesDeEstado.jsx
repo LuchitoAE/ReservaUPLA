@@ -11,13 +11,13 @@ const ACCIONES = {
     boton: 'Aprobar',
     variante: 'aprobar',
     pregunta: '¿Aprobar la reserva?',
-    efecto: 'El ambiente quedará ocupado en ese horario y nadie más podrá reservarlo (RN-01).',
+    efecto: 'El ambiente quedará ocupado en ese horario y nadie más podrá reservarlo.',
   },
   Rechazada: {
     boton: 'Rechazar',
     variante: 'peligro',
     pregunta: '¿Rechazar la reserva?',
-    efecto: 'Una reserva rechazada ya no puede modificarse (RN-06).',
+    efecto: 'Una reserva rechazada ya no puede modificarse.',
   },
   Cancelada: {
     boton: 'Cancelar reserva',

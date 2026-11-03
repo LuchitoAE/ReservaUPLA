@@ -31,7 +31,7 @@ export function MenuPrincipal({ id, abierto, alElegir }) {
                   onClick={alElegir}
                   aria-current={activa ? 'page' : undefined}
                   className={`${ESTILO_OPCION} font-semibold focus-visible:outline-3 focus-visible:outline-white ${
-                    activa ? 'bg-white text-marca-900' : 'text-white hover:bg-white/10'
+                    activa ? 'bg-white text-marca-900' : 'text-white hover:bg-white/10 active:bg-white/20'
                   }`}
                 >
                   <Icono nombre={seccion.icono} />

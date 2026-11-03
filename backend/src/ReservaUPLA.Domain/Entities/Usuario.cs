@@ -58,7 +58,7 @@ public sealed class Usuario
             errores.Agregar(nameof(Correo_Usuario), "Ya existe un usuario con este correo.");
         }
 
-        errores.ValidarOpcion(nameof(Rol_Usuario), rol, "Elija el rol: Solicitante, Administrador o ResponsableDeAmbiente.");
+        errores.ValidarOpcion(nameof(Rol_Usuario), rol, "Elija el rol: Solicitante, Administrador o Responsable de ambiente.");
 
         errores.LanzarSiHay();
 

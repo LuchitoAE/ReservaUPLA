@@ -6,11 +6,12 @@ import { useDisponibilidad } from '../../hooks/useDisponibilidad'
 import { useFormulario } from '../../hooks/useFormulario'
 import { useUsuarioActual } from '../../hooks/useUsuarioActual'
 import { horarioCompleto, normalizarReserva, RESERVA, reglasDeReserva } from '../../reglas/reserva'
-import { ahoraEnPeru } from '../../utils/fechas'
-import { ROLES, TIPOS_AMBIENTE } from '../../utils/formato'
+import { ahoraEnPeru, formatearFechaLarga } from '../../utils/fechas'
+import { QUE_HACE_EL_ROL, ROLES, TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { AlertMessage } from '../ui/AlertMessage'
 import { DateInput } from '../ui/DateInput'
+import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
@@ -25,20 +26,33 @@ const INICIALES = {
   hora_fin_reserva: '',
   motivo_reserva: '',
 }
+const OBLIGATORIOS = {
+  id_usuario: 'el usuario actual',
+  id_ambiente: 'el ambiente',
+  fecha_reserva: 'la fecha',
+  hora_inicio_reserva: 'la hora de inicio',
+  hora_fin_reserva: 'la hora de fin',
+  motivo_reserva: 'el motivo',
+}
 
-// RF-03 y RF-04: solicitar una reserva. El solicitante es el usuario actual; mientras se eligen el ambiente, la
-// fecha y las horas, el panel dice si el horario está libre. La API vuelve a revisar todo al registrar.
+// RF-03 y RF-04: solicitar una reserva. Cuatro grupos que siguen la pregunta que el usuario se hace (quién, dónde,
+// cuándo y para qué): es su modelo mental de una reserva (Norman). La disponibilidad aparece dentro del grupo
+// «¿Cuándo?», junto a las horas que la deciden, y si el horario está ocupado no se puede enviar (restricción).
+// La API vuelve a revisar todo al registrar.
 export function FormularioReserva({ alRegistrar }) {
   const { usuarioActual } = useUsuarioActual()
   const ambientes = useConsulta(() => listarAmbientes({ estado_ambiente: 'Disponible' }), [])
-  const { valores, errores, campo, cambiar, enviar, enviando, aviso } = useFormulario({
+  const formulario = useFormulario({
     iniciales: INICIALES,
     reglas: reglasDeReserva,
+    obligatorios: OBLIGATORIOS,
+    automaticos: ['id_usuario'],
     alEnviar: async (datos) => {
       const respuesta = await registrarReserva(normalizarReserva(datos))
       alRegistrar(respuesta.data)
     },
   })
+  const { valores, errores, campo, cambiar, enviar, aviso } = formulario
   const disponibilidad = useDisponibilidad(valores, horarioCompleto(valores))
 
   // El solicitante sigue al usuario actual de la barra lateral, aunque se cambie con el formulario abierto.
@@ -48,51 +62,73 @@ export function FormularioReserva({ alRegistrar }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idUsuarioActual])
 
-  const opcionesDeAmbiente = (ambientes.datos ?? []).map((ambiente) => ({
+  const lista = ambientes.datos ?? []
+  const elegido = lista.find((ambiente) => ambiente.id_ambiente === valores.id_ambiente)
+  const opcionesDeAmbiente = lista.map((ambiente) => ({
     valor: ambiente.id_ambiente,
-    etiqueta: `${ambiente.nombre_ambiente} · ${TIPOS_AMBIENTE[ambiente.tipo_ambiente]} · ${ambiente.capacidad_ambiente} personas`,
+    etiqueta: `${ambiente.nombre_ambiente} · ${TIPOS_AMBIENTE[ambiente.tipo_ambiente]}`,
   }))
+  const bloqueado =
+    disponibilidad.estado === 'ocupado' ? 'El horario elegido ya está ocupado: cambie la hora, la fecha o el ambiente.' : null
 
   return (
-    <form noValidate onSubmit={enviar} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <div className="flex flex-col gap-5">
-        <NotaObligatorios />
-        {aviso && <AlertMessage tipo="error" aviso={aviso} />}
+    <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
+      <NotaObligatorios />
+      {aviso && <AlertMessage tipo="error" aviso={aviso} />}
 
-        <div className="flex flex-col gap-1.5">
-          <p className="font-semibold text-texto">Solicitante</p>
-          <div
-            id="id_usuario"
-            tabIndex={-1}
-            aria-describedby={errores.id_usuario ? 'id_usuario-error' : undefined}
-            className={`rounded-lg border bg-superficie-tenue px-3 py-2.5 focus:outline-3 focus:outline-foco/30 ${errores.id_usuario ? 'border-error' : 'border-borde-fuerte'}`}
-          >
-            {usuarioActual ? (
-              <span>
-                {usuarioActual.nombre_completo_usuario}{' '}
-                <span className="text-texto-suave">· {ROLES[usuarioActual.rol_usuario]}</span>
-              </span>
-            ) : (
-              <span className="text-texto-suave">Sin usuario actual</span>
-            )}
-          </div>
-          {errores.id_usuario && (
-            <p id="id_usuario-error" className="flex gap-1.5 text-sm font-medium text-error">
-              <span aria-hidden="true">⚠</span>
-              {errores.id_usuario}
+      <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre del usuario actual.">
+        <div
+          id="id_usuario"
+          tabIndex={-1}
+          aria-describedby={errores.id_usuario ? 'id_usuario-error' : undefined}
+          className={`rounded-lg border px-3 py-2.5 focus:outline-3 focus:outline-foco/30 ${errores.id_usuario ? 'border-error' : 'border-borde-fuerte'} bg-superficie-tenue`}
+        >
+          {usuarioActual ? (
+            <>
+              <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
+              <p className="text-sm text-texto-suave">
+                {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
+              </p>
+            </>
+          ) : (
+            <p className="text-texto-suave">
+              Todavía no hay usuario actual. Elija su nombre en <strong className="text-texto">«Usuario actual»</strong>, en
+              el menú.
             </p>
           )}
         </div>
+        {errores.id_usuario && (
+          <p id="id_usuario-error" className="-mt-3 flex gap-1.5 text-sm font-medium text-error">
+            <span aria-hidden="true">⚠</span>
+            {errores.id_usuario}
+          </p>
+        )}
+      </GrupoDeCampos>
 
+      <GrupoDeCampos numero="2" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
         <SelectInput
           {...campo('id_ambiente')}
           etiqueta="Ambiente"
           obligatorio
-          ayuda="Solo aparecen los ambientes disponibles."
+          ayuda={
+            elegido
+              ? `${elegido.capacidad_ambiente} personas · ${elegido.ubicacion_ambiente}` +
+                (elegido.nombre_responsable_ambiente ? ` · responsable: ${elegido.nombre_responsable_ambiente}` : '')
+              : 'Al elegirlo verá su capacidad y su ubicación.'
+          }
           opciones={opcionesDeAmbiente}
           textoVacio={ambientes.cargando ? 'Cargando ambientes…' : 'Elija el ambiente'}
         />
-        <DateInput {...campo('fecha_reserva')} etiqueta="Fecha" obligatorio minimo={ahoraEnPeru().fecha} />
+      </GrupoDeCampos>
+
+      <GrupoDeCampos numero="3" titulo="¿Cuándo?" descripcion="Entre las 07:00 y las 22:00, desde hoy.">
+        <DateInput
+          {...campo('fecha_reserva')}
+          etiqueta="Fecha"
+          obligatorio
+          minimo={ahoraEnPeru().fecha}
+          ayuda={valores.fecha_reserva ? formatearFechaLarga(valores.fecha_reserva) : 'Elija el día en el calendario.'}
+        />
         <div className="grid gap-5 sm:grid-cols-2">
           <TimeInput
             {...campo('hora_inicio_reserva')}
@@ -111,19 +147,27 @@ export function FormularioReserva({ alRegistrar }) {
             ayuda="Hasta las 22:00."
           />
         </div>
+        <PanelDisponibilidad disponibilidad={disponibilidad} />
+      </GrupoDeCampos>
+
+      <GrupoDeCampos numero="4" titulo="¿Para qué?" descripcion="Ayuda al administrador a decidir.">
         <TextInput
           {...campo('motivo_reserva')}
           multilinea
           etiqueta="Motivo"
           obligatorio
           maximo={RESERVA.motivoMaximo}
-          ayuda="Para qué necesita el ambiente: clase, práctica, reunión, evento…"
+          ayuda="Clase, práctica, reunión, evento…"
         />
-        <AccionesDeFormulario volverA="/" enviando={enviando} texto="Solicitar reserva" textoEnviando="Solicitando…" />
-      </div>
-      <div className="lg:sticky lg:top-6 lg:self-start">
-        <PanelDisponibilidad disponibilidad={disponibilidad} />
-      </div>
+      </GrupoDeCampos>
+
+      <AccionesDeFormulario
+        formulario={formulario}
+        volverA="/"
+        texto="Solicitar reserva"
+        textoEnviando="Solicitando…"
+        bloqueado={bloqueado}
+      />
     </form>
   )
 }

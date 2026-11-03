@@ -26,7 +26,7 @@ public abstract class EstadoDeReserva
 
         if (destino is Estados_Reserva.Aprobada or Estados_Reserva.Rechazada && !usuario.EsAdministrador())
         {
-            throw new AccionNoPermitidaException("Solo un administrador puede aprobar o rechazar reservas (RN-05).");
+            throw new AccionNoPermitidaException("Solo un administrador puede aprobar o rechazar reservas.");
         }
 
         if (destino == Estados_Reserva.Cancelada && !usuario.EsAdministrador() && usuario.Id_Usuario != reserva.Id_Usuario)
@@ -37,5 +37,5 @@ public abstract class EstadoDeReserva
 
     // Mensaje para un cambio que este estado no admite. Cada estado lo puede explicar a su manera.
     protected virtual string MotivoDeNoPermitir(Estados_Reserva destino) =>
-        $"Una reserva {Valor} no puede pasar a {destino}.";
+        $"Una reserva {Valor.ToString().ToLowerInvariant()} no puede pasar a {destino.ToString().ToLowerInvariant()}.";
 }

@@ -3,6 +3,7 @@ import { UsoDeAmbientes } from '../components/dashboard/UsoDeAmbientes'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
+import { Cargando } from '../components/ui/Cargando'
 import { CardIndicador } from '../components/ui/CardIndicador'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
@@ -43,11 +44,7 @@ export function Dashboard() {
         }
       />
       {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
-      {cargando && !indicadores && (
-        <p role="status" className="text-texto-suave">
-          Cargando indicadores…
-        </p>
-      )}
+      {cargando && !indicadores && <Cargando texto="Cargando indicadores…" />}
       {indicadores && (
         <div className="flex flex-col gap-6">
           <section aria-labelledby="titulo-indicadores">
@@ -61,6 +58,7 @@ export function Dashboard() {
                 descripcion="Registradas en el sistema"
                 icono="total"
                 destino={listadoDe(null)}
+                accion="Ver todas"
               />
               {POR_ESTADO.map((indicador) => (
                 <CardIndicador

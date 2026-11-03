@@ -2,17 +2,19 @@ import { AlertMessage } from '../ui/AlertMessage'
 import { EstadoBadge } from '../ui/EstadoBadge'
 
 // Muestra, mientras se llena el formulario, si el horario está libre (RF-04) y qué reservas tiene ese ambiente ese
-// día: el solicitante elige otro horario sin adivinar (prevención de errores). Se anuncia sin interrumpir.
+// día: el solicitante elige otro horario sin adivinar (prevención de errores) y ve el resultado de cada cambio al
+// instante (feedback informativo). Va junto a las horas que lo deciden (Norman: relación visible). Se anuncia sin
+// interrumpir.
 export function PanelDisponibilidad({ disponibilidad }) {
   const { estado, mensaje, reservasDelDia } = disponibilidad
 
   return (
-    <section aria-labelledby="titulo-disponibilidad" className="flex flex-col gap-3 rounded-xl border border-borde bg-superficie-tenue p-4">
-      <h2 id="titulo-disponibilidad" className="font-semibold text-titulo">
+    <section aria-labelledby="titulo-disponibilidad" className="flex flex-col gap-3 rounded-lg border border-borde bg-superficie-tenue p-4">
+      <h3 id="titulo-disponibilidad" className="font-semibold text-titulo">
         Disponibilidad del ambiente
-      </h2>
+      </h3>
       <div aria-live="polite">
-        {estado === 'espera' && <p className="text-texto-suave">Elija el ambiente, la fecha y las horas para revisarla.</p>}
+        {estado === 'espera' && <p className="text-texto-suave">Elija el ambiente, la fecha y las horas: aquí verá si el horario está libre.</p>}
         {estado === 'consultando' && <p className="text-texto-suave">Revisando la disponibilidad…</p>}
         {estado === 'libre' && <AlertMessage tipo="exito" titulo="Horario libre.">{mensaje}</AlertMessage>}
         {estado === 'ocupado' && <AlertMessage tipo="aviso" titulo="Horario ocupado.">{mensaje}</AlertMessage>}

@@ -5,6 +5,7 @@ import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AccionesDeEstado } from '../components/reservas/AccionesDeEstado'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
+import { Cargando } from '../components/ui/Cargando'
 import { EstadoBadge } from '../components/ui/EstadoBadge'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
@@ -26,9 +27,7 @@ export function DetalleReserva() {
     return (
       <>
         <EncabezadoDePagina titulo="Reserva" migas={MIGAS} />
-        <p role="status" className="text-texto-suave">
-          Cargando la reserva…
-        </p>
+        <Cargando texto="Cargando la reserva…" />
       </>
     )
   }

@@ -25,7 +25,7 @@ public sealed class ConsultarDisponibilidadUseCase
     {
         if (hora_fin_reserva <= hora_inicio_reserva)
         {
-            throw new DatosNoValidosException(nameof(Reserva.Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio (RN-03).");
+            throw new DatosNoValidosException(nameof(Reserva.Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio.");
         }
 
         var ambiente = await _ambiente_repository.ObtenerPorIdAsync(id_ambiente, cancelacion)

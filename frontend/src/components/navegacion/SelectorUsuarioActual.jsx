@@ -1,8 +1,9 @@
 import { useUsuarioActual } from '../../hooks/useUsuarioActual'
-import { ROLES } from '../../utils/formato'
+import { QUE_HACE_EL_ROL, ROLES } from '../../utils/formato'
 
-// «Usuario actual» en la barra lateral: simula la sesión, que el caso no pide. La interfaz muestra a cada rol
-// solo las acciones que le corresponden; la regla la vuelve a comprobar la API.
+// «Usuario actual» en la barra lateral: simula la sesión, que el caso no pide. Debajo dice el rol y qué permite
+// (visibilidad, Norman: el usuario sabe qué puede hacer sin probar). Al cambiarlo, el texto se anuncia (feedback
+// inmediato). La interfaz muestra a cada rol solo sus acciones; la regla la vuelve a comprobar la API.
 export function SelectorUsuarioActual() {
   const { usuarios, cargando, usuarioActual, elegir } = useUsuarioActual()
 
@@ -16,10 +17,11 @@ export function SelectorUsuarioActual() {
         value={usuarioActual?.id_usuario ?? ''}
         onChange={(evento) => elegir(evento.target.value)}
         disabled={cargando || usuarios.length === 0}
-        className="mt-1 min-h-11 w-full rounded-lg border border-white/40 bg-marca-800 px-2 text-white focus-visible:outline-3 focus-visible:outline-white"
+        aria-describedby="usuario-actual-rol"
+        className="mt-1 min-h-11 w-full cursor-pointer rounded-lg border border-white/40 bg-marca-800 px-2 text-white hover:border-white focus-visible:outline-3 focus-visible:outline-white"
       >
         <option value="" disabled>
-          {usuarios.length === 0 ? 'No hay usuarios activos' : 'Elija un usuario'}
+          {cargando ? 'Cargando usuarios…' : usuarios.length === 0 ? 'No hay usuarios activos' : 'Elija un usuario'}
         </option>
         {usuarios.map((usuario) => (
           <option key={usuario.id_usuario} value={usuario.id_usuario}>
@@ -27,7 +29,16 @@ export function SelectorUsuarioActual() {
           </option>
         ))}
       </select>
-      <p className="mt-1 text-sm text-marca-100">{usuarioActual ? ROLES[usuarioActual.rol_usuario] : 'Sin elegir'}</p>
+      <p id="usuario-actual-rol" aria-live="polite" className="mt-1.5 text-sm text-marca-100">
+        {usuarioActual ? (
+          <>
+            <strong className="text-white">{ROLES[usuarioActual.rol_usuario]}</strong>
+            <span className="block">{QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}</span>
+          </>
+        ) : (
+          'Elija quién usa el sistema para ver sus acciones.'
+        )}
+      </p>
     </div>
   )
 }

@@ -81,6 +81,6 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
         return Problema(
             StatusCodes.Status500InternalServerError,
             "Error interno del servidor.",
-            "Ocurrió un error inesperado. Inténtelo de nuevo en unos minutos; si continúa, informe el código de rastreo.");
+            "Ocurrió un error inesperado. Inténtelo de nuevo en unos minutos; si continúa, avise al administrador del sistema.");
     }
 }
