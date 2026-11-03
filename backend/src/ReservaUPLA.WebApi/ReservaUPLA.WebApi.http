@@ -1,0 +1,83 @@
+# Pruebas de la API desde VS Code (extensión REST Client) o JetBrains: «Send Request» sobre cada petición.
+# Los identificadores son de ejemplo: cópielos de las respuestas de GET /api/usuarios y GET /api/ambientes.
+@api = http://localhost:5320/api
+@id_solicitante = 00000000-0000-0000-0000-000000000001
+@id_administrador = 00000000-0000-0000-0000-000000000002
+@id_ambiente = 00000000-0000-0000-0000-000000000003
+@id_reserva = 00000000-0000-0000-0000-000000000004
+
+### RF-01 Registrar un usuario
+POST {{api}}/usuarios
+Content-Type: application/json
+
+{
+  "nombre_completo_usuario": "Nombre Apellido",
+  "correo_usuario": "nombre.apellido@upla.edu.pe",
+  "rol_usuario": "Solicitante"
+}
+
+### Listar usuarios activos de un rol
+GET {{api}}/usuarios?rol_usuario=Administrador&activo_usuario=true
+
+### RF-02 Registrar un ambiente
+POST {{api}}/ambientes
+Content-Type: application/json
+
+{
+  "nombre_ambiente": "Sala de reuniones 2",
+  "tipo_ambiente": "SalaDeReuniones",
+  "capacidad_ambiente": 12,
+  "ubicacion_ambiente": "Pabellón C, tercer piso",
+  "estado_ambiente": "Disponible",
+  "id_responsable_ambiente": null
+}
+
+### Listar ambientes disponibles
+GET {{api}}/ambientes?estado_ambiente=Disponible
+
+### RF-04 Consultar disponibilidad
+GET {{api}}/reservas/disponibilidad?id_ambiente={{id_ambiente}}&fecha_reserva=2026-12-01&hora_inicio_reserva=09:00&hora_fin_reserva=11:00
+
+### RF-03 Registrar una reserva (nace Pendiente)
+POST {{api}}/reservas
+Content-Type: application/json
+
+{
+  "id_usuario": "{{id_solicitante}}",
+  "id_ambiente": "{{id_ambiente}}",
+  "fecha_reserva": "2026-12-01",
+  "hora_inicio_reserva": "09:00",
+  "hora_fin_reserva": "11:00",
+  "motivo_reserva": "Práctica calificada del curso Construcción de Software."
+}
+
+### RN-03 y RN-04: la API responde 400 con un error por campo
+POST {{api}}/reservas
+Content-Type: application/json
+
+{
+  "id_usuario": "{{id_solicitante}}",
+  "id_ambiente": "{{id_ambiente}}",
+  "fecha_reserva": "2026-12-01",
+  "hora_inicio_reserva": "21:00",
+  "hora_fin_reserva": "23:00",
+  "motivo_reserva": "Ensayo del coro universitario."
+}
+
+### RF-05 Listar reservas (filtros opcionales)
+GET {{api}}/reservas?estado_reserva=Pendiente
+
+### RF-06 Detalle de una reserva
+GET {{api}}/reservas/{{id_reserva}}
+
+### RF-07 Aprobar (solo un administrador: RN-05)
+PATCH {{api}}/reservas/{{id_reserva}}/estado
+Content-Type: application/json
+
+{
+  "estado_reserva": "Aprobada",
+  "id_usuario": "{{id_administrador}}"
+}
+
+### RF-08 Indicadores del dashboard
+GET {{api}}/dashboard/indicadores
