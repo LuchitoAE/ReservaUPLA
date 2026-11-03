@@ -1,0 +1,37 @@
+import { formatearFechaLarga } from '../../utils/fechas'
+import { AlertMessage } from '../ui/AlertMessage'
+import { Button } from '../ui/Button'
+import { EstadoBadge } from '../ui/EstadoBadge'
+
+// Lo que ve el solicitante al registrar: el código para seguir su solicitud y que queda pendiente de aprobación.
+export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
+  return (
+    <div className="flex flex-col gap-5">
+      <AlertMessage tipo="exito" titulo={`Reserva ${reserva.codigo_reserva} registrada.`}>
+        Queda pendiente hasta que un administrador la apruebe o la rechace.
+      </AlertMessage>
+      <dl className="grid gap-x-6 gap-y-3 rounded-xl border border-borde bg-superficie p-5 sm:grid-cols-[10rem_1fr]">
+        <dt className="text-texto-suave">Código</dt>
+        <dd className="font-semibold">{reserva.codigo_reserva}</dd>
+        <dt className="text-texto-suave">Ambiente</dt>
+        <dd>{reserva.nombre_ambiente}</dd>
+        <dt className="text-texto-suave">Fecha</dt>
+        <dd className="first-letter:uppercase">{formatearFechaLarga(reserva.fecha_reserva)}</dd>
+        <dt className="text-texto-suave">Horario</dt>
+        <dd className="tabular-nums">
+          {reserva.hora_inicio_reserva} a {reserva.hora_fin_reserva}
+        </dd>
+        <dt className="text-texto-suave">Estado</dt>
+        <dd>
+          <EstadoBadge estado={reserva.estado_reserva} />
+        </dd>
+      </dl>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button variante="principal" onClick={alSolicitarOtra}>
+          Solicitar otra reserva
+        </Button>
+        <Button destino="/">Ir al inicio</Button>
+      </div>
+    </div>
+  )
+}

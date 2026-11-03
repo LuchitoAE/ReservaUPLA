@@ -20,7 +20,10 @@ namespace ReservaUPLA.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "btree_gist");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.HasSequence<int>("reservas_numero_seq");
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
                 {
@@ -77,6 +80,82 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Reserva", b =>
+                {
+                    b.Property<Guid>("Id_Reserva")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_reserva");
+
+                    b.Property<string>("Codigo_Reserva")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("codigo_reserva");
+
+                    b.Property<string>("Estado_Reserva")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("estado_reserva");
+
+                    b.Property<DateTime?>("Fecha_Actualizacion_Reserva")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_actualizacion_reserva");
+
+                    b.Property<DateTime>("Fecha_Registro_Reserva")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_registro_reserva");
+
+                    b.Property<DateOnly>("Fecha_Reserva")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_reserva");
+
+                    b.Property<TimeOnly>("Hora_Fin_Reserva")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("hora_fin_reserva");
+
+                    b.Property<TimeOnly>("Hora_Inicio_Reserva")
+                        .HasColumnType("time without time zone")
+                        .HasColumnName("hora_inicio_reserva");
+
+                    b.Property<Guid>("Id_Ambiente")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_ambiente");
+
+                    b.Property<Guid>("Id_Usuario")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_usuario");
+
+                    b.Property<string>("Motivo_Reserva")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("motivo_reserva");
+
+                    b.HasKey("Id_Reserva")
+                        .HasName("pk_reservas");
+
+                    b.HasIndex("Codigo_Reserva")
+                        .IsUnique()
+                        .HasDatabaseName("ux_reservas_codigo_reserva");
+
+                    b.HasIndex("Estado_Reserva")
+                        .HasDatabaseName("ix_reservas_estado_reserva");
+
+                    b.HasIndex("Id_Usuario")
+                        .HasDatabaseName("ix_reservas_id_usuario");
+
+                    b.HasIndex("Id_Ambiente", "Fecha_Reserva")
+                        .HasDatabaseName("ix_reservas_id_ambiente_fecha_reserva");
+
+                    b.ToTable("reservas", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_reservas_hora_fin_mayor", "hora_fin_reserva > hora_inicio_reserva");
+
+                            t.HasCheckConstraint("ck_reservas_horario_permitido", "hora_inicio_reserva >= TIME '07:00' AND hora_fin_reserva <= TIME '22:00'");
+                        });
+                });
+
             modelBuilder.Entity("ReservaUPLA.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id_Usuario")
@@ -123,6 +202,23 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasForeignKey("Id_Responsable_Ambiente")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_ambientes_usuarios_responsable");
+                });
+
+            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Reserva", b =>
+                {
+                    b.HasOne("ReservaUPLA.Domain.Entities.Ambiente", null)
+                        .WithMany()
+                        .HasForeignKey("Id_Ambiente")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_reservas_ambientes");
+
+                    b.HasOne("ReservaUPLA.Domain.Entities.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_reservas_usuarios");
                 });
 #pragma warning restore 612, 618
         }

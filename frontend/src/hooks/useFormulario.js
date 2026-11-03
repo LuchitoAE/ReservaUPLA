@@ -12,26 +12,25 @@ export function useFormulario({ iniciales, reglas, alEnviar }) {
   const [enviando, setEnviando] = useState(false)
   const [aviso, setAviso] = useState(null)
 
-  function revisar(campo, nuevos, siempre) {
+  // Vuelve a revisar los campos que ya muestran un error (y «campo», si se pide): así el mensaje desaparece en cuanto
+  // se corrige, también cuando depende de otro campo (la hora de fin se compara con la de inicio).
+  function revisar(nuevos, campo) {
     setErrores((anteriores) => {
-      if (!siempre && !anteriores[campo]) {
-        return anteriores
-      }
-      const { [campo]: _anterior, ...resto } = anteriores
-      const mensaje = reglas.validarCampo(campo, nuevos)
-      return mensaje ? { ...resto, [campo]: mensaje } : resto
+      const revisados = new Set([...Object.keys(anteriores), ...(campo ? [campo] : [])])
+      return Object.fromEntries(
+        [...revisados].map((nombre) => [nombre, reglas.validarCampo(nombre, nuevos)]).filter(([, mensaje]) => mensaje),
+      )
     })
   }
 
   function cambiar(campo, valor) {
     const nuevos = { ...valores, [campo]: valor }
     setValores(nuevos)
-    // Si el campo ya mostraba un error, se vuelve a revisar mientras se corrige.
-    revisar(campo, nuevos, false)
+    revisar(nuevos)
   }
 
   function salir(campo) {
-    revisar(campo, valores, true)
+    revisar(valores, campo)
   }
 
   function mostrarErrores(encontrados) {

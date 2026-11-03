@@ -103,4 +103,12 @@ public sealed class Ambiente
 
     // Solo un ambiente disponible recibe reservas: uno en mantenimiento o inactivo, no.
     public bool AdmiteReservas() => Estado_Ambiente == Estados_Ambiente.Disponible;
+
+    // El estado dicho como en una frase: «está en mantenimiento».
+    public string DescribirEstado() => Estado_Ambiente switch
+    {
+        Estados_Ambiente.Disponible => "disponible",
+        Estados_Ambiente.EnMantenimiento => "en mantenimiento",
+        _ => "inactivo",
+    };
 }
