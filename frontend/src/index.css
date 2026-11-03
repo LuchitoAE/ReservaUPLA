@@ -1,0 +1,106 @@
+/* Tailwind 4: una sola línea trae la base, los componentes y las utilidades. */
+@import 'tailwindcss';
+
+/* Colores en un solo lugar. Los componentes usan nombres con significado (bg-superficie, text-texto-suave,
+   border-error…) y nunca un color fijo: el modo oscuro, o cualquier cambio de paleta, se hace solo aquí.
+   Los pares de texto y fondo tienen al menos 4,5:1 de contraste y los bordes de los controles 3:1
+   (WCAG 2.2, criterios 1.4.3 y 1.4.11), en los dos modos. */
+@theme {
+  --color-marca-100: #e0e7ff;
+  --color-marca-700: #4338ca;
+  --color-marca-800: #3730a3;
+  --color-marca-900: #1e1b4b;
+
+  --color-fondo: #f4f5fb;
+  --color-superficie: #ffffff;
+  --color-superficie-tenue: #f8f9fc;
+  --color-borde: #e2e5f0;
+  --color-borde-fuerte: #c9cee0;
+  --color-borde-control: #646b85;
+  --color-texto: #111827;
+  --color-texto-suave: #4b5268;
+  --color-titulo: #1e1b4b;
+  --color-enlace: #4338ca;
+  --color-foco: #4338ca;
+  --color-seleccion: #eef0ff;
+
+  --color-error: #b91c1c;
+  --color-error-fondo: #fef2f2;
+  --color-error-texto: #7f1d1d;
+  --color-exito: #15803d;
+  --color-exito-fondo: #f0fdf4;
+  --color-exito-texto: #14532d;
+  --color-aviso: #b45309;
+  --color-aviso-fondo: #fffbeb;
+  --color-aviso-texto: #78350f;
+  --color-info: #4338ca;
+  --color-info-fondo: #eef0ff;
+  --color-info-texto: #1e1b4b;
+
+  /* Botones de acción con significado (aprobar, rechazar): texto blanco en los dos modos. */
+  --color-aprobar: #15803d;
+  --color-aprobar-oscuro: #166534;
+  --color-peligro: #b91c1c;
+  --color-peligro-oscuro: #991b1b;
+
+  /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */
+  --color-pendiente-fondo: #fef3c7;
+  --color-pendiente-texto: #78350f;
+  --color-aprobada-fondo: #dcfce7;
+  --color-aprobada-texto: #14532d;
+  --color-rechazada-fondo: #fee2e2;
+  --color-rechazada-texto: #7f1d1d;
+  --color-cancelada-fondo: #e2e8f0;
+  --color-cancelada-texto: #334155;
+}
+
+/* Modo oscuro: sigue la preferencia del sistema operativo. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo: #0f1020;
+    --color-superficie: #1a1b33;
+    --color-superficie-tenue: #15162b;
+    --color-borde: #2e3055;
+    --color-borde-fuerte: #3f4270;
+    --color-borde-control: #8a8fb8;
+    --color-texto: #e8e9f5;
+    --color-texto-suave: #b8bbd6;
+    --color-titulo: #e0e7ff;
+    --color-enlace: #a5b4fc;
+    --color-foco: #a5b4fc;
+    --color-seleccion: #2a2c5a;
+
+    --color-error: #fca5a5;
+    --color-error-fondo: #3b1a1d;
+    --color-error-texto: #fecaca;
+    --color-exito: #86efac;
+    --color-exito-fondo: #12301f;
+    --color-exito-texto: #bbf7d0;
+    --color-aviso: #fcd34d;
+    --color-aviso-fondo: #3a2a0c;
+    --color-aviso-texto: #fde68a;
+    --color-info: #a5b4fc;
+    --color-info-fondo: #23254a;
+    --color-info-texto: #e0e7ff;
+
+    --color-pendiente-fondo: #3a2a0c;
+    --color-pendiente-texto: #fde68a;
+    --color-aprobada-fondo: #12301f;
+    --color-aprobada-texto: #bbf7d0;
+    --color-rechazada-fondo: #3b1a1d;
+    --color-rechazada-texto: #fecaca;
+    --color-cancelada-fondo: #243241;
+    --color-cancelada-texto: #cbd5e1;
+  }
+}
+
+@layer base {
+  /* Los controles nativos (calendario, reloj, listas desplegables) también cambian de modo. */
+  :root {
+    color-scheme: light dark;
+  }
+
+  body {
+    @apply bg-fondo text-texto antialiased;
+  }
+}

@@ -1,0 +1,48 @@
+import { NavLink } from 'react-router'
+import { SECCIONES } from '../../navegacion'
+import { Icono } from '../ui/Icono'
+
+const ESTILO_OPCION = 'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2'
+
+// Menú de la SPA. La sección actual se resalta y se anuncia (NavLink pone aria-current="page"). Las secciones
+// que aún no existen se ven, pero sin enlace. En el teléfono se abre y se cierra con el botón «Menú».
+// «end» solo en Inicio: así /reservas/… también marca «Reservas» como la sección actual.
+export function MenuPrincipal({ id, abierto, alElegir }) {
+  return (
+    <nav
+      id={id}
+      aria-label="Menú principal"
+      className={`${abierto ? 'block' : 'hidden'} border-t border-white/15 px-3 py-3 lg:block lg:border-0 lg:px-4`}
+    >
+      <ul className="flex flex-col gap-1">
+        {SECCIONES.map((seccion) => (
+          <li key={seccion.nombre}>
+            {seccion.ruta ? (
+              <NavLink
+                to={seccion.ruta}
+                end={seccion.ruta === '/' || seccion.exacta}
+                onClick={alElegir}
+                className={({ isActive }) =>
+                  `${ESTILO_OPCION} font-semibold focus-visible:outline-3 focus-visible:outline-white ${
+                    isActive ? 'bg-white text-marca-900' : 'text-white hover:bg-white/10'
+                  }`
+                }
+              >
+                <Icono nombre={seccion.icono} />
+                {seccion.nombre}
+              </NavLink>
+            ) : (
+              <span className={`${ESTILO_OPCION} text-marca-100`}>
+                <Icono nombre={seccion.icono} />
+                <span className="flex flex-col">
+                  {seccion.nombre}
+                  <span className="text-xs">Próximamente</span>
+                </span>
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
