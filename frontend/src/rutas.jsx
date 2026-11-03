@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router'
 import { LayoutPrincipal } from './layouts/LayoutPrincipal'
 import { Ambientes } from './paginas/Ambientes'
+import { Dashboard } from './paginas/Dashboard'
 import { DetalleReserva } from './paginas/DetalleReserva'
-import { Inicio } from './paginas/Inicio'
 import { NuevaReserva } from './paginas/NuevaReserva'
 import { NuevoAmbiente } from './paginas/NuevoAmbiente'
 import { NuevoUsuario } from './paginas/NuevoUsuario'
@@ -17,7 +17,7 @@ export const rutas = createBrowserRouter([
     path: '/',
     element: <LayoutPrincipal />,
     children: [
-      { index: true, element: <Inicio /> },
+      { index: true, element: <Dashboard /> },
       { path: 'reservas', element: <Reservas /> },
       { path: 'reservas/nueva', element: <NuevaReserva /> },
       { path: 'reservas/:idReserva', element: <DetalleReserva /> },
