@@ -1,13 +1,19 @@
-import { NavLink } from 'react-router'
+import { Link, matchPath, useLocation } from 'react-router'
 import { SECCIONES } from '../../navegacion'
 import { Icono } from '../ui/Icono'
 
 const ESTILO_OPCION = 'flex min-h-11 items-center gap-3 rounded-lg px-3 py-2'
 
-// Menú de la SPA. La sección actual se resalta y se anuncia (NavLink pone aria-current="page"). Las secciones
-// que aún no existen se ven, pero sin enlace. En el teléfono se abre y se cierra con el botón «Menú».
-// «end» solo en Inicio: así /reservas/… también marca «Reservas» como la sección actual.
+// Menú de la SPA. La sección actual se resalta y se anuncia (aria-current="page"), también en sus subpáginas:
+// en el detalle de una reserva sigue marcada «Reservas». Las secciones que aún no existen se ven sin enlace.
+// En el teléfono el menú se abre y se cierra con el botón «Menú»; en pantallas grandes siempre está visible.
 export function MenuPrincipal({ id, abierto, alElegir }) {
+  const { pathname } = useLocation()
+
+  const estaActiva = (seccion) =>
+    seccion.activaEn.some((patron) => matchPath(patron, pathname)) &&
+    !(seccion.excepto ?? []).some((patron) => matchPath(patron, pathname))
+
   return (
     <nav
       id={id}
@@ -15,33 +21,34 @@ export function MenuPrincipal({ id, abierto, alElegir }) {
       className={`${abierto ? 'block' : 'hidden'} border-t border-white/15 px-3 py-3 lg:block lg:border-0 lg:px-4`}
     >
       <ul className="flex flex-col gap-1">
-        {SECCIONES.map((seccion) => (
-          <li key={seccion.nombre}>
-            {seccion.ruta ? (
-              <NavLink
-                to={seccion.ruta}
-                end={seccion.ruta === '/' || seccion.exacta}
-                onClick={alElegir}
-                className={({ isActive }) =>
-                  `${ESTILO_OPCION} font-semibold focus-visible:outline-3 focus-visible:outline-white ${
-                    isActive ? 'bg-white text-marca-900' : 'text-white hover:bg-white/10'
-                  }`
-                }
-              >
-                <Icono nombre={seccion.icono} />
-                {seccion.nombre}
-              </NavLink>
-            ) : (
-              <span className={`${ESTILO_OPCION} text-marca-100`}>
-                <Icono nombre={seccion.icono} />
-                <span className="flex flex-col">
+        {SECCIONES.map((seccion) => {
+          const activa = estaActiva(seccion)
+          return (
+            <li key={seccion.nombre}>
+              {seccion.ruta ? (
+                <Link
+                  to={seccion.ruta}
+                  onClick={alElegir}
+                  aria-current={activa ? 'page' : undefined}
+                  className={`${ESTILO_OPCION} font-semibold focus-visible:outline-3 focus-visible:outline-white ${
+                    activa ? 'bg-white text-marca-900' : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Icono nombre={seccion.icono} />
                   {seccion.nombre}
-                  <span className="text-xs">Próximamente</span>
+                </Link>
+              ) : (
+                <span className={`${ESTILO_OPCION} text-marca-100`}>
+                  <Icono nombre={seccion.icono} />
+                  <span className="flex flex-col">
+                    {seccion.nombre}
+                    <span className="text-xs">Próximamente</span>
+                  </span>
                 </span>
-              </span>
-            )}
-          </li>
-        ))}
+              )}
+            </li>
+          )
+        })}
       </ul>
     </nav>
   )

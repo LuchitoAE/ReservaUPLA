@@ -16,7 +16,7 @@ export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
         <dt className="text-texto-suave">Ambiente</dt>
         <dd>{reserva.nombre_ambiente}</dd>
         <dt className="text-texto-suave">Fecha</dt>
-        <dd className="first-letter:uppercase">{formatearFechaLarga(reserva.fecha_reserva)}</dd>
+        <dd className="inline-block first-letter:uppercase">{formatearFechaLarga(reserva.fecha_reserva)}</dd>
         <dt className="text-texto-suave">Horario</dt>
         <dd className="tabular-nums">
           {reserva.hora_inicio_reserva} a {reserva.hora_fin_reserva}
@@ -27,10 +27,10 @@ export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
         </dd>
       </dl>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Button variante="principal" onClick={alSolicitarOtra}>
-          Solicitar otra reserva
+        <Button destino={`/reservas/${reserva.id_reserva}`} variante="principal">
+          Ver detalle
         </Button>
-        <Button destino="/">Ir al inicio</Button>
+        <Button onClick={alSolicitarOtra}>Solicitar otra reserva</Button>
       </div>
     </div>
   )
