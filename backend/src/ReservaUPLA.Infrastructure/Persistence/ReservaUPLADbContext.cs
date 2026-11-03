@@ -12,6 +12,8 @@ public sealed class ReservaUPLADbContext : DbContext
 
     public DbSet<Usuario> Usuarios => Set<Usuario>();
 
+    public DbSet<Ambiente> Ambientes => Set<Ambiente>();
+
     protected override void OnModelCreating(ModelBuilder modelo)
     {
         modelo.ApplyConfigurationsFromAssembly(typeof(ReservaUPLADbContext).Assembly);

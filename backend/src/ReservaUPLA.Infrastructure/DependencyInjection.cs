@@ -20,6 +20,8 @@ public static class DependencyInjection
         // Guardar entidades (repositorios) y leer para mostrar (consultas): cada contrato con su clase.
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
         services.AddScoped<IConsultaDeUsuarios, ConsultaDeUsuarios>();
+        services.AddScoped<IAmbienteRepository, AmbienteRepository>();
+        services.AddScoped<IConsultaDeAmbientes, ConsultaDeAmbientes>();
 
         return services;
     }
