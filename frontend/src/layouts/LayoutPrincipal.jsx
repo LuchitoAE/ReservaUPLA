@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { MenuPrincipal } from '../components/navegacion/MenuPrincipal'
+import { SelectorUsuarioActual } from '../components/navegacion/SelectorUsuarioActual'
 import { Icono } from '../components/ui/Icono'
+import { ProveedorUsuarioActual } from '../contexto/ProveedorUsuarioActual'
 
-// Estructura común de todas las páginas: marca y menú a la izquierda (arriba en el teléfono), la página actual
-// en el centro (<Outlet />) y el pie. Las páginas solo traen su propio contenido.
+// Estructura común de todas las páginas: marca, usuario actual y menú a la izquierda (arriba en el teléfono),
+// la página actual en el centro (<Outlet />) y el pie. Las páginas solo traen su propio contenido.
 export function LayoutPrincipal() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const { pathname } = useLocation()
@@ -22,6 +24,7 @@ export function LayoutPrincipal() {
   const cerrarMenu = () => setMenuAbierto(false)
 
   return (
+    <ProveedorUsuarioActual>
     <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
       <a
         href="#contenido"
@@ -53,6 +56,7 @@ export function LayoutPrincipal() {
               Menú
             </button>
           </div>
+          <SelectorUsuarioActual />
           <MenuPrincipal id="menu-principal" abierto={menuAbierto} alElegir={cerrarMenu} />
         </header>
       </div>
@@ -68,5 +72,6 @@ export function LayoutPrincipal() {
 
       <ScrollRestoration />
     </div>
+    </ProveedorUsuarioActual>
   )
 }
