@@ -33,7 +33,7 @@ export function Usuarios() {
       />
       <div className="flex flex-col gap-4">
         {aviso && <AlertMessage tipo="exito" titulo={aviso} />}
-        {error && <AlertMessage tipo="error" {...avisoDeErrorComoProps(error)} />}
+        {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
         <TableList
           titulo="Usuarios"
           columnas={COLUMNAS}
@@ -45,9 +45,4 @@ export function Usuarios() {
       </div>
     </>
   )
-}
-
-function avisoDeErrorComoProps(error) {
-  const aviso = avisoDeError(error)
-  return { titulo: aviso.titulo, codigoRastreo: aviso.codigoRastreo, children: aviso.mensaje }
 }
