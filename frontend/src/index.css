@@ -6,23 +6,33 @@
    Los pares de texto y fondo tienen al menos 4,5:1 de contraste y los bordes de los controles 3:1
    (WCAG 2.2, criterios 1.4.3 y 1.4.11), en los dos modos. */
 @theme {
-  --color-marca-100: #e0e7ff;
-  --color-marca-700: #4338ca;
-  --color-marca-800: #3730a3;
-  --color-marca-900: #1e1b4b;
+  /* Tipografía: el Manual de Marca UPLA pide Woodford Bourne y Geomanist (comerciales) y nombra Montserrat como
+     secundaria. Se usa Montserrat (libre, OFL, paquete @fontsource-variable/montserrat); Geomanist va primero por si
+     está instalada. */
+  --font-sans: 'Geomanist', 'Montserrat Variable', 'Montserrat', Arial, sans-serif;
 
-  --color-fondo: #f4f5fb;
+  /* Colores UPLA. #0063A8 es el azul oficial para web (Manual de Marca, 2.2.1, hoja 17), junto con el blanco.
+     El azul marino #1F365C y el dorado #FFCB70 vienen de la ficha de Brandfetch (upla.edu.pe), no del manual: se usan
+     como apoyo (barra lateral y acentos), nunca para texto pequeño sobre blanco. */
+  --color-marca-100: #dcebf7;
+  --color-marca-700: #0063a8;
+  --color-marca-800: #004f87;
+  --color-marca-900: #1f365c;
+  --color-acento: #ffcb70;
+  --color-acento-texto: #5a3a00;
+
+  --color-fondo: #f3f6fa;
   --color-superficie: #ffffff;
-  --color-superficie-tenue: #f8f9fc;
-  --color-borde: #e2e5f0;
-  --color-borde-fuerte: #c9cee0;
-  --color-borde-control: #646b85;
-  --color-texto: #111827;
-  --color-texto-suave: #4b5268;
-  --color-titulo: #1e1b4b;
-  --color-enlace: #4338ca;
-  --color-foco: #4338ca;
-  --color-seleccion: #eef0ff;
+  --color-superficie-tenue: #f7f9fc;
+  --color-borde: #dde4ee;
+  --color-borde-fuerte: #c4cfde;
+  --color-borde-control: #5f6f86;
+  --color-texto: #14213a;
+  --color-texto-suave: #4a5a72;
+  --color-titulo: #1f365c;
+  --color-enlace: #0063a8;
+  --color-foco: #0063a8;
+  --color-seleccion: #e6f0f9;
 
   --color-error: #b91c1c;
   --color-error-fondo: #fef2f2;
@@ -33,9 +43,9 @@
   --color-aviso: #b45309;
   --color-aviso-fondo: #fffbeb;
   --color-aviso-texto: #78350f;
-  --color-info: #4338ca;
-  --color-info-fondo: #eef0ff;
-  --color-info-texto: #1e1b4b;
+  --color-info: #0063a8;
+  --color-info-fondo: #e6f0f9;
+  --color-info-texto: #1f365c;
 
   /* Botones de acción con significado (aprobar, rechazar): texto blanco en los dos modos. */
   --color-aprobar: #15803d;
@@ -43,8 +53,8 @@
   --color-peligro: #b91c1c;
   --color-peligro-oscuro: #991b1b;
 
-  /* Barras del dashboard: un solo tono (magnitud), el de la marca. */
-  --color-barra: #4338ca;
+  /* Barras del dashboard: un solo tono (magnitud), el azul UPLA. */
+  --color-barra: #0063a8;
 
   /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */
   --color-pendiente-fondo: #fef3c7;
@@ -57,21 +67,22 @@
   --color-cancelada-texto: #334155;
 }
 
-/* Modo oscuro: sigue la preferencia del sistema operativo. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fondo: #0f1020;
-    --color-superficie: #1a1b33;
-    --color-superficie-tenue: #15162b;
-    --color-borde: #2e3055;
-    --color-borde-fuerte: #3f4270;
-    --color-borde-control: #8a8fb8;
-    --color-texto: #e8e9f5;
-    --color-texto-suave: #b8bbd6;
-    --color-titulo: #e0e7ff;
-    --color-enlace: #a5b4fc;
-    --color-foco: #a5b4fc;
-    --color-seleccion: #2a2c5a;
+/* Modo oscuro. Al abrir, index.html pone data-tema según la elección guardada o, si no la hay, según el sistema
+   operativo; el botón de sol y luna lo cambia (hooks/useTema.js). */
+:root[data-tema='oscuro'] {
+    color-scheme: dark;
+    --color-fondo: #0c1626;
+    --color-superficie: #13233a;
+    --color-superficie-tenue: #0f1d31;
+    --color-borde: #243a58;
+    --color-borde-fuerte: #34507a;
+    --color-borde-control: #7f94b3;
+    --color-texto: #e7eef7;
+    --color-texto-suave: #b5c3d6;
+    --color-titulo: #dcebf7;
+    --color-enlace: #7dbef0;
+    --color-foco: #7dbef0;
+    --color-seleccion: #1c3556;
 
     --color-error: #fca5a5;
     --color-error-fondo: #3b1a1d;
@@ -82,11 +93,11 @@
     --color-aviso: #fcd34d;
     --color-aviso-fondo: #3a2a0c;
     --color-aviso-texto: #fde68a;
-    --color-info: #a5b4fc;
-    --color-info-fondo: #23254a;
-    --color-info-texto: #e0e7ff;
+    --color-info: #7dbef0;
+    --color-info-fondo: #1c3556;
+    --color-info-texto: #dcebf7;
 
-    --color-barra: #818cf8;
+    --color-barra: #5da9e0;
 
     --color-pendiente-fondo: #3a2a0c;
     --color-pendiente-texto: #fde68a;
@@ -96,16 +107,15 @@
     --color-rechazada-texto: #fecaca;
     --color-cancelada-fondo: #243241;
     --color-cancelada-texto: #cbd5e1;
-  }
 }
 
 @layer base {
-  /* Los controles nativos (calendario, reloj, listas desplegables) también cambian de modo. */
+  /* Los controles nativos (calendario, reloj, listas desplegables) siguen el modo elegido. */
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
   body {
-    @apply bg-fondo text-texto antialiased;
+    @apply bg-fondo font-sans text-texto antialiased;
   }
 }

@@ -6,6 +6,14 @@ export const ROLES = {
   ResponsableDeAmbiente: 'Responsable de ambiente',
 }
 
+// Qué puede hacer cada rol: se muestra al elegirlo y junto al usuario actual (el usuario sabe qué puede hacer con
+// solo mirar la pantalla, Norman).
+export const QUE_HACE_EL_ROL = {
+  Solicitante: 'Pide reservas y cancela las suyas.',
+  Administrador: 'Aprueba, rechaza o cancela reservas.',
+  ResponsableDeAmbiente: 'Consulta el uso de los ambientes a su cargo.',
+}
+
 export const TIPOS_AMBIENTE = {
   LaboratorioDeComputo: 'Laboratorio de cómputo',
   Auditorio: 'Auditorio',

@@ -7,6 +7,7 @@ namespace ReservaUPLA.WebApi.Middleware;
 
 // Único lugar donde una excepción se convierte en respuesta HTTP; los controladores no llevan try/catch.
 //   Datos que no cumplen las reglas          -> 400 con un error por campo.
+//   Credenciales o sesión no válidas         -> 401.
 //   Rol que no permite la acción (RN-05)     -> 403.
 //   No existe lo que se pidió                -> 404.
 //   Choca con los datos (RN-01, RN-06)       -> 409.
@@ -33,6 +34,8 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
         var problema = excepcion switch
         {
             DatosNoValidosException datos_no_validos => DatosNoValidos(datos_no_validos),
+            SesionNoValidaException sesion =>
+                Problema(StatusCodes.Status401Unauthorized, "No se pudo iniciar sesión.", sesion.Message),
             AccionNoPermitidaException no_permitida =>
                 Problema(StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", no_permitida.Message),
             RecursoNoEncontradoException no_encontrado =>
@@ -81,6 +84,6 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
         return Problema(
             StatusCodes.Status500InternalServerError,
             "Error interno del servidor.",
-            "Ocurrió un error inesperado. Inténtelo de nuevo en unos minutos; si continúa, informe el código de rastreo.");
+            "Ocurrió un error inesperado. Inténtelo de nuevo en unos minutos; si continúa, avise al administrador del sistema.");
     }
 }

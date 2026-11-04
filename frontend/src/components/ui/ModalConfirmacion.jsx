@@ -3,8 +3,19 @@ import { Button } from './Button'
 
 // Pide confirmación antes de una acción que no se puede deshacer (componente «ModalConfirmacion» del caso).
 // Usa <dialog> del navegador: atrapa el foco dentro, se cierra con Esc y deja el resto de la página inerte.
-// El foco empieza en «Volver», la opción segura: confirmar exige un paso deliberado.
-export function ModalConfirmacion({ abierto, titulo, children, textoConfirmar, variante = 'principal', ocupado = false, alConfirmar, alCancelar }) {
+// El foco empieza en «Volver», la opción segura: confirmar exige un paso deliberado (reversión fácil y control del
+// usuario, Shneiderman).
+export function ModalConfirmacion({
+  abierto,
+  titulo,
+  children,
+  textoConfirmar,
+  textoCancelar = 'Volver',
+  variante = 'principal',
+  ocupado = false,
+  alConfirmar,
+  alCancelar,
+}) {
   const dialogo = useRef(null)
 
   useEffect(() => {
@@ -35,7 +46,7 @@ export function ModalConfirmacion({ abierto, titulo, children, textoConfirmar, v
         <div className="text-texto-suave">{children}</div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button onClick={alCancelar} disabled={ocupado} autoFocus>
-            Volver
+            {textoCancelar}
           </Button>
           <Button variante={variante} onClick={alConfirmar} ocupado={ocupado}>
             {textoConfirmar}

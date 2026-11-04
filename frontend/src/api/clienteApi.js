@@ -4,7 +4,8 @@
 const RUTA_BASE = '/api'
 
 export class ErrorDeApi extends Error {
-  // tipo: 'sin_conexion' | 'datos_no_validos' | 'no_permitido' | 'no_encontrado' | 'conflicto' | 'servidor'
+  // tipo: 'sin_conexion' | 'datos_no_validos' | 'no_autenticado' | 'no_permitido' | 'no_encontrado' | 'conflicto'
+  //       | 'servidor'
   constructor(tipo, mensaje, errores = {}, codigoRastreo = null) {
     super(mensaje)
     this.name = 'ErrorDeApi'
@@ -14,7 +15,10 @@ export class ErrorDeApi extends Error {
   }
 }
 
-const TIPOS_POR_ESTADO = { 400: 'datos_no_validos', 403: 'no_permitido', 404: 'no_encontrado', 409: 'conflicto' }
+const TIPOS_POR_ESTADO = { 400: 'datos_no_validos', 401: 'no_autenticado', 403: 'no_permitido', 404: 'no_encontrado', 409: 'conflicto' }
+
+// Si la sesión terminó mientras se usaba el sistema, se avisa a toda la SPA para volver a la pantalla de ingreso.
+export const SESION_TERMINADA = 'reservaupla:sesion-terminada'
 
 function tipoDeError(estado) {
   return estado >= 500 ? 'servidor' : (TIPOS_POR_ESTADO[estado] ?? 'datos_no_validos')
@@ -52,6 +56,9 @@ export async function pedir(ruta, opciones = {}) {
     Object.entries(cuerpo?.errors ?? {}).map(([campo, mensajes]) => [campo, mensajes[0]]),
   )
   const tipoError = tipoDeError(respuesta.status)
+  if (tipoError === 'no_autenticado' && !ruta.startsWith('/autenticacion/')) {
+    window.dispatchEvent(new Event(SESION_TERMINADA))
+  }
   const mensaje =
     cuerpo?.message ??
     (tipoError === 'servidor'

@@ -62,7 +62,7 @@ public sealed class Reserva
 
         if (solicitante is null || !solicitante.Activo_Usuario)
         {
-            errores.Agregar(nameof(Id_Usuario), "Elija como usuario actual a un usuario activo: él será el solicitante.");
+            errores.Agregar(nameof(Id_Usuario), "Inicie sesión con un usuario activo para solicitar la reserva.");
         }
 
         if (ambiente is null)
@@ -113,7 +113,7 @@ public sealed class Reserva
         }
         else if (inicio < Hora_Apertura || inicio >= Hora_Cierre)
         {
-            errores.Agregar(nameof(Hora_Inicio_Reserva), "La hora de inicio debe estar entre las 07:00 y las 22:00 (RN-04).");
+            errores.Agregar(nameof(Hora_Inicio_Reserva), "La hora de inicio debe estar entre las 07:00 y las 22:00.");
         }
         else if (fecha == DateOnly.FromDateTime(ahora_en_peru) && inicio <= TimeOnly.FromDateTime(ahora_en_peru))
         {
@@ -126,11 +126,11 @@ public sealed class Reserva
         }
         else if (fin > Hora_Cierre)
         {
-            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin no puede pasar de las 22:00 (RN-04).");
+            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin no puede pasar de las 22:00.");
         }
         else if (inicio is not null && fin <= inicio)
         {
-            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio (RN-03).");
+            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio.");
         }
     }
 
@@ -160,7 +160,7 @@ public sealed class Reserva
         {
             throw new ConflictoDeNegocioException(
                 $"El ambiente ya está reservado {cruce.ObtenerHorario()} ({cruce.Codigo_Reserva}, aprobada). " +
-                "Elija otro horario u otro ambiente (RN-01).");
+                "Elija otro horario u otro ambiente.");
         }
     }
 
@@ -179,12 +179,12 @@ public sealed class Reserva
     {
         if (usuario is null || !usuario.Activo_Usuario)
         {
-            throw new AccionNoPermitidaException("Elija como usuario actual a un usuario activo para cambiar el estado.");
+            throw new AccionNoPermitidaException("Inicie sesión con un usuario activo para cambiar el estado.");
         }
 
         if (!Enum.IsDefined(nuevo_estado))
         {
-            throw new DatosNoValidosException(nameof(Estado_Reserva), "Elija el nuevo estado: Aprobada, Rechazada o Cancelada.");
+            throw new DatosNoValidosException(nameof(Estado_Reserva), "Elija el nuevo estado: aprobada, rechazada o cancelada.");
         }
 
         ObtenerEstado().ValidarCambio(nuevo_estado, this, usuario);

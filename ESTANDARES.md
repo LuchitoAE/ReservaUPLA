@@ -51,6 +51,13 @@ ReservaUPLA/
 5. **Sin secretos en el repositorio:** la cadena de conexión va en los user-secrets de .NET.
 6. **Respuestas de la API:** éxito `{ success, message, data }`; error en ProblemDetails (RFC 9457) con `success: false`, `message` y, si son datos, `errors` por campo.
 7. **Interfaz:** etiquetas visibles, errores junto a su campo, foco visible, controles de 44 px de alto, contraste AA (WCAG 2.2) y modo oscuro por tokens de color.
+8. **Diseño centrado en el usuario** (reglas de oro de Shneiderman y principios de Norman):
+   - Los campos se agrupan en tarjetas numeradas (`GrupoDeCampos`), en el orden en que el usuario piensa la tarea.
+   - El botón de enviar queda deshabilitado mientras falte un dato obligatorio o haya un impedimento, y dice qué falta.
+   - Los mensajes dicen qué corregir con palabras del usuario: nunca códigos de reglas, nombres técnicos ni códigos de rastreo.
+   - Toda acción tiene feedback (al pasar, al pulsar, mientras carga) y un final claro (confirmación o aviso de éxito).
+   - Toda acción se puede revertir antes de confirmarla: Cancelar, Volver, confirmar antes de salir con datos sin guardar.
+   - Los ejemplos van como ayuda bajo el campo, no como texto de ejemplo dentro de él.
 
 ## 4. Commits
 

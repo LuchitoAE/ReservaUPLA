@@ -8,6 +8,7 @@ namespace ReservaUPLA.WebApi.Controllers;
 // RF-08: indicadores básicos de reservas para el dashboard.
 [ApiController]
 [Route("api/dashboard")]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 public sealed class DashboardController : ControllerBase
 {

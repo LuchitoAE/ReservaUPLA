@@ -11,13 +11,13 @@ const ACCIONES = {
     boton: 'Aprobar',
     variante: 'aprobar',
     pregunta: '¿Aprobar la reserva?',
-    efecto: 'El ambiente quedará ocupado en ese horario y nadie más podrá reservarlo (RN-01).',
+    efecto: 'El ambiente quedará ocupado en ese horario y nadie más podrá reservarlo.',
   },
   Rechazada: {
     boton: 'Rechazar',
     variante: 'peligro',
     pregunta: '¿Rechazar la reserva?',
-    efecto: 'Una reserva rechazada ya no puede modificarse (RN-06).',
+    efecto: 'Una reserva rechazada ya no puede modificarse.',
   },
   Cancelada: {
     boton: 'Cancelar reserva',
@@ -43,7 +43,7 @@ export function AccionesDeEstado({ reserva, usuarioActual, alCambiar }) {
   async function confirmar() {
     setEnviando(true)
     try {
-      const respuesta = await cambiarEstadoDeReserva(reserva.id_reserva, elegida, usuarioActual.id_usuario)
+      const respuesta = await cambiarEstadoDeReserva(reserva.id_reserva, elegida)
       setElegida(null)
       setAviso(null)
       alCambiar(respuesta)
@@ -65,8 +65,6 @@ export function AccionesDeEstado({ reserva, usuarioActual, alCambiar }) {
       {aviso && <AlertMessage tipo="error" aviso={aviso} />}
       {reserva.estados_siguientes_reserva.length === 0 ? (
         <p className="text-texto-suave">Esta reserva está {reserva.estado_reserva.toLowerCase()}: ya no cambia de estado.</p>
-      ) : !usuarioActual ? (
-        <p className="text-texto-suave">Elija el usuario actual en la barra lateral para ver sus acciones.</p>
       ) : permitidas.length === 0 ? (
         <p className="text-texto-suave">Solo un administrador puede aprobar o rechazar; cancelar, quien la solicitó.</p>
       ) : (

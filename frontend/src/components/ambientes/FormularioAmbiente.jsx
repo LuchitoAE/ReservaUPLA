@@ -7,6 +7,7 @@ import { AMBIENTE, normalizarAmbiente, reglasDeAmbiente } from '../../reglas/amb
 import { ESTADOS_AMBIENTE, opcionesDe, TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { AlertMessage } from '../ui/AlertMessage'
+import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
@@ -19,19 +20,29 @@ const INICIALES = {
   estado_ambiente: 'Disponible',
   id_responsable_ambiente: '',
 }
+const OBLIGATORIOS = {
+  nombre_ambiente: 'el nombre',
+  tipo_ambiente: 'el tipo',
+  capacidad_ambiente: 'la capacidad',
+  ubicacion_ambiente: 'la ubicación',
+  estado_ambiente: 'el estado',
+}
 
-// RF-02: registrar un ambiente. Reutiliza useFormulario y los mismos campos que el formulario de usuarios.
+// RF-02: registrar un ambiente, en tres grupos: qué es, cuánto cabe y dónde está, y si se puede usar y quién lo
+// supervisa (agrupación semántica). El estado empieza en «Disponible», el valor más común.
 export function FormularioAmbiente() {
   const navegar = useNavigate()
   const responsables = useConsulta(() => listarUsuarios({ rol_usuario: 'ResponsableDeAmbiente', activo_usuario: true }), [])
-  const { campo, enviar, enviando, aviso } = useFormulario({
+  const formulario = useFormulario({
     iniciales: INICIALES,
     reglas: reglasDeAmbiente,
+    obligatorios: OBLIGATORIOS,
     alEnviar: async (valores) => {
       const respuesta = await registrarAmbiente(normalizarAmbiente(valores))
       navegar('/ambientes', { state: { aviso: respuesta.message } })
     },
   })
+  const { campo, enviar, aviso } = formulario
 
   const opcionesDeResponsable = (responsables.datos ?? []).map((usuario) => ({
     valor: usuario.id_usuario,
@@ -42,14 +53,14 @@ export function FormularioAmbiente() {
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
       {aviso && <AlertMessage tipo="error" aviso={aviso} />}
-      <TextInput
-        {...campo('nombre_ambiente')}
-        etiqueta="Nombre"
-        obligatorio
-        maximo={AMBIENTE.nombreMaximo}
-        placeholder="Laboratorio de cómputo 1"
-      />
-      <div className="grid gap-5 sm:grid-cols-2">
+      <GrupoDeCampos numero="1" titulo="Identificación" descripcion="Cómo se llama y qué clase de ambiente es.">
+        <TextInput
+          {...campo('nombre_ambiente')}
+          etiqueta="Nombre"
+          obligatorio
+          maximo={AMBIENTE.nombreMaximo}
+          ayuda="Por ejemplo, Laboratorio de cómputo 1."
+        />
         <SelectInput
           {...campo('tipo_ambiente')}
           etiqueta="Tipo"
@@ -57,6 +68,8 @@ export function FormularioAmbiente() {
           opciones={opcionesDe(TIPOS_AMBIENTE)}
           textoVacio="Elija el tipo"
         />
+      </GrupoDeCampos>
+      <GrupoDeCampos numero="2" titulo="Capacidad y ubicación" descripcion="Cuántas personas caben y dónde encontrarlo.">
         <TextInput
           {...campo('capacidad_ambiente')}
           type="number"
@@ -65,17 +78,17 @@ export function FormularioAmbiente() {
           max={AMBIENTE.capacidadMaxima}
           etiqueta="Capacidad"
           obligatorio
-          ayuda="Personas que caben sentadas."
+          ayuda={`Personas que caben sentadas, de ${AMBIENTE.capacidadMinima} a ${AMBIENTE.capacidadMaxima}.`}
         />
-      </div>
-      <TextInput
-        {...campo('ubicacion_ambiente')}
-        etiqueta="Ubicación"
-        obligatorio
-        maximo={AMBIENTE.ubicacionMaximo}
-        placeholder="Pabellón B, segundo piso"
-      />
-      <div className="grid gap-5 sm:grid-cols-2">
+        <TextInput
+          {...campo('ubicacion_ambiente')}
+          etiqueta="Ubicación"
+          obligatorio
+          maximo={AMBIENTE.ubicacionMaximo}
+          ayuda="Pabellón y piso, por ejemplo: Pabellón B, segundo piso."
+        />
+      </GrupoDeCampos>
+      <GrupoDeCampos numero="3" titulo="Estado y responsable" descripcion="Si recibe reservas y quién consulta su uso.">
         <SelectInput
           {...campo('estado_ambiente')}
           etiqueta="Estado"
@@ -95,8 +108,8 @@ export function FormularioAmbiente() {
           textoVacio="Sin responsable"
           opcional
         />
-      </div>
-      <AccionesDeFormulario volverA="/ambientes" enviando={enviando} texto="Registrar ambiente" textoEnviando="Registrando…" />
+      </GrupoDeCampos>
+      <AccionesDeFormulario formulario={formulario} volverA="/ambientes" texto="Registrar ambiente" textoEnviando="Registrando…" />
     </form>
   )
 }

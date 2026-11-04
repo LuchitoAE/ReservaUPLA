@@ -1,10 +1,13 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi;
 using ReservaUPLA.Application;
 using ReservaUPLA.Infrastructure;
 using ReservaUPLA.WebApi.Json;
 using ReservaUPLA.WebApi.Middleware;
+using ReservaUPLA.WebApi.Seguridad;
 using ReservaUPLA.WebApi.Validacion;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +43,28 @@ builder.Services.AddProblemDetails(opciones => opciones.CustomizeProblemDetails 
 });
 builder.Services.AddExceptionHandler<ManejadorDeErrores>();
 
+// Sesión con cookie: HttpOnly (el JavaScript no la lee), SameSite=Strict (no viaja desde otros sitios) y 8 horas que
+// se renuevan con el uso. Sin sesión la API responde 401 y sin el rol 403, en el mismo formato que los demás errores,
+// en lugar de redirigir a una página de inicio de sesión que la API no tiene.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(opciones =>
+    {
+        opciones.Cookie.Name = "reservaupla_sesion";
+        opciones.Cookie.HttpOnly = true;
+        opciones.Cookie.SameSite = SameSiteMode.Strict;
+        opciones.ExpireTimeSpan = TimeSpan.FromHours(8);
+        opciones.SlidingExpiration = true;
+        opciones.Events.OnRedirectToLogin = contexto => Sesion.EscribirProblema(contexto.HttpContext,
+            StatusCodes.Status401Unauthorized, "Inicie sesión para continuar.",
+            "Su sesión no existe o ya terminó. Ingrese con su correo y su contraseña.");
+        opciones.Events.OnRedirectToAccessDenied = contexto => Sesion.EscribirProblema(contexto.HttpContext,
+            StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", "Su rol no permite esta acción.");
+    });
+
+// Todo endpoint exige sesión salvo los que digan [AllowAnonymous] (ingreso, registro y salida).
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
 // Genera la descripción de la API (/openapi/v1.json), que alimenta a Swagger.
 builder.Services.AddOpenApi(opciones =>
 {
@@ -72,15 +97,24 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-// Swagger solo en desarrollo: sirve para probar los endpoints a mano, no se publica.
+// Swagger solo en desarrollo: sirve para probar los endpoints a mano, no se publica. Va antes de la autenticación:
+// su página no es un endpoint, y la regla «todo exige sesión» la bloquearía con 401. Para probar los endpoints
+// protegidos, primero se ejecuta POST /api/autenticacion/ingreso en el mismo Swagger: la cookie queda guardada.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwaggerUI(opciones =>
     {
         opciones.SwaggerEndpoint("/openapi/v1.json", "ReservaUPLA v1");
         opciones.DocumentTitle = "ReservaUPLA — API";
     });
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi().AllowAnonymous();
 }
 
 app.MapControllers();

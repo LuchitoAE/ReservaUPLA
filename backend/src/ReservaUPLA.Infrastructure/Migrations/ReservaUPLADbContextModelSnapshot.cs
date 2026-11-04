@@ -173,6 +173,11 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasColumnType("character varying(150)")
                         .HasColumnName("correo_usuario");
 
+                    b.Property<byte[]>("Hash_Contrasena_Usuario")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("hash_contrasena_usuario");
+
                     b.Property<string>("Nombre_Completo_Usuario")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -184,6 +189,11 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("rol_usuario");
+
+                    b.Property<byte[]>("Sal_Contrasena_Usuario")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("sal_contrasena_usuario");
 
                     b.HasKey("Id_Usuario")
                         .HasName("pk_usuarios");

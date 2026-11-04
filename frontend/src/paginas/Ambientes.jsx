@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button'
 import { TableList } from '../components/ui/TableList'
 import { useAvisoDeNavegacion } from '../hooks/useAvisoDeNavegacion'
 import { useConsulta } from '../hooks/useConsulta'
+import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
 import { ESTADOS_AMBIENTE, TIPOS_AMBIENTE } from '../utils/formato'
 
@@ -17,9 +18,11 @@ const COLUMNAS = [
   { clave: 'nombre_responsable_ambiente', titulo: 'Responsable', celda: (ambiente) => ambiente.nombre_responsable_ambiente ?? '—' },
 ]
 
-// Ambientes registrados (RF-02), con acceso al formulario de registro.
+// Ambientes registrados (RF-02). Solo el administrador ve el acceso al formulario de registro.
 export function Ambientes() {
   const aviso = useAvisoDeNavegacion()
+  const { usuarioActual } = useUsuarioActual()
+  const esAdministrador = usuarioActual.rol_usuario === 'Administrador'
   const { datos, cargando, error } = useConsulta(() => listarAmbientes(), [])
 
   return (
@@ -28,9 +31,11 @@ export function Ambientes() {
         titulo="Ambientes"
         descripcion="Laboratorios, auditorios y salas que se pueden reservar."
         acciones={
-          <Button destino="/ambientes/nuevo" variante="principal">
-            Registrar ambiente
-          </Button>
+          esAdministrador && (
+            <Button destino="/ambientes/nuevo" variante="principal">
+              Registrar ambiente
+            </Button>
+          )
         }
       />
       <div className="flex flex-col gap-4">

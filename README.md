@@ -26,7 +26,7 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RN-05 Solo el administrador aprueba o rechaza | Cada estado de la reserva lo comprueba (patrón State); la API responde 403 |
 | RN-06 Una reserva rechazada no se modifica | El estado Rechazada no admite cambios; la API responde 409 |
 
-**Usuario actual.** El caso no pide inicio de sesión: en la barra lateral se elige quién usa el sistema entre los usuarios registrados. La interfaz muestra a cada rol sus acciones y la API comprueba el rol con la base de datos.
+**Inicio de sesión.** Cada usuario entra con su correo y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. Un solicitante puede crear su propia cuenta; los administradores y responsables los registra un administrador.
 
 ## Requisitos
 
@@ -63,6 +63,16 @@ SELECT codigo_reserva, fecha_reserva, hora_inicio_reserva, hora_fin_reserva, est
 \q
 ```
 
+### Primer administrador
+
+Las tablas empiezan vacías. Cree una cuenta en http://localhost:5190/registro (nace como solicitante) y conviértala en administrador con psql:
+
+```sql
+UPDATE usuarios SET rol_usuario = 'Administrador' WHERE correo_usuario = 'su.correo@upla.edu.pe';
+```
+
+Desde ahí, ese administrador registra los demás usuarios y los ambientes desde la aplicación.
+
 ## Cómo ejecutarlo
 
 Dos terminales:
@@ -82,13 +92,17 @@ Para detenerlos, Ctrl+C en cada terminal. Para revisar el código: `pnpm lint` (
 
 ## API
 
-Todas las respuestas exitosas tienen la forma `{ "success": true, "message": "…", "data": … }`. Los errores siguen el RFC 9457 (ProblemDetails) con `success: false`, `message` y, si son datos, `errors` por campo.
+Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella responde 401. Todas las respuestas exitosas tienen la forma `{ "success": true, "message": "…", "data": … }`. Los errores siguen el RFC 9457 (ProblemDetails) con `success: false`, `message` y, si son datos, `errors` por campo.
 
 | Método | Ruta | Para qué | Respuestas |
 |---|---|---|---|
-| POST | `/api/usuarios` | RF-01 registrar usuario | 201, 400 |
-| GET | `/api/usuarios?rol_usuario=&activo_usuario=` | Lista de usuarios | 200 |
-| POST | `/api/ambientes` | RF-02 registrar ambiente | 201, 400 |
+| POST | `/api/autenticacion/ingreso` | Iniciar sesión (deja la cookie) | 200, 400, 401 |
+| POST | `/api/autenticacion/registro` | RF-01: un solicitante crea su cuenta | 201, 400 |
+| GET | `/api/autenticacion/sesion` | ¿Hay sesión? (al abrir la SPA) | 200, 401 |
+| POST | `/api/autenticacion/salida` | Cerrar sesión | 200 |
+| POST | `/api/usuarios` | RF-01: el administrador registra un usuario de cualquier rol | 201, 400, 403 |
+| GET | `/api/usuarios?rol_usuario=&activo_usuario=` | Lista de usuarios (administrador) | 200, 403 |
+| POST | `/api/ambientes` | RF-02 registrar ambiente (administrador) | 201, 400, 403 |
 | GET | `/api/ambientes?estado_ambiente=&id_responsable_ambiente=` | Lista de ambientes | 200 |
 | POST | `/api/reservas` | RF-03 registrar reserva | 201, 400, 409 (RN-01) |
 | GET | `/api/reservas/disponibilidad?id_ambiente=&fecha_reserva=&hora_inicio_reserva=&hora_fin_reserva=` | RF-04 disponibilidad | 200, 400, 404 |
@@ -97,7 +111,7 @@ Todas las respuestas exitosas tienen la forma `{ "success": true, "message": "�
 | PATCH | `/api/reservas/{id}/estado` | RF-07 cambiar estado | 200, 400, 403 (RN-05), 404, 409 (RN-01, RN-06) |
 | GET | `/api/dashboard/indicadores` | RF-08 indicadores | 200 |
 
-Para probarla: Swagger en http://localhost:5320/swagger, o `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
+Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /api/autenticacion/ingreso` con un correo y su contraseña: la cookie queda guardada y los demás endpoints ya responden. También `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
 
 ## Estructura
 

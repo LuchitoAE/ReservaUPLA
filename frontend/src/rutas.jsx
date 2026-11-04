@@ -1,31 +1,48 @@
 import { createBrowserRouter } from 'react-router'
+import { SoloParaRoles } from './components/navegacion/SoloParaRoles'
 import { LayoutPrincipal } from './layouts/LayoutPrincipal'
+import { RaizDeLaApp } from './layouts/RaizDeLaApp'
 import { Ambientes } from './paginas/Ambientes'
 import { Dashboard } from './paginas/Dashboard'
 import { DetalleReserva } from './paginas/DetalleReserva'
 import { NuevaReserva } from './paginas/NuevaReserva'
 import { NuevoAmbiente } from './paginas/NuevoAmbiente'
 import { NuevoUsuario } from './paginas/NuevoUsuario'
+import { PaginaDeError } from './paginas/PaginaDeError'
+import { PaginaIngreso } from './paginas/PaginaIngreso'
 import { PaginaNoEncontrada } from './paginas/PaginaNoEncontrada'
+import { PaginaRegistro } from './paginas/PaginaRegistro'
 import { Reservas } from './paginas/Reservas'
 import { Usuarios } from './paginas/Usuarios'
 
-// Mapa de la SPA: cada dirección muestra su página dentro del layout principal (menú, encabezado y pie).
-// Cambiar de página no recarga el documento: React Router reemplaza solo el contenido (<Outlet />).
+const ADMINISTRADOR = ['Administrador']
+
+// Mapa de la SPA. Las pantallas de acceso (ingreso y crear cuenta) van solas; las del sistema, dentro del layout
+// principal, que exige sesión. Cambiar de página no recarga el documento: React Router reemplaza solo el contenido.
+// Si algo falla al dibujar una página, se muestra PaginaDeError en lugar del detalle técnico.
 export const rutas = createBrowserRouter([
   {
-    path: '/',
-    element: <LayoutPrincipal />,
+    element: <RaizDeLaApp />,
+    errorElement: <PaginaDeError />,
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'reservas', element: <Reservas /> },
-      { path: 'reservas/nueva', element: <NuevaReserva /> },
-      { path: 'reservas/:idReserva', element: <DetalleReserva /> },
-      { path: 'ambientes', element: <Ambientes /> },
-      { path: 'ambientes/nuevo', element: <NuevoAmbiente /> },
-      { path: 'usuarios', element: <Usuarios /> },
-      { path: 'usuarios/nuevo', element: <NuevoUsuario /> },
-      { path: '*', element: <PaginaNoEncontrada /> },
+      { path: '/ingreso', element: <PaginaIngreso /> },
+      { path: '/registro', element: <PaginaRegistro /> },
+      {
+        path: '/',
+        element: <LayoutPrincipal />,
+        errorElement: <PaginaDeError />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: 'reservas', element: <Reservas /> },
+          { path: 'reservas/nueva', element: <NuevaReserva /> },
+          { path: 'reservas/:idReserva', element: <DetalleReserva /> },
+          { path: 'ambientes', element: <Ambientes /> },
+          { path: 'ambientes/nuevo', element: <SoloParaRoles roles={ADMINISTRADOR}><NuevoAmbiente /></SoloParaRoles> },
+          { path: 'usuarios', element: <SoloParaRoles roles={ADMINISTRADOR}><Usuarios /></SoloParaRoles> },
+          { path: 'usuarios/nuevo', element: <SoloParaRoles roles={ADMINISTRADOR}><NuevoUsuario /></SoloParaRoles> },
+          { path: '*', element: <PaginaNoEncontrada /> },
+        ],
+      },
     ],
   },
 ])

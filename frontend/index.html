@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="ReservaUPLA: reservas de ambientes universitarios" />
     <title>ReservaUPLA</title>
+    <script>
+      // Modo claro u oscuro antes de dibujar la página (sin destello): la elección guardada o la del sistema.
+      try {
+        var elegido = localStorage.getItem('reservaupla.tema')
+      } catch (e) {}
+      document.documentElement.dataset.tema =
+        elegido || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro')
+    </script>
   </head>
   <body>
     <div id="root"></div>

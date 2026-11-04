@@ -59,7 +59,7 @@ public sealed class Ambiente
         }
 
         errores.ValidarOpcion(nameof(Tipo_Ambiente), tipo,
-            "Elija el tipo: LaboratorioDeComputo, Auditorio, SalaDeReuniones o LaboratorioEspecializado.");
+            "Elija el tipo: laboratorio de cómputo, auditorio, sala de reuniones o laboratorio especializado.");
 
         if (capacidad is null)
         {
@@ -73,7 +73,7 @@ public sealed class Ambiente
         var ubicacion_normalizada = errores.ValidarTexto(
             nameof(Ubicacion_Ambiente), Texto.NormalizarLinea(ubicacion), Regla_Ubicacion, exigir_contenido_util: false);
 
-        errores.ValidarOpcion(nameof(Estado_Ambiente), estado, "Elija el estado: Disponible, EnMantenimiento o Inactivo.");
+        errores.ValidarOpcion(nameof(Estado_Ambiente), estado, "Elija el estado: disponible, en mantenimiento o inactivo.");
 
         if (responsable_indicado)
         {
@@ -83,7 +83,7 @@ public sealed class Ambiente
             }
             else if (responsable.Rol_Usuario != Roles_Usuario.ResponsableDeAmbiente)
             {
-                errores.Agregar(nameof(Id_Responsable_Ambiente), "El responsable debe tener el rol ResponsableDeAmbiente.");
+                errores.Agregar(nameof(Id_Responsable_Ambiente), "El responsable debe tener el rol «Responsable de ambiente».");
             }
         }
 

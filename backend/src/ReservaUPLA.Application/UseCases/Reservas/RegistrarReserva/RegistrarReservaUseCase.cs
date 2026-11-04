@@ -25,11 +25,10 @@ public sealed class RegistrarReservaUseCase
         _reloj = reloj;
     }
 
-    public async Task<ReservaDetalleDto> EjecutarAsync(RegistrarReservaCommand comando, CancellationToken cancelacion = default)
+    // «id_usuario_sesion»: quien inició sesión; él es el solicitante.
+    public async Task<ReservaDetalleDto> EjecutarAsync(RegistrarReservaCommand comando, Guid id_usuario_sesion, CancellationToken cancelacion = default)
     {
-        var solicitante = comando.Id_Usuario is { } id_usuario
-            ? await _usuario_repository.ObtenerPorIdAsync(id_usuario, cancelacion)
-            : null;
+        var solicitante = await _usuario_repository.ObtenerPorIdAsync(id_usuario_sesion, cancelacion);
         var ambiente = comando.Id_Ambiente is { } id_ambiente
             ? await _ambiente_repository.ObtenerPorIdAsync(id_ambiente, cancelacion)
             : null;

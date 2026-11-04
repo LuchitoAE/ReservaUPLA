@@ -1,8 +1,8 @@
 // Aviso general (componente «AlertMessage» del caso): éxito, error, advertencia o información.
 // El de error se anuncia de inmediato (role="alert"); los demás, cuando el lector de pantalla termina lo que está
-// leyendo (role="status"). El color nunca va solo: lleva ícono y texto.
-// «aviso» acepta directamente lo que arma avisoDeError(): { titulo, mensaje, codigoRastreo }. El código de rastreo
-// solo llega en errores del servidor, para que soporte encuentre el detalle en su registro.
+// leyendo (role="status"). El color nunca va solo: lleva ícono y texto. «aviso» acepta lo que arma avisoDeError():
+// { titulo, mensaje }. Nunca muestra códigos internos (Shneiderman: manejo simple de errores): el mensaje dice qué
+// pasó y qué hacer; el detalle técnico queda en el registro del servidor.
 const ESTILOS = {
   exito: 'border-exito bg-exito-fondo text-exito-texto',
   error: 'border-error bg-error-fondo text-error-texto',
@@ -27,11 +27,6 @@ export function AlertMessage({ tipo = 'info', titulo, aviso, children, className
       <div className="min-w-0">
         {encabezado && <p className="font-semibold">{encabezado}</p>}
         {contenido && <div>{contenido}</div>}
-        {aviso?.codigoRastreo && (
-          <p className="mt-1 text-sm">
-            Código de rastreo para soporte: <code className="break-all">{aviso.codigoRastreo}</code>
-          </p>
-        )}
       </div>
     </div>
   )

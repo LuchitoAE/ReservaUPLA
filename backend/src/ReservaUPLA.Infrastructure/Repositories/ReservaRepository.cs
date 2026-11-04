@@ -59,7 +59,7 @@ internal sealed class ReservaRepository : IReservaRepository
         {
             // Dos aprobaciones del mismo horario al mismo tiempo: la base detiene la segunda (RN-01).
             throw new ConflictoDeNegocioException(
-                "El ambiente ya tiene una reserva aprobada que se cruza con este horario. Elija otro horario u otro ambiente (RN-01).");
+                "El ambiente ya tiene una reserva aprobada que se cruza con este horario. Elija otro horario u otro ambiente.");
         }
     }
 }

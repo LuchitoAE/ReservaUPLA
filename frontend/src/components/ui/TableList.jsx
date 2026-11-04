@@ -1,13 +1,11 @@
+import { Cargando } from './Cargando'
+
 // Tabla reutilizable (componente «TableList» del caso): la usan las reservas, los ambientes y los usuarios.
 // Las columnas se describen una vez: [{ clave, titulo, celda?(fila), alinear? }]. En pantallas medianas y grandes
 // se ve como tabla; en el teléfono, como tarjetas con «título: valor», sin barra de desplazamiento horizontal.
 export function TableList({ titulo, columnas, filas, claveFila, cargando = false, vacio = 'No hay registros.' }) {
   if (cargando) {
-    return (
-      <p role="status" className="rounded-xl border border-borde bg-superficie p-6 text-texto-suave">
-        Cargando {titulo.toLowerCase()}…
-      </p>
-    )
+    return <Cargando texto={`Cargando ${titulo.toLowerCase()}…`} />
   }
 
   if (filas.length === 0) {

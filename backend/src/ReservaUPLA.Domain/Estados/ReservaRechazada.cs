@@ -10,5 +10,5 @@ public sealed class ReservaRechazada : EstadoDeReserva
     public override IReadOnlyList<Estados_Reserva> Siguientes { get; } = [];
 
     protected override string MotivoDeNoPermitir(Estados_Reserva destino) =>
-        "Una reserva rechazada no puede modificarse (RN-06). Si aún necesita el ambiente, registre una nueva solicitud.";
+        "Una reserva rechazada no puede modificarse. Si aún necesita el ambiente, registre una nueva solicitud.";
 }

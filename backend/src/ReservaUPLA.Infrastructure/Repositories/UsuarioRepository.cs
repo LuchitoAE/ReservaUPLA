@@ -22,6 +22,11 @@ internal sealed class UsuarioRepository : IUsuarioRepository
         return await _contexto.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id_Usuario == id_usuario, cancelacion);
     }
 
+    public async Task<Usuario?> ObtenerPorCorreoAsync(string correo_usuario, CancellationToken cancelacion = default)
+    {
+        return await _contexto.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Correo_Usuario == correo_usuario, cancelacion);
+    }
+
     public async Task<bool> ExisteCorreoAsync(string correo_usuario, CancellationToken cancelacion = default)
     {
         return await _contexto.Usuarios.AnyAsync(u => u.Correo_Usuario == correo_usuario, cancelacion);
