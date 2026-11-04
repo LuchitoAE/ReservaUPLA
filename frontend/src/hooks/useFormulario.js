@@ -40,7 +40,9 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
     setErrores((anteriores) => {
       const revisados = new Set([...Object.keys(anteriores), ...(campo ? [campo] : [])])
       return Object.fromEntries(
-        [...revisados].map((nombre) => [nombre, reglas.validarCampo(nombre, nuevos)]).filter(([, mensaje]) => mensaje),
+        [...revisados]
+          .map((nombre) => [nombre, reglas.tiene(nombre) ? reglas.validarCampo(nombre, nuevos) : anteriores[nombre]])
+          .filter(([, mensaje]) => mensaje),
       )
     })
   }

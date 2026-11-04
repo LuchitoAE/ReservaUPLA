@@ -4,7 +4,8 @@ using ReservaUPLA.Domain.Entities;
 
 namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
 
-// Mapeo de la entidad Usuario a la tabla usuarios (modelo de datos del caso: Id, NombreCompleto, Correo, Rol, Activo).
+// Mapeo de la entidad Usuario a la tabla usuarios (modelo de datos del caso: Id, NombreCompleto, Correo, Rol, Activo),
+// más la sal y el hash de la contraseña para iniciar sesión.
 internal sealed class Usuario_Configuration : IEntityTypeConfiguration<Usuario>
 {
     public const string Indice_Correo = "ux_usuarios_correo_usuario";
@@ -38,5 +39,9 @@ internal sealed class Usuario_Configuration : IEntityTypeConfiguration<Usuario>
             .IsRequired();
 
         usuario.Property(u => u.Activo_Usuario).HasColumnName("activo_usuario").IsRequired();
+
+        // Solo la sal y el hash (PBKDF2): la contraseña nunca se guarda.
+        usuario.Property(u => u.Sal_Contrasena_Usuario).HasColumnName("sal_contrasena_usuario").IsRequired();
+        usuario.Property(u => u.Hash_Contrasena_Usuario).HasColumnName("hash_contrasena_usuario").IsRequired();
     }
 }

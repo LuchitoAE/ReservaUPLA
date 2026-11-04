@@ -7,13 +7,16 @@ using ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
 using ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
 using ReservaUPLA.Domain.Enums;
 using ReservaUPLA.WebApi.Respuestas;
+using ReservaUPLA.WebApi.Seguridad;
 
 namespace ReservaUPLA.WebApi.Controllers;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch: de los errores se encarga
-// ManejadorDeErrores (400 datos, 403 rol, 404 no existe, 409 choca con otra reserva o con el estado).
+// ManejadorDeErrores (400 datos, 401 sin sesión, 403 rol, 404 no existe, 409 choca con otra reserva o con el estado).
+// El solicitante y quien cambia el estado son siempre el usuario de la sesión.
 [ApiController]
 [Route("api/reservas")]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 public sealed class ReservasController : ControllerBase
 {
@@ -27,7 +30,7 @@ public sealed class ReservasController : ControllerBase
         [FromServices] RegistrarReservaUseCase caso_de_uso,
         CancellationToken cancelacion)
     {
-        var reserva = await caso_de_uso.EjecutarAsync(comando, cancelacion);
+        var reserva = await caso_de_uso.EjecutarAsync(comando, User.IdUsuario(), cancelacion);
 
         return CreatedAtAction(
             nameof(ObtenerDetalle),
@@ -90,7 +93,7 @@ public sealed class ReservasController : ControllerBase
         [FromServices] CambiarEstadoReservaUseCase caso_de_uso,
         CancellationToken cancelacion)
     {
-        var reserva = await caso_de_uso.EjecutarAsync(id_reserva, comando, cancelacion);
+        var reserva = await caso_de_uso.EjecutarAsync(id_reserva, comando, User.IdUsuario(), cancelacion);
 
         return RespuestaApi.Exito(reserva, $"Reserva {reserva.Codigo_Reserva}: ahora está {reserva.Estado_Reserva}.");
     }

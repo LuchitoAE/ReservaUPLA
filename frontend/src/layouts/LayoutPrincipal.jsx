@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, Outlet, ScrollRestoration, useLocation } from 'react-router'
+import { Link, Navigate, Outlet, useLocation } from 'react-router'
+import logoUpla from '../assets/logo-upla-blanco.png'
 import { MenuPrincipal } from '../components/navegacion/MenuPrincipal'
-import { SelectorUsuarioActual } from '../components/navegacion/SelectorUsuarioActual'
+import { PanelDeSesion } from '../components/navegacion/PanelDeSesion'
+import { BotonTema } from '../components/ui/BotonTema'
+import { Cargando } from '../components/ui/Cargando'
 import { Icono } from '../components/ui/Icono'
-import { ProveedorUsuarioActual } from '../contexto/ProveedorUsuarioActual'
+import { useUsuarioActual } from '../hooks/useUsuarioActual'
 
-// Estructura común de todas las páginas: marca, usuario actual y menú a la izquierda (arriba en el teléfono),
-// la página actual en el centro (<Outlet />) y el pie. Las páginas solo traen su propio contenido.
+// Estructura común de las páginas del sistema: marca UPLA, sesión y menú a la izquierda (arriba en el teléfono), la
+// página actual en el centro (<Outlet />) y el pie. Sin sesión no se entra: se va a la pantalla de ingreso y, al
+// volver, se regresa a la página que se pidió.
 export function LayoutPrincipal() {
   const [menuAbierto, setMenuAbierto] = useState(false)
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const paginaAnterior = useRef(pathname)
+  const { usuarioActual, cargando, motivoSinSesion } = useUsuarioActual()
 
   // Al cambiar de página, el foco va al título de la nueva: quien usa teclado o lector de pantalla sabe que el
   // contenido cambió aunque el documento no se haya recargado.
@@ -21,10 +26,26 @@ export function LayoutPrincipal() {
     }
   }, [pathname])
 
+  if (cargando) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-6">
+        <Cargando texto="Verificando la sesión…" />
+      </div>
+    )
+  }
+
+  // Al cerrar la sesión no se recuerda la página: al volver a entrar se empieza por el dashboard.
+  if (!usuarioActual) {
+    const estado =
+      motivoSinSesion === 'salida'
+        ? { aviso: 'Cerró su sesión.' }
+        : { desde: pathname + search, aviso: motivoSinSesion === 'terminada' ? 'Su sesión terminó. Vuelva a ingresar para continuar.' : null }
+    return <Navigate to="/ingreso" replace state={estado} />
+  }
+
   const cerrarMenu = () => setMenuAbierto(false)
 
   return (
-    <ProveedorUsuarioActual>
     <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
       <a
         href="#contenido"
@@ -33,30 +54,35 @@ export function LayoutPrincipal() {
         Saltar al contenido
       </a>
 
-      {/* La columna lleva el fondo hasta el final de la página; el encabezado queda fijo mientras se baja. */}
       <div className="bg-marca-900 text-white">
-        <header className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+        <header className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto">
           <div className="flex items-center justify-between gap-3 px-4 py-4 lg:px-6 lg:py-6">
             <Link
               to="/"
               onClick={cerrarMenu}
-              className="rounded-lg focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="flex flex-col gap-2 rounded-lg focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-acento"
             >
-              <span className="block text-xl font-bold">ReservaUPLA</span>
-              <span className="block text-sm text-marca-100">Reservas de ambientes</span>
+              <img src={logoUpla} alt="Universidad Peruana Los Andes" className="h-9 w-auto self-start" />
+              <span>
+                <span className="block text-xl font-bold">ReservaUPLA</span>
+                <span className="block text-sm text-marca-100">Reservas de ambientes</span>
+              </span>
             </Link>
+            <div className="flex items-center gap-2 self-start">
+            <BotonTema sobreFondoOscuro />
             <button
               type="button"
               onClick={() => setMenuAbierto(!menuAbierto)}
               aria-expanded={menuAbierto}
               aria-controls="menu-principal"
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/40 px-3 font-semibold hover:bg-white/10 focus-visible:outline-3 focus-visible:outline-white lg:hidden"
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/40 px-3 font-semibold transition hover:bg-white/10 active:bg-white/20 focus-visible:outline-3 focus-visible:outline-acento lg:hidden"
             >
               <Icono nombre={menuAbierto ? 'cerrar' : 'menu'} />
               Menú
             </button>
+            </div>
           </div>
-          <SelectorUsuarioActual />
+          <PanelDeSesion />
           <MenuPrincipal id="menu-principal" abierto={menuAbierto} alElegir={cerrarMenu} />
         </header>
       </div>
@@ -69,9 +95,6 @@ export function LayoutPrincipal() {
           ReservaUPLA · Universidad Peruana Los Andes · Gestión de reservas de ambientes
         </footer>
       </div>
-
-      <ScrollRestoration />
     </div>
-    </ProveedorUsuarioActual>
   )
 }

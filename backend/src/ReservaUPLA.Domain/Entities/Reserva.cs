@@ -62,7 +62,7 @@ public sealed class Reserva
 
         if (solicitante is null || !solicitante.Activo_Usuario)
         {
-            errores.Agregar(nameof(Id_Usuario), "Elija como usuario actual a un usuario activo: él será el solicitante.");
+            errores.Agregar(nameof(Id_Usuario), "Inicie sesión con un usuario activo para solicitar la reserva.");
         }
 
         if (ambiente is null)
@@ -179,7 +179,7 @@ public sealed class Reserva
     {
         if (usuario is null || !usuario.Activo_Usuario)
         {
-            throw new AccionNoPermitidaException("Elija como usuario actual a un usuario activo para cambiar el estado.");
+            throw new AccionNoPermitidaException("Inicie sesión con un usuario activo para cambiar el estado.");
         }
 
         if (!Enum.IsDefined(nuevo_estado))

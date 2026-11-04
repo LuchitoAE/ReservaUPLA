@@ -16,6 +16,15 @@ internal sealed class ConsultaDeUsuarios : IConsultaDeUsuarios
         _contexto = contexto;
     }
 
+    public async Task<UsuarioDto?> ObtenerActivoAsync(Guid id_usuario, CancellationToken cancelacion = default)
+    {
+        return await _contexto.Usuarios
+            .AsNoTracking()
+            .Where(u => u.Id_Usuario == id_usuario && u.Activo_Usuario)
+            .Select(u => new UsuarioDto(u.Id_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
+            .FirstOrDefaultAsync(cancelacion);
+    }
+
     public async Task<IReadOnlyList<UsuarioDto>> ListarAsync(
         Roles_Usuario? rol_usuario, bool? activo_usuario, CancellationToken cancelacion = default)
     {

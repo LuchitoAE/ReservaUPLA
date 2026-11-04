@@ -5,6 +5,7 @@ import { ErrorDeApi } from '../api/clienteApi'
 // internos ni detalles técnicos (Shneiderman: manejo simple de errores).
 const TITULOS = {
   datos_no_validos: 'Hay datos por corregir.',
+  no_autenticado: 'No se pudo iniciar sesión.',
   no_permitido: 'Acción no permitida.',
   no_encontrado: 'No se encontró lo que se buscaba.',
   conflicto: 'No se pudo completar la operación.',

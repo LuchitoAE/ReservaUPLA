@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { listarAmbientes } from '../../api/ambientesApi'
 import { registrarReserva } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
@@ -19,7 +18,6 @@ import { TimeInput } from '../ui/TimeInput'
 import { PanelDisponibilidad } from './PanelDisponibilidad'
 
 const INICIALES = {
-  id_usuario: '',
   id_ambiente: '',
   fecha_reserva: '',
   hora_inicio_reserva: '',
@@ -27,7 +25,6 @@ const INICIALES = {
   motivo_reserva: '',
 }
 const OBLIGATORIOS = {
-  id_usuario: 'el usuario actual',
   id_ambiente: 'el ambiente',
   fecha_reserva: 'la fecha',
   hora_inicio_reserva: 'la hora de inicio',
@@ -46,21 +43,13 @@ export function FormularioReserva({ alRegistrar }) {
     iniciales: INICIALES,
     reglas: reglasDeReserva,
     obligatorios: OBLIGATORIOS,
-    automaticos: ['id_usuario'],
     alEnviar: async (datos) => {
       const respuesta = await registrarReserva(normalizarReserva(datos))
       alRegistrar(respuesta.data)
     },
   })
-  const { valores, errores, campo, cambiar, enviar, aviso } = formulario
+  const { valores, campo, enviar, aviso } = formulario
   const disponibilidad = useDisponibilidad(valores, horarioCompleto(valores))
-
-  // El solicitante sigue al usuario actual de la barra lateral, aunque se cambie con el formulario abierto.
-  const idUsuarioActual = usuarioActual?.id_usuario ?? ''
-  useEffect(() => {
-    cambiar('id_usuario', idUsuarioActual)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idUsuarioActual])
 
   const lista = ambientes.datos ?? []
   const elegido = lista.find((ambiente) => ambiente.id_ambiente === valores.id_ambiente)
@@ -76,33 +65,13 @@ export function FormularioReserva({ alRegistrar }) {
       <NotaObligatorios />
       {aviso && <AlertMessage tipo="error" aviso={aviso} />}
 
-      <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre del usuario actual.">
-        <div
-          id="id_usuario"
-          tabIndex={-1}
-          aria-describedby={errores.id_usuario ? 'id_usuario-error' : undefined}
-          className={`rounded-lg border px-3 py-2.5 focus:outline-3 focus:outline-foco/30 ${errores.id_usuario ? 'border-error' : 'border-borde-fuerte'} bg-superficie-tenue`}
-        >
-          {usuarioActual ? (
-            <>
-              <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
-              <p className="text-sm text-texto-suave">
-                {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
-              </p>
-            </>
-          ) : (
-            <p className="text-texto-suave">
-              Todavía no hay usuario actual. Elija su nombre en <strong className="text-texto">«Usuario actual»</strong>, en
-              el menú.
-            </p>
-          )}
-        </div>
-        {errores.id_usuario && (
-          <p id="id_usuario-error" className="-mt-3 flex gap-1.5 text-sm font-medium text-error">
-            <span aria-hidden="true">⚠</span>
-            {errores.id_usuario}
+      <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre de quien inició sesión.">
+        <div className="rounded-lg border border-borde-fuerte bg-superficie-tenue px-3 py-2.5">
+          <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
+          <p className="text-sm text-texto-suave">
+            {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
           </p>
-        )}
+        </div>
       </GrupoDeCampos>
 
       <GrupoDeCampos numero="2" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">

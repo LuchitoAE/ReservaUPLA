@@ -25,14 +25,13 @@ public sealed class CambiarEstadoReservaUseCase
         _reloj = reloj;
     }
 
-    public async Task<ReservaDetalleDto> EjecutarAsync(Guid id_reserva, CambiarEstadoReservaCommand comando, CancellationToken cancelacion = default)
+    public async Task<ReservaDetalleDto> EjecutarAsync(
+        Guid id_reserva, CambiarEstadoReservaCommand comando, Guid id_usuario_sesion, CancellationToken cancelacion = default)
     {
         var reserva = await _reserva_repository.ObtenerPorIdAsync(id_reserva, cancelacion)
             ?? throw new RecursoNoEncontradoException("No existe una reserva con el identificador indicado.");
 
-        var usuario = comando.Id_Usuario is { } id_usuario
-            ? await _usuario_repository.ObtenerPorIdAsync(id_usuario, cancelacion)
-            : null;
+        var usuario = await _usuario_repository.ObtenerPorIdAsync(id_usuario_sesion, cancelacion);
 
         var reservas_del_dia = await _reserva_repository.ListarDelAmbienteEnLaFechaAsync(reserva.Id_Ambiente, reserva.Fecha_Reserva, cancelacion);
 

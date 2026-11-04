@@ -9,7 +9,6 @@ import { crearValidador, requerido, texto } from './validaciones'
 export const RESERVA = { apertura: '07:00', cierre: '22:00', motivoMinimo: 10, motivoMaximo: 500 }
 
 export const reglasDeReserva = crearValidador({
-  id_usuario: (valor) => requerido(valor, 'Elija el usuario actual en la barra lateral: será el solicitante.'),
   id_ambiente: (valor) => requerido(valor, 'Elija el ambiente que necesita.'),
   fecha_reserva: (valor) => {
     const hoy = ahoraEnPeru().fecha

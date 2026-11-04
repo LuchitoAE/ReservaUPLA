@@ -4,12 +4,15 @@ using ReservaUPLA.Domain.Enums;
 namespace ReservaUPLA.Domain.Entities;
 
 // Persona que usa el sistema (RF-01). Su rol decide qué puede hacer: solicitar, aprobar o consultar su ambiente.
-// Solo se crea con Registrar, que normaliza y exige las reglas; un usuario nuevo nace activo.
+// Solo se crea con Registrar, que normaliza y exige las reglas; un usuario nuevo nace activo. Para iniciar sesión
+// guarda la sal y el hash de su contraseña (el modelo del caso se amplía con esos dos campos).
 public sealed class Usuario
 {
     public const int Longitud_Minima_Nombre = 5;
     public const int Longitud_Maxima_Nombre = 150;
     public const int Longitud_Maxima_Correo = 150;
+    public const int Longitud_Minima_Contrasena = 8;
+    public const int Longitud_Maxima_Contrasena = 64;
 
     private static readonly ReglaDeTexto Regla_Nombre = new(
         "El nombre completo", Longitud_Minima_Nombre, Longitud_Maxima_Nombre, "Escriba el nombre y los apellidos del usuario.");
@@ -28,9 +31,20 @@ public sealed class Usuario
 
     public bool Activo_Usuario { get; private set; }
 
+    public byte[] Sal_Contrasena_Usuario { get; private set; } = [];
+
+    public byte[] Hash_Contrasena_Usuario { get; private set; } = [];
+
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
-    // «correo_ya_registrado» lo averigua el caso de uso en la base, con el correo ya normalizado.
-    public static Usuario Registrar(string? nombre_completo, string? correo, Roles_Usuario rol, bool correo_ya_registrado)
+    // «correo_ya_registrado» lo averigua el caso de uso en la base, con el correo ya normalizado. «cifrar» lo da la
+    // Infraestructura (PBKDF2): la entidad solo decide si la contraseña cumple las reglas.
+    public static Usuario Registrar(
+        string? nombre_completo,
+        string? correo,
+        Roles_Usuario rol,
+        string? contrasena,
+        bool correo_ya_registrado,
+        Func<string, ContrasenaCifrada> cifrar)
     {
         var errores = new ErroresDeValidacion();
 
@@ -60,7 +74,15 @@ public sealed class Usuario
 
         errores.ValidarOpcion(nameof(Rol_Usuario), rol, "Elija el rol: Solicitante, Administrador o Responsable de ambiente.");
 
+        var mensaje_contrasena = RevisarContrasena(contrasena);
+        if (mensaje_contrasena is not null)
+        {
+            errores.Agregar("Contrasena_Usuario", mensaje_contrasena);
+        }
+
         errores.LanzarSiHay();
+
+        var cifrada = cifrar(contrasena!);
 
         return new Usuario
         {
@@ -69,7 +91,27 @@ public sealed class Usuario
             Correo_Usuario = correo_normalizado,
             Rol_Usuario = rol,
             Activo_Usuario = true,
+            Sal_Contrasena_Usuario = cifrada.Sal,
+            Hash_Contrasena_Usuario = cifrada.Hash,
         };
+    }
+
+    // De 8 a 64 caracteres, con al menos una mayúscula, una minúscula y un número. Devuelve qué falta, o null.
+    public static string? RevisarContrasena(string? contrasena)
+    {
+        if (string.IsNullOrEmpty(contrasena))
+        {
+            return "Escriba una contraseña.";
+        }
+
+        if (contrasena.Length < Longitud_Minima_Contrasena || contrasena.Length > Longitud_Maxima_Contrasena)
+        {
+            return $"La contraseña debe tener entre {Longitud_Minima_Contrasena} y {Longitud_Maxima_Contrasena} caracteres.";
+        }
+
+        return contrasena.Any(char.IsUpper) && contrasena.Any(char.IsLower) && contrasena.Any(char.IsDigit)
+            ? null
+            : "La contraseña debe tener al menos una mayúscula, una minúscula y un número.";
     }
 
     // RN-05: solo un administrador activo aprueba o rechaza reservas.

@@ -1,20 +1,25 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Ambientes.RegistrarAmbiente;
 using ReservaUPLA.Domain.Enums;
 using ReservaUPLA.WebApi.Respuestas;
+using ReservaUPLA.WebApi.Seguridad;
 
 namespace ReservaUPLA.WebApi.Controllers;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch.
 [ApiController]
 [Route("api/ambientes")]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 public sealed class AmbientesController : ControllerBase
 {
-    // RF-02: registrar un ambiente universitario.
+    // RF-02: registrar un ambiente universitario. Solo el administrador.
     [HttpPost]
+    [Authorize(Roles = Sesion.Administrador)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
     [ProducesResponseType<RespuestaApi<AmbienteDto>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public async Task<ActionResult<RespuestaApi<AmbienteDto>>> Registrar(

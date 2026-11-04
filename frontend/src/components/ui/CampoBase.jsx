@@ -8,7 +8,9 @@ const ESTILO_CONTROL =
   'focus:border-foco focus:outline-3 focus:outline-foco/30 disabled:cursor-not-allowed disabled:bg-superficie-tenue ' +
   'aria-[invalid=true]:border-error aria-[invalid=true]:focus:outline-error/30'
 
-export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, contador, className = '', children }) {
+// «adorno»: algo que va dentro del control, a la derecha (el botón «Mostrar» de la contraseña). «aviso»: un mensaje
+// informativo bajo la ayuda (por ejemplo, Bloq Mayús activado), que no es un error.
+export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, contador, adorno, aviso, className = '', children }) {
   const idAyuda = ayuda ? `${id}-ayuda` : null
   const idError = error ? `${id}-error` : null
   const descritoPor = [idError, idAyuda].filter(Boolean).join(' ')
@@ -24,19 +26,28 @@ export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, con
           </span>
         )}
       </label>
-      {cloneElement(children, {
-        id,
-        name: id,
-        'aria-invalid': Boolean(error),
-        'aria-describedby': descritoPor || undefined,
-        'aria-required': obligatorio || undefined,
-        className: `${ESTILO_CONTROL} ${children.props.className ?? ''}`,
-      })}
+      <div className="relative">
+        {cloneElement(children, {
+          id,
+          name: id,
+          'aria-invalid': Boolean(error),
+          'aria-describedby': descritoPor || undefined,
+          'aria-required': obligatorio || undefined,
+          className: `${ESTILO_CONTROL} ${adorno ? 'pr-24' : ''} ${children.props.className ?? ''}`,
+        })}
+        {adorno}
+      </div>
       {(ayuda || contador) && (
         <div className="flex gap-3 text-sm text-texto-suave">
           {ayuda && <span id={idAyuda}>{ayuda}</span>}
           {contador && <span className="ml-auto shrink-0 tabular-nums">{contador}</span>}
         </div>
+      )}
+      {aviso && (
+        <p role="status" className="flex gap-1.5 text-sm font-medium text-aviso">
+          <span aria-hidden="true">!</span>
+          {aviso}
+        </p>
       )}
       {error && (
         <p id={idError} className="flex gap-1.5 text-sm font-medium text-error">

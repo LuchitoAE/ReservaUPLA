@@ -39,13 +39,16 @@ export function esCorreo(correo) {
 
 // Arma el validador de un formulario a partir de sus reglas: { campo: (valor, valores) => mensaje | null }.
 // validarCampo revisa uno (al salir de él); validarTodo, todos (al enviar), en el orden en que se declararon.
+// «tiene» dice si el formulario valida ese campo: los errores que solo detecta el servidor (por ejemplo, un dato que
+// el formulario no pide) se conservan hasta el próximo envío en lugar de revisarse aquí.
 export function crearValidador(reglas) {
-  const validarCampo = (campo, valores) => reglas[campo](valores[campo], valores)
+  const tiene = (campo) => typeof reglas[campo] === 'function'
+  const validarCampo = (campo, valores) => (tiene(campo) ? reglas[campo](valores[campo], valores) : null)
   const validarTodo = (valores) =>
     Object.fromEntries(
       Object.keys(reglas)
         .map((campo) => [campo, validarCampo(campo, valores)])
         .filter(([, mensaje]) => mensaje),
     )
-  return { validarCampo, validarTodo }
+  return { tiene, validarCampo, validarTodo }
 }

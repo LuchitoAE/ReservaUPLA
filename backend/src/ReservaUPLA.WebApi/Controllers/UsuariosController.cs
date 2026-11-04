@@ -1,16 +1,21 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Domain.Enums;
 using ReservaUPLA.WebApi.Respuestas;
+using ReservaUPLA.WebApi.Seguridad;
 
 namespace ReservaUPLA.WebApi.Controllers;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch: de los errores se encarga
-// ManejadorDeErrores.
+// ManejadorDeErrores. Solo el administrador registra usuarios de cualquier rol y ve la lista (tiene correos).
 [ApiController]
 [Route("api/usuarios")]
+[Authorize(Roles = Sesion.Administrador)]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 public sealed class UsuariosController : ControllerBase
 {
