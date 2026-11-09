@@ -6,6 +6,7 @@ namespace ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 // responde con su mensaje en español en lugar del aviso genérico de ASP.NET. La contraseña solo pasa por aquí: se
 // guarda cifrada y nunca vuelve en una respuesta.
 public sealed record RegistrarUsuarioCommand(
+    string? Codigo_Usuario,
     string? Nombre_Completo_Usuario,
     string? Correo_Usuario,
     Roles_Usuario Rol_Usuario,

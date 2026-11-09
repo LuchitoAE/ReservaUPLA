@@ -167,6 +167,12 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("activo_usuario");
 
+                    b.Property<string>("Codigo_Usuario")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("codigo_usuario");
+
                     b.Property<string>("Correo_Usuario")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -197,6 +203,10 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
                     b.HasKey("Id_Usuario")
                         .HasName("pk_usuarios");
+
+                    b.HasIndex("Codigo_Usuario")
+                        .IsUnique()
+                        .HasDatabaseName("ux_usuarios_codigo_usuario");
 
                     b.HasIndex("Correo_Usuario")
                         .IsUnique()

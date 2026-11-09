@@ -12,8 +12,9 @@ import { PasswordInput } from '../ui/PasswordInput'
 import { RadioInput } from '../ui/RadioInput'
 import { TextInput } from '../ui/TextInput'
 
-const INICIALES = { nombre_completo_usuario: '', correo_usuario: '', rol_usuario: '', contrasena_usuario: '' }
+const INICIALES = { codigo_usuario: '', nombre_completo_usuario: '', correo_usuario: '', rol_usuario: '', contrasena_usuario: '' }
 const OBLIGATORIOS = {
+  codigo_usuario: 'el código',
   nombre_completo_usuario: 'el nombre completo',
   correo_usuario: 'el correo',
   rol_usuario: 'el rol',
@@ -42,7 +43,17 @@ export function FormularioUsuario() {
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
       {aviso && <AlertMessage tipo="error" aviso={aviso} />}
-      <GrupoDeCampos numero="1" titulo="Datos de la persona" descripcion="Cómo se llama y cómo contactarla.">
+      <GrupoDeCampos numero="1" titulo="Datos de la persona" descripcion="Con el código ingresará al sistema.">
+        <TextInput
+          {...campo('codigo_usuario')}
+          etiqueta="Código"
+          obligatorio
+          autoComplete="off"
+          autoCapitalize="characters"
+          spellCheck={false}
+          maxLength={20}
+          ayuda="El que le dio la universidad, por ejemplo P00914K."
+        />
         <TextInput
           {...campo('nombre_completo_usuario')}
           etiqueta="Nombre completo"
@@ -65,7 +76,7 @@ export function FormularioUsuario() {
       <GrupoDeCampos numero="2" titulo="Rol en el sistema" descripcion="Decide qué podrá hacer con las reservas.">
         <RadioInput {...campo('rol_usuario')} etiqueta="Rol" obligatorio opciones={OPCIONES_DE_ROL} />
       </GrupoDeCampos>
-      <GrupoDeCampos numero="3" titulo="Contraseña inicial" descripcion="Entréguela a la persona: con ella y su correo ingresará.">
+      <GrupoDeCampos numero="3" titulo="Contraseña inicial" descripcion="Entréguela a la persona: con ella y su código ingresará.">
         <PasswordInput {...campo('contrasena_usuario')} etiqueta="Contraseña inicial" obligatorio autoComplete="new-password" />
         <ReglasDeContrasena valor={valores.contrasena_usuario} />
       </GrupoDeCampos>

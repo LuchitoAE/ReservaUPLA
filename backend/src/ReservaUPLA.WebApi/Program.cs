@@ -56,12 +56,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         opciones.SlidingExpiration = true;
         opciones.Events.OnRedirectToLogin = contexto => Sesion.EscribirProblema(contexto.HttpContext,
             StatusCodes.Status401Unauthorized, "Inicie sesión para continuar.",
-            "Su sesión no existe o ya terminó. Ingrese con su correo y su contraseña.");
+            "Su sesión no existe o ya terminó. Ingrese con su código y su contraseña.");
         opciones.Events.OnRedirectToAccessDenied = contexto => Sesion.EscribirProblema(contexto.HttpContext,
             StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", "Su rol no permite esta acción.");
     });
 
-// Todo endpoint exige sesión salvo los que digan [AllowAnonymous] (ingreso, registro y salida).
+// Todo endpoint exige sesión salvo los que digan [AllowAnonymous] (ingreso y salida).
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 

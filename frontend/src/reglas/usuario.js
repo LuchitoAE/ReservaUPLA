@@ -1,8 +1,9 @@
-import { normalizarCorreo, normalizarLinea } from '../utils/normalizarTexto'
+import { normalizarCodigo, normalizarCorreo, normalizarLinea } from '../utils/normalizarTexto'
 import { crearValidador, esCorreo, requerido, texto } from './validaciones'
 
-// Reglas de los formularios de usuario (RF-01) y de ingreso, iguales a las de Domain/Entities/Usuario.cs.
-export const USUARIO = { nombreMaximo: 150, correoMaximo: 150, contrasenaMaxima: 64 }
+// Reglas de los formularios de usuario (RF-01) y de ingreso (RF-09), iguales a las del dominio (Usuario.cs y
+// CodigoDeUsuario.cs).
+export const USUARIO = { codigoLongitud: 7, nombreMaximo: 150, correoMaximo: 150, contrasenaMaxima: 64 }
 
 // Las mismas que Usuario.RevisarContrasena: de 8 a 64 caracteres, con mayúscula, minúscula y número.
 export const REGLAS_DE_CONTRASENA = [
@@ -11,6 +12,15 @@ export const REGLAS_DE_CONTRASENA = [
   { texto: 'Una minúscula', cumple: (valor) => /\p{Ll}/u.test(valor) },
   { texto: 'Un número', cumple: (valor) => /\d/.test(valor) },
 ]
+
+// RN-14: 7 letras (A-Z) o dígitos, por ejemplo P00914K o ADMIN01.
+const codigo = (valor) => {
+  const normalizado = normalizarCodigo(valor)
+  return (
+    requerido(normalizado, 'Escriba el código del usuario.') ??
+    (/^[A-Z0-9]{7}$/.test(normalizado) ? null : 'El código debe tener 7 letras o números, por ejemplo P00914K.')
+  )
+}
 
 const nombre = (valor) =>
   texto(valor, {
@@ -36,35 +46,25 @@ const contrasena = (valor) =>
       ? null
       : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.')
 
-const confirmacion = (valor, valores) =>
-  requerido(valor, 'Vuelva a escribir la contraseña.') ??
-  (valor === valores.contrasena_usuario ? null : 'Las dos contraseñas no coinciden.')
-
 // Registro por el administrador: cualquier rol, con una contraseña inicial.
 export const reglasDeUsuario = crearValidador({
+  codigo_usuario: codigo,
   nombre_completo_usuario: nombre,
   correo_usuario: correo,
   rol_usuario: (valor) => requerido(valor, 'Elija el rol del usuario.'),
   contrasena_usuario: contrasena,
 })
 
-// Cuenta que crea el propio solicitante: confirma la contraseña para no equivocarse al escribirla.
-export const reglasDeCuenta = crearValidador({
-  nombre_completo_usuario: nombre,
-  correo_usuario: correo,
-  contrasena_usuario: contrasena,
-  confirmacion_contrasena: confirmacion,
-})
-
 // Ingreso: solo que estén escritos; si no coinciden, la API responde sin decir cuál falló.
 export const reglasDeIngreso = crearValidador({
-  correo_usuario: correo,
+  codigo_usuario: (valor) => requerido(normalizarCodigo(valor), 'Escriba su código.'),
   contrasena_usuario: (valor) => requerido(valor, 'Escriba su contraseña.'),
 })
 
 // Lo que se envía: los textos ya normalizados. La contraseña va tal cual (los espacios cuentan).
 export function normalizarUsuario(valores) {
   return {
+    codigo_usuario: normalizarCodigo(valores.codigo_usuario),
     nombre_completo_usuario: normalizarLinea(valores.nombre_completo_usuario),
     correo_usuario: normalizarCorreo(valores.correo_usuario),
     rol_usuario: valores.rol_usuario,

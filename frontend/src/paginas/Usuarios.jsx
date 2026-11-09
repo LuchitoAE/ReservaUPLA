@@ -9,6 +9,7 @@ import { avisoDeError } from '../utils/avisoDeError'
 import { ROLES } from '../utils/formato'
 
 const COLUMNAS = [
+  { clave: 'codigo_usuario', titulo: 'Código' },
   { clave: 'nombre_completo_usuario', titulo: 'Nombre completo' },
   { clave: 'correo_usuario', titulo: 'Correo' },
   { clave: 'rol_usuario', titulo: 'Rol', celda: (usuario) => ROLES[usuario.rol_usuario] },

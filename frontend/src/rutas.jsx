@@ -11,13 +11,12 @@ import { NuevoUsuario } from './paginas/NuevoUsuario'
 import { PaginaDeError } from './paginas/PaginaDeError'
 import { PaginaIngreso } from './paginas/PaginaIngreso'
 import { PaginaNoEncontrada } from './paginas/PaginaNoEncontrada'
-import { PaginaRegistro } from './paginas/PaginaRegistro'
 import { Reservas } from './paginas/Reservas'
 import { Usuarios } from './paginas/Usuarios'
 
 const ADMINISTRADOR = ['Administrador']
 
-// Mapa de la SPA. Las pantallas de acceso (ingreso y crear cuenta) van solas; las del sistema, dentro del layout
+// Mapa de la SPA. La pantalla de ingreso va sola (no hay registro propio, RN-07); las del sistema, dentro del layout
 // principal, que exige sesión. Cambiar de página no recarga el documento: React Router reemplaza solo el contenido.
 // Si algo falla al dibujar una página, se muestra PaginaDeError en lugar del detalle técnico.
 export const rutas = createBrowserRouter([
@@ -26,7 +25,6 @@ export const rutas = createBrowserRouter([
     errorElement: <PaginaDeError />,
     children: [
       { path: '/ingreso', element: <PaginaIngreso /> },
-      { path: '/registro', element: <PaginaRegistro /> },
       {
         path: '/',
         element: <LayoutPrincipal />,

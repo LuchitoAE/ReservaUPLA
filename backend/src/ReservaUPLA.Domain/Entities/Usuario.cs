@@ -4,8 +4,8 @@ using ReservaUPLA.Domain.Enums;
 namespace ReservaUPLA.Domain.Entities;
 
 // Persona que usa el sistema (RF-01). Su rol decide qué puede hacer: solicitar, aprobar o consultar su ambiente.
-// Solo se crea con Registrar, que normaliza y exige las reglas; un usuario nuevo nace activo. Para iniciar sesión
-// guarda la sal y el hash de su contraseña (el modelo del caso se amplía con esos dos campos).
+// Solo se crea con Registrar, que normaliza y exige las reglas; un usuario nuevo nace activo. Ingresa con su código
+// (RN-14) y guarda la sal y el hash de su contraseña (el modelo del caso se amplía con esos tres campos).
 public sealed class Usuario
 {
     public const int Longitud_Minima_Nombre = 5;
@@ -23,6 +23,8 @@ public sealed class Usuario
 
     public Guid Id_Usuario { get; private set; }
 
+    public string Codigo_Usuario { get; private set; } = string.Empty;
+
     public string Nombre_Completo_Usuario { get; private set; } = string.Empty;
 
     public string Correo_Usuario { get; private set; } = string.Empty;
@@ -36,17 +38,30 @@ public sealed class Usuario
     public byte[] Hash_Contrasena_Usuario { get; private set; } = [];
 
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
-    // «correo_ya_registrado» lo averigua el caso de uso en la base, con el correo ya normalizado. «cifrar» lo da la
-    // Infraestructura (PBKDF2): la entidad solo decide si la contraseña cumple las reglas.
+    // «codigo_ya_registrado» y «correo_ya_registrado» los averigua el caso de uso en la base, con el dato ya
+    // normalizado. «cifrar» lo da la Infraestructura (PBKDF2): la entidad solo decide si la contraseña cumple las reglas.
     public static Usuario Registrar(
+        string? codigo,
         string? nombre_completo,
         string? correo,
         Roles_Usuario rol,
         string? contrasena,
+        bool codigo_ya_registrado,
         bool correo_ya_registrado,
         Func<string, ContrasenaCifrada> cifrar)
     {
         var errores = new ErroresDeValidacion();
+
+        var codigo_normalizado = CodigoDeUsuario.Normalizar(codigo);
+        var mensaje_codigo = CodigoDeUsuario.Revisar(codigo_normalizado);
+        if (mensaje_codigo is not null)
+        {
+            errores.Agregar(nameof(Codigo_Usuario), mensaje_codigo);
+        }
+        else if (codigo_ya_registrado)
+        {
+            errores.Agregar(nameof(Codigo_Usuario), "Este código ya existe.");
+        }
 
         var nombre = errores.ValidarTexto(nameof(Nombre_Completo_Usuario), Texto.NormalizarLinea(nombre_completo), Regla_Nombre);
         if (!errores.TieneErrorEn(nameof(Nombre_Completo_Usuario)) && !nombre.Contains(' '))
@@ -87,6 +102,7 @@ public sealed class Usuario
         return new Usuario
         {
             Id_Usuario = Guid.CreateVersion7(),
+            Codigo_Usuario = codigo_normalizado,
             Nombre_Completo_Usuario = nombre,
             Correo_Usuario = correo_normalizado,
             Rol_Usuario = rol,
