@@ -4,6 +4,7 @@ using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
 using ReservaUPLA.Application.UseCases.Reservas.CambiarEstadoReserva;
 using ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
 using ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
+using ReservaUPLA.Application.UseCases.Usuarios.CuentasIniciales;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 
 namespace ReservaUPLA.Application;
@@ -15,6 +16,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IniciarSesionUseCase>();
         services.AddScoped<RegistrarUsuarioUseCase>();
+        services.AddScoped<CrearPrimerAdministradorUseCase>();
+        services.AddScoped<CrearCuentasDePruebaUseCase>();
         services.AddScoped<RegistrarAmbienteUseCase>();
         services.AddScoped<RegistrarReservaUseCase>();
         services.AddScoped<ConsultarDisponibilidadUseCase>();

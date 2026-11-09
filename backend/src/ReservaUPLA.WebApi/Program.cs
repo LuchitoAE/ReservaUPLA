@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi;
 using ReservaUPLA.Application;
 using ReservaUPLA.Infrastructure;
+using ReservaUPLA.WebApi.Arranque;
 using ReservaUPLA.WebApi.Json;
 using ReservaUPLA.WebApi.Middleware;
 using ReservaUPLA.WebApi.Seguridad;
@@ -94,6 +95,9 @@ builder.Services.AddOpenApi(opciones =>
 });
 
 var app = builder.Build();
+
+// RF-15 y RNF-22: el primer administrador y, en desarrollo, las cuentas de prueba, con datos de los secretos de usuario.
+await app.CrearCuentasInicialesAsync();
 
 app.UseExceptionHandler();
 
