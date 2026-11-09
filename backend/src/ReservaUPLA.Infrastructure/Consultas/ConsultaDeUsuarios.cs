@@ -21,7 +21,7 @@ internal sealed class ConsultaDeUsuarios : IConsultaDeUsuarios
         return await _contexto.Usuarios
             .AsNoTracking()
             .Where(u => u.Id_Usuario == id_usuario && u.Activo_Usuario)
-            .Select(u => new UsuarioDto(u.Id_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
+            .Select(u => new UsuarioDto(u.Id_Usuario, u.Codigo_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
             .FirstOrDefaultAsync(cancelacion);
     }
 
@@ -42,7 +42,7 @@ internal sealed class ConsultaDeUsuarios : IConsultaDeUsuarios
 
         return await usuarios
             .OrderBy(u => u.Nombre_Completo_Usuario)
-            .Select(u => new UsuarioDto(u.Id_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
+            .Select(u => new UsuarioDto(u.Id_Usuario, u.Codigo_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
             .ToListAsync(cancelacion);
     }
 }

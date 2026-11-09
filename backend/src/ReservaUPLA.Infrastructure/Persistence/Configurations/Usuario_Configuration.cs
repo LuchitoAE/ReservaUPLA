@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ReservaUPLA.Domain.Common;
 using ReservaUPLA.Domain.Entities;
 
 namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
 
 // Mapeo de la entidad Usuario a la tabla usuarios (modelo de datos del caso: Id, NombreCompleto, Correo, Rol, Activo),
-// más la sal y el hash de la contraseña para iniciar sesión.
+// más el código con el que se ingresa (RN-14) y la sal y el hash de la contraseña.
 internal sealed class Usuario_Configuration : IEntityTypeConfiguration<Usuario>
 {
+    public const string Indice_Codigo = "ux_usuarios_codigo_usuario";
     public const string Indice_Correo = "ux_usuarios_correo_usuario";
 
     public void Configure(EntityTypeBuilder<Usuario> usuario)
@@ -17,6 +19,13 @@ internal sealed class Usuario_Configuration : IEntityTypeConfiguration<Usuario>
         usuario.HasKey(u => u.Id_Usuario).HasName("pk_usuarios");
 
         usuario.Property(u => u.Id_Usuario).HasColumnName("id_usuario");
+
+        // El código identifica a la persona al ingresar: obligatorio, de 7 caracteres y sin repetirse.
+        usuario.Property(u => u.Codigo_Usuario)
+            .HasColumnName("codigo_usuario")
+            .HasMaxLength(CodigoDeUsuario.Longitud)
+            .IsRequired();
+        usuario.HasIndex(u => u.Codigo_Usuario).IsUnique().HasDatabaseName(Indice_Codigo);
 
         usuario.Property(u => u.Nombre_Completo_Usuario)
             .HasColumnName("nombre_completo_usuario")

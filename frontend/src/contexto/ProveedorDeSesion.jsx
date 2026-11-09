@@ -30,12 +30,6 @@ export function ProveedorDeSesion({ children }) {
     return respuesta
   }
 
-  async function crearCuenta(datos) {
-    const respuesta = await autenticacion.crearCuenta(datos)
-    setSesion({ cargando: false, usuario: respuesta.data, motivo: null })
-    return respuesta
-  }
-
   async function cerrarSesion() {
     await autenticacion.cerrarSesion().catch(() => null)
     setSesion({ cargando: false, usuario: null, motivo: 'salida' })
@@ -48,7 +42,6 @@ export function ProveedorDeSesion({ children }) {
         cargando: sesion.cargando,
         motivoSinSesion: sesion.motivo,
         iniciarSesion,
-        crearCuenta,
         cerrarSesion,
       }}
     >

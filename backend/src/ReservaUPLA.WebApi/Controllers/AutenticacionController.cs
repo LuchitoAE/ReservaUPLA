@@ -3,17 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.UseCases.Autenticacion.CrearCuenta;
 using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
-using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Domain.Exceptions;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
 namespace ReservaUPLA.WebApi.Controllers;
 
-// Inicio y cierre de sesión, y la cuenta que un solicitante crea por sí mismo. Son los únicos endpoints que se usan
-// sin sesión.
+// Inicio y cierre de sesión (RF-09, RF-10). Son los únicos endpoints que se usan sin sesión. No hay registro propio:
+// las cuentas las crea el administrador con el código que entrega la universidad (RN-07).
 [ApiController]
 [Route("api/autenticacion")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
@@ -33,23 +31,6 @@ public sealed class AutenticacionController : ControllerBase
         await HttpContext.SignInAsync(Sesion.CrearPrincipal(usuario));
 
         return RespuestaApi.Exito(usuario, $"Bienvenido, {usuario.Nombre_Completo_Usuario}.");
-    }
-
-    // RF-01: una persona crea su cuenta de solicitante y entra al sistema.
-    [HttpPost("registro")]
-    [AllowAnonymous]
-    [ProducesResponseType<RespuestaApi<UsuarioDto>>(StatusCodes.Status201Created)]
-    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public async Task<ActionResult<RespuestaApi<UsuarioDto>>> CrearCuenta(
-        CrearCuentaCommand comando,
-        [FromServices] RegistrarUsuarioUseCase caso_de_uso,
-        CancellationToken cancelacion)
-    {
-        var usuario = await caso_de_uso.EjecutarAsync(comando.ComoRegistro(), cancelacion);
-        await HttpContext.SignInAsync(Sesion.CrearPrincipal(usuario));
-
-        return StatusCode(StatusCodes.Status201Created,
-            RespuestaApi.Exito(usuario, $"Cuenta creada. Bienvenido, {usuario.Nombre_Completo_Usuario}."));
     }
 
     // La SPA pregunta al abrirse si ya hay una sesión (por ejemplo, después de recargar la página).

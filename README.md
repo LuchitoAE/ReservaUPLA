@@ -26,7 +26,7 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RN-05 Solo el administrador aprueba o rechaza | Cada estado de la reserva lo comprueba (patrón State); la API responde 403 |
 | RN-06 Una reserva rechazada no se modifica | El estado Rechazada no admite cambios; la API responde 409 |
 
-**Inicio de sesión.** Cada usuario entra con su correo y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. Un solicitante puede crear su propia cuenta; los administradores y responsables los registra un administrador.
+**Inicio de sesión.** Cada usuario entra con su código (7 letras o dígitos, por ejemplo P00914K) y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. No hay registro propio: las cuentas las crea el administrador con el código que entrega la universidad.
 
 ## Requisitos
 
@@ -63,15 +63,31 @@ SELECT codigo_reserva, fecha_reserva, hora_inicio_reserva, hora_fin_reserva, est
 \q
 ```
 
-### Primer administrador
+### Primer administrador y cuentas de prueba
 
-Las tablas empiezan vacías. Cree una cuenta en http://localhost:5190/registro (nace como solicitante) y conviértala en administrador con psql:
+Al arrancar, si no hay ningún administrador activo, la API crea el primero con los datos de la sección `PrimerAdministrador` de los secretos de usuario (nunca del repositorio). En desarrollo crea además una cuenta de prueba por rol, de la sección `CuentasDePrueba`, si no existen. Lo que hizo queda escrito en la consola de la API.
 
-```sql
-UPDATE usuarios SET rol_usuario = 'Administrador' WHERE correo_usuario = 'su.correo@upla.edu.pe';
+```fish
+cd backend/src/ReservaUPLA.WebApi
+dotnet user-secrets set "PrimerAdministrador:Codigo_Usuario" "ADMIN01"
+dotnet user-secrets set "PrimerAdministrador:Nombre_Completo_Usuario" "Administrador UPLA"
+dotnet user-secrets set "PrimerAdministrador:Correo_Usuario" "admin@upla.edu.pe"
+dotnet user-secrets set "PrimerAdministrador:Contrasena_Usuario" "<una contraseña con mayúscula, minúscula y número>"
+# Cuentas de prueba (solo desarrollo): un bloque por cuenta, con índice 0, 1…
+dotnet user-secrets set "CuentasDePrueba:0:Codigo_Usuario" "SOLIC01"
+dotnet user-secrets set "CuentasDePrueba:0:Nombre_Completo_Usuario" "Solicitante de Prueba"
+dotnet user-secrets set "CuentasDePrueba:0:Correo_Usuario" "solicitante@upla.edu.pe"
+dotnet user-secrets set "CuentasDePrueba:0:Rol_Usuario" "Solicitante"
+dotnet user-secrets set "CuentasDePrueba:0:Contrasena_Usuario" "<contraseña>"
 ```
 
-Desde ahí, ese administrador registra los demás usuarios y los ambientes desde la aplicación.
+| Código | Correo | Rol |
+|---|---|---|
+| ADMIN01 | admin@upla.edu.pe | Administrador (es el primer administrador) |
+| SOLIC01 | solicitante@upla.edu.pe | Solicitante |
+| RESPO01 | responsable@upla.edu.pe | Responsable de ambiente (`ResponsableDeAmbiente`) |
+
+Desde ahí, el administrador registra los demás usuarios, con su código, y los ambientes desde la aplicación.
 
 ## Cómo ejecutarlo
 
@@ -88,7 +104,7 @@ pnpm install        # solo la primera vez
 pnpm dev
 ```
 
-Para detenerlos, Ctrl+C en cada terminal. Para revisar el código: `pnpm lint` (oxlint) en `frontend/` y `dotnet build` en `backend/`.
+Para detenerlos, Ctrl+C en cada terminal. Para revisar el código: `pnpm lint` (oxlint) y `pnpm test` (Vitest) en `frontend/`; `dotnet build` y `dotnet test` (xUnit) en `backend/`.
 
 ## API
 
@@ -96,8 +112,7 @@ Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella respon
 
 | Método | Ruta | Para qué | Respuestas |
 |---|---|---|---|
-| POST | `/api/autenticacion/ingreso` | Iniciar sesión (deja la cookie) | 200, 400, 401 |
-| POST | `/api/autenticacion/registro` | RF-01: un solicitante crea su cuenta | 201, 400 |
+| POST | `/api/autenticacion/ingreso` | RF-09: iniciar sesión con `codigo_usuario` y `contrasena_usuario` (deja la cookie) | 200, 400, 401 |
 | GET | `/api/autenticacion/sesion` | ¿Hay sesión? (al abrir la SPA) | 200, 401 |
 | POST | `/api/autenticacion/salida` | Cerrar sesión | 200 |
 | POST | `/api/usuarios` | RF-01: el administrador registra un usuario de cualquier rol | 201, 400, 403 |
@@ -111,25 +126,28 @@ Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella respon
 | PATCH | `/api/reservas/{id}/estado` | RF-07 cambiar estado | 200, 400, 403 (RN-05), 404, 409 (RN-01, RN-06) |
 | GET | `/api/dashboard/indicadores` | RF-08 indicadores | 200 |
 
-Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /api/autenticacion/ingreso` con un correo y su contraseña: la cookie queda guardada y los demás endpoints ya responden. También `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
+Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /api/autenticacion/ingreso` con un código y su contraseña: la cookie queda guardada y los demás endpoints ya responden. También `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
 
 ## Estructura
 
 ```
 backend/src/
-  ReservaUPLA.Domain/          Usuario, Ambiente, Reserva; Horario (objeto de valor); estados de la reserva
+  ReservaUPLA.Domain/          Usuario, Ambiente, Reserva; Horario y CodigoDeUsuario (objetos de valor); estados de la reserva
                                (patrón State) y su fábrica (Factory); reglas y excepciones de negocio
   ReservaUPLA.Application/     Casos de uso (registrar, disponibilidad, cambiar estado), DTOs de entrada y salida,
                                interfaces de repositorios, consultas y reloj
   ReservaUPLA.Infrastructure/  DbContext, mapeos, migraciones, repositorios y consultas (módulo de salida) con EF Core
-  ReservaUPLA.WebApi/          Controladores, ManejadorDeErrores (RFC 9457), formato JSON y Swagger
+  ReservaUPLA.WebApi/          Controladores, ManejadorDeErrores (RFC 9457), formato JSON, Swagger y el arranque
+                               (primer administrador y cuentas de prueba)
+backend/tests/
+  ReservaUPLA.Pruebas/         Pruebas unitarias (xUnit) del dominio y de los casos de uso, con dobles en memoria
 frontend/src/
   api/                         clienteApi.js y un archivo por recurso
   components/ui/               TextInput, SelectInput, DateInput, TimeInput, Button, AlertMessage,
                                ModalConfirmacion, TableList, CardIndicador y otros
   components/<módulo>/         Formularios y piezas de usuarios, ambientes, reservas y dashboard
   hooks/                       useFormulario, useConsulta, useDisponibilidad, useUsuarioActual…
-  reglas/                      Validaciones (las mismas del dominio)
+  reglas/                      Validaciones (las mismas del dominio), con sus pruebas *.test.js (Vitest)
   paginas/, layouts/           Páginas de la SPA y su estructura común
 ```
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.OpenApi;
 using ReservaUPLA.Application;
 using ReservaUPLA.Infrastructure;
+using ReservaUPLA.WebApi.Arranque;
 using ReservaUPLA.WebApi.Json;
 using ReservaUPLA.WebApi.Middleware;
 using ReservaUPLA.WebApi.Seguridad;
@@ -56,12 +57,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         opciones.SlidingExpiration = true;
         opciones.Events.OnRedirectToLogin = contexto => Sesion.EscribirProblema(contexto.HttpContext,
             StatusCodes.Status401Unauthorized, "Inicie sesión para continuar.",
-            "Su sesión no existe o ya terminó. Ingrese con su correo y su contraseña.");
+            "Su sesión no existe o ya terminó. Ingrese con su código y su contraseña.");
         opciones.Events.OnRedirectToAccessDenied = contexto => Sesion.EscribirProblema(contexto.HttpContext,
             StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", "Su rol no permite esta acción.");
     });
 
-// Todo endpoint exige sesión salvo los que digan [AllowAnonymous] (ingreso, registro y salida).
+// Todo endpoint exige sesión salvo los que digan [AllowAnonymous] (ingreso y salida).
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
@@ -94,6 +95,9 @@ builder.Services.AddOpenApi(opciones =>
 });
 
 var app = builder.Build();
+
+// RF-15 y RNF-22: el primer administrador y, en desarrollo, las cuentas de prueba, con datos de los secretos de usuario.
+await app.CrearCuentasInicialesAsync();
 
 app.UseExceptionHandler();
 

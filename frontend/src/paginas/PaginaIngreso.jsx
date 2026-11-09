@@ -1,4 +1,4 @@
-import { Link, Navigate, useLocation, useNavigate } from 'react-router'
+import { Navigate, useLocation, useNavigate } from 'react-router'
 import { MarcoDeAcceso } from '../components/autenticacion/MarcoDeAcceso'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
@@ -8,17 +8,17 @@ import { useFormulario } from '../hooks/useFormulario'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { reglasDeIngreso } from '../reglas/usuario'
 
-// Pantalla de ingreso. Correo antes que contraseña (modelo mental, Norman); «Ingresar» se habilita cuando los dos
-// están escritos (restricción); si no coinciden, un solo mensaje que no dice cuál falló. Quien no tiene cuenta ve
-// el camino para crearla.
+// Pantalla de ingreso (RF-09). Código antes que contraseña (modelo mental, Norman); «Ingresar» se habilita cuando
+// los dos están escritos (restricción); si no coinciden, un solo mensaje que no dice cuál falló. No hay registro
+// propio: el código lo entrega la universidad y la cuenta la crea el administrador (RN-07).
 export function PaginaIngreso() {
   const { usuarioActual, iniciarSesion } = useUsuarioActual()
   const { state } = useLocation()
   const navegar = useNavigate()
   const formulario = useFormulario({
-    iniciales: { correo_usuario: '', contrasena_usuario: '' },
+    iniciales: { codigo_usuario: '', contrasena_usuario: '' },
     reglas: reglasDeIngreso,
-    obligatorios: { correo_usuario: 'el correo', contrasena_usuario: 'la contraseña' },
+    obligatorios: { codigo_usuario: 'el código', contrasena_usuario: 'la contraseña' },
     alEnviar: async (valores) => {
       await iniciarSesion(valores)
       navegar(state?.desde ?? '/', { replace: true })
@@ -31,17 +31,18 @@ export function PaginaIngreso() {
   }
 
   return (
-    <MarcoDeAcceso titulo="Iniciar sesión" tituloPestana="Ingresar" descripcion="Ingrese con su correo y su contraseña.">
+    <MarcoDeAcceso titulo="Iniciar sesión" tituloPestana="Ingresar" descripcion="Ingrese con su código y su contraseña.">
       <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
         {state?.aviso && !aviso && <AlertMessage tipo="info" titulo={state.aviso} />}
         {aviso && <AlertMessage tipo="error" aviso={aviso} />}
         <TextInput
-          {...campo('correo_usuario')}
-          type="email"
-          etiqueta="Correo"
+          {...campo('codigo_usuario')}
+          etiqueta="Código"
           autoComplete="username"
-          inputMode="email"
-          ayuda="Por ejemplo, nombre.apellido@upla.edu.pe."
+          autoCapitalize="characters"
+          spellCheck={false}
+          maxLength={20}
+          ayuda="Su código de la UPLA, por ejemplo P00914K."
         />
         <PasswordInput {...campo('contrasena_usuario')} etiqueta="Contraseña" />
         <div className="flex flex-col gap-2">
@@ -53,12 +54,7 @@ export function PaginaIngreso() {
           </p>
         </div>
       </form>
-      <p className="mt-6 border-t border-borde pt-5 text-center text-texto-suave">
-        ¿Es su primera vez?{' '}
-        <Link to="/registro" className="font-semibold text-enlace underline underline-offset-2 hover:decoration-2">
-          Cree su cuenta de solicitante
-        </Link>
-      </p>
+      <p className="mt-6 border-t border-borde pt-5 text-center text-texto-suave">Su código lo entrega la universidad.</p>
     </MarcoDeAcceso>
   )
 }
