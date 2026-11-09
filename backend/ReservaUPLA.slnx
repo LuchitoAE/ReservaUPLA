@@ -5,4 +5,7 @@
     <Project Path="src/ReservaUPLA.Infrastructure/ReservaUPLA.Infrastructure.csproj" />
     <Project Path="src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ReservaUPLA.Pruebas/ReservaUPLA.Pruebas.csproj" />
+  </Folder>
 </Solution>
