@@ -52,3 +52,24 @@ export function crearValidador(reglas) {
     )
   return { tiene, validarCampo, validarTodo }
 }
+
+// Vuelve a revisar los errores que se ven (y «campo», el que se acaba de dejar), para que cada mensaje desaparezca en
+// cuanto se corrige, también si depende de otro campo. Un error que dio la API («delServidor»: el valor que tenía cada
+// campo cuando la API lo rechazó) no lo decide la regla del navegador: se mantiene mientras ese campo no cambie.
+export function revisarErrores({ anteriores, valores, reglas, campo = null, delServidor = {} }) {
+  const revisados = new Set([...Object.keys(anteriores), ...(campo ? [campo] : [])])
+  return Object.fromEntries(
+    [...revisados]
+      .map((nombre) => {
+        const errorDeLaApi = nombre in delServidor
+        if (errorDeLaApi && valores[nombre] === delServidor[nombre]) {
+          return [nombre, anteriores[nombre]]
+        }
+        if (reglas.tiene(nombre)) {
+          return [nombre, reglas.validarCampo(nombre, valores)]
+        }
+        return [nombre, errorDeLaApi ? null : anteriores[nombre]]
+      })
+      .filter(([, mensaje]) => mensaje),
+  )
+}

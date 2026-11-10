@@ -61,6 +61,22 @@ export const reglasDeIngreso = crearValidador({
   contrasena_usuario: (valor) => requerido(valor, 'Escriba su contraseña.'),
 })
 
+// Mi cuenta (RF-11): la actual, la nueva (RN-13 y distinta de la actual, como Usuario.CambiarContrasena) y su
+// repetición, que solo revisa la interfaz para que un error de tipeo no deje al usuario sin poder entrar.
+export const reglasDeCambioDeContrasena = crearValidador({
+  contrasena_actual: (valor) => requerido(valor, 'Escriba su contraseña actual.'),
+  contrasena_nueva: (valor, valores) =>
+    contrasena(valor) ?? (valor === valores.contrasena_actual ? 'Debe ser distinta de la actual.' : null),
+  repetir_contrasena: (valor, valores) =>
+    requerido(valor, 'Repita la nueva contraseña.') ??
+    (valor !== valores.contrasena_nueva ? 'Las dos contraseñas no coinciden.' : null),
+})
+
+// Lo que se envía al cambiar la contraseña: la actual y la nueva, tal cual.
+export function normalizarCambioDeContrasena(valores) {
+  return { contrasena_actual: valores.contrasena_actual, contrasena_nueva: valores.contrasena_nueva }
+}
+
 // Lo que se envía: los textos ya normalizados. La contraseña va tal cual (los espacios cuentan).
 export function normalizarUsuario(valores) {
   return {

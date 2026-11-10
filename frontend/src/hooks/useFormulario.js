@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useBlocker } from 'react-router'
+import { revisarErrores } from '../reglas/validaciones'
 import { avisoDeError } from '../utils/avisoDeError'
 
 // Estado y comportamiento comunes de todos los formularios (usuario, ambiente, reserva): valores, errores por
@@ -39,17 +40,13 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
       hayCambios.current && !guardando.current && currentLocation.pathname !== nextLocation.pathname,
   )
 
+  // El valor de cada campo cuando la API lo rechazó: ese error se mantiene hasta que la persona cambie el campo.
+  const delServidor = useRef({})
+
   // Vuelve a revisar los campos que ya muestran un error (y «campo», si se pide): así el mensaje desaparece en cuanto
   // se corrige, también cuando depende de otro campo (la hora de fin se compara con la de inicio).
   function revisar(nuevos, campo) {
-    setErrores((anteriores) => {
-      const revisados = new Set([...Object.keys(anteriores), ...(campo ? [campo] : [])])
-      return Object.fromEntries(
-        [...revisados]
-          .map((nombre) => [nombre, reglas.tiene(nombre) ? reglas.validarCampo(nombre, nuevos) : anteriores[nombre]])
-          .filter(([, mensaje]) => mensaje),
-      )
-    })
+    setErrores((anteriores) => revisarErrores({ anteriores, valores: nuevos, reglas, campo, delServidor: delServidor.current }))
   }
 
   function cambiar(campo, valor) {
@@ -86,6 +83,7 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
 
     setErrores({})
     setFallo(null)
+    delServidor.current = {}
     setEnviando(true)
     guardando.current = true
     try {
@@ -94,6 +92,7 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
       guardando.current = false
       const conCampos = Object.keys(error.errores ?? {}).length > 0
       if (conCampos) {
+        delServidor.current = Object.fromEntries(Object.keys(error.errores).map((nombre) => [nombre, valores[nombre]]))
         mostrarErrores(error.errores)
       }
       setFallo(conCampos ? 'campos' : { mensaje: avisoDeError(error).mensaje })
@@ -101,6 +100,17 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
     } finally {
       setEnviando(false)
     }
+  }
+
+  // Después de guardar sin salir de la página (Mi cuenta): el formulario vuelve a empezar, sin datos ni errores, y
+  // ya no pregunta antes de salir.
+  function reiniciar() {
+    setValores(iniciales)
+    setErrores({})
+    setFallo(null)
+    setAviso(null)
+    delServidor.current = {}
+    guardando.current = false
   }
 
   // Lo que necesita cada campo (TextInput, SelectInput…): <TextInput {...campo('correo_usuario')} />
@@ -126,5 +136,5 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
       ? `${textoDeFallo}: ${detalleDelFallo}`
       : detalleDelFallo.charAt(0).toUpperCase() + detalleDelFallo.slice(1)
 
-  return { valores, errores, enviando, aviso, resumenDeError, faltan, modificado, bloqueo, campo, cambiar, enviar }
+  return { valores, errores, enviando, aviso, resumenDeError, faltan, modificado, bloqueo, campo, cambiar, enviar, reiniciar }
 }

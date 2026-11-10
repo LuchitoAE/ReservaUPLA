@@ -9,6 +9,9 @@ internal sealed class RepositorioDeUsuariosEnMemoria : IRepositorioDeUsuarios
 {
     public List<Usuario> Usuarios { get; } = [];
 
+    // Cuántas veces se guardó un cambio: un intento rechazado no debe guardar nada.
+    public int Actualizaciones { get; private set; }
+
     public Task<Usuario?> ObtenerPorIdAsync(Guid id_usuario, CancellationToken cancelacion = default) =>
         Task.FromResult(Usuarios.FirstOrDefault(u => u.Id_Usuario == id_usuario));
 
@@ -27,6 +30,13 @@ internal sealed class RepositorioDeUsuariosEnMemoria : IRepositorioDeUsuarios
     public Task AgregarAsync(Usuario usuario, CancellationToken cancelacion = default)
     {
         Usuarios.Add(usuario);
+        return Task.CompletedTask;
+    }
+
+    // En memoria el usuario ya es el mismo objeto: solo se cuenta la actualización.
+    public Task ActualizarAsync(Usuario usuario, CancellationToken cancelacion = default)
+    {
+        Actualizaciones++;
         return Task.CompletedTask;
     }
 }

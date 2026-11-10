@@ -18,4 +18,7 @@ public interface IRepositorioDeUsuarios
     Task<bool> ExisteAdministradorActivoAsync(CancellationToken cancelacion = default);
 
     Task AgregarAsync(Usuario usuario, CancellationToken cancelacion = default);
+
+    // Guarda los cambios de un usuario que ya existe (su contraseña, RF-11).
+    Task ActualizarAsync(Usuario usuario, CancellationToken cancelacion = default);
 }
