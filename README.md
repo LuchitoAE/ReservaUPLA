@@ -28,6 +28,8 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 
 **Inicio de sesión.** Cada usuario entra con su código (7 letras o dígitos, por ejemplo P00914K) y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. No hay registro propio: las cuentas las crea el administrador con el código que entrega la universidad.
 
+**Pantalla de ingreso.** A la izquierda, el panel «Agenda del campus»: fotos del campus tomadas por el autor, vistas en el azul de la marca a través de una rejilla de bloques de horario; tres bloques muestran la foto a color y uno lleva borde dorado. La foto cambia entre visitas. En el escritorio la agenda se mueve despacio, con un botón para pausarla; queda quieta si el sistema pide reducir el movimiento y se detiene si la pestaña no está a la vista (RNF-06, WCAG 2.2.2). En el teléfono es una franja fija arriba del formulario.
+
 ## Requisitos
 
 - .NET SDK 10, PostgreSQL 16 o superior (con la extensión `btree_gist`, que viene con PostgreSQL), Node 22 o superior y pnpm.
@@ -104,6 +106,8 @@ pnpm install        # solo la primera vez
 pnpm dev
 ```
 
+Para abrirla desde un teléfono conectado a la misma red, use `pnpm dev --host` y entre a `http://<IP-de-la-PC>:5190` (la API no se expone: el teléfono solo habla con Vite, que reenvía `/api`). Si el equipo tiene cortafuegos, hay que permitir el puerto 5190 para la red local.
+
 Para detenerlos, Ctrl+C en cada terminal. Para revisar el código: `pnpm lint` (oxlint) y `pnpm test` (Vitest) en `frontend/`; `dotnet build` y `dotnet test` (xUnit) en `backend/`.
 
 ## API
@@ -146,8 +150,11 @@ frontend/src/
   components/ui/               TextInput, SelectInput, DateInput, TimeInput, Button, AlertMessage,
                                ModalConfirmacion, TableList, CardIndicador y otros
   components/<módulo>/         Formularios y piezas de usuarios, ambientes, reservas y dashboard
-  hooks/                       useFormulario, useConsulta, useDisponibilidad, useUsuarioActual…
+  components/autenticacion/    Marco del ingreso y panel «Agenda del campus» (sus reglas, con pruebas, en agendaDelCampus.js)
+  assets/campus/               Fotos del panel del ingreso, a color y en azul (WebP de 1000 px de alto, sin metadatos)
+  hooks/                       useFormulario, useConsulta, useDisponibilidad, useUsuarioActual, useAgendaViva…
   reglas/                      Validaciones (las mismas del dominio), con sus pruebas *.test.js (Vitest)
+  utils/                       Ayudas sin estado: normalizar texto, preferencias guardadas en el navegador
   paginas/, layouts/           Páginas de la SPA y su estructura común
 ```
 

@@ -1,24 +1,8 @@
 import { useEffect, useState } from 'react'
+import { guardarPreferencia, leerPreferencia } from '../utils/almacenamientoLocal'
 
 const CLAVE = 'reservaupla.tema'
 const SISTEMA_OSCURO = '(prefers-color-scheme: dark)'
-
-// Guardar la elección es una comodidad: si el navegador no lo permite (ventana privada), igual funciona.
-function leerElegido() {
-  try {
-    return localStorage.getItem(CLAVE)
-  } catch {
-    return null
-  }
-}
-
-function guardarElegido(tema) {
-  try {
-    localStorage.setItem(CLAVE, tema)
-  } catch {
-    // Sin almacenamiento: la elección dura hasta recargar.
-  }
-}
 
 function temaInicial() {
   return document.documentElement.dataset.tema ?? (window.matchMedia(SISTEMA_OSCURO).matches ? 'oscuro' : 'claro')
@@ -37,7 +21,7 @@ export function useTema() {
   useEffect(() => {
     const consulta = window.matchMedia(SISTEMA_OSCURO)
     const alCambiarSistema = (evento) => {
-      if (!leerElegido()) {
+      if (!leerPreferencia(CLAVE)) {
         setTema(evento.matches ? 'oscuro' : 'claro')
       }
     }
@@ -47,7 +31,7 @@ export function useTema() {
 
   function alternar() {
     const nuevo = tema === 'oscuro' ? 'claro' : 'oscuro'
-    guardarElegido(nuevo)
+    guardarPreferencia(CLAVE, nuevo)
     setTema(nuevo)
   }
 
