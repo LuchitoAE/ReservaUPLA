@@ -2,9 +2,9 @@ import { listarAmbientes } from '../../api/ambientesApi'
 import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
 import { ahoraEnPeru } from '../../utils/fechas'
-import { EncabezadoDePagina } from '../navegacion/EncabezadoDePagina'
 import { Button } from '../ui/Button'
 import { Icono } from '../ui/Icono'
+import { BandaDeBienvenida } from './BandaDeBienvenida'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
 import { ListaDeAmbientes } from './ListaDeAmbientes'
 import { ListaDeReservas } from './ListaDeReservas'
@@ -27,11 +27,11 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
 
   return (
     <>
-      <EncabezadoDePagina
-        titulo="Panel principal"
-        descripcion={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, pendientes: indicadores.datos?.reservas_pendientes })}
-        acciones={
-          <Button destino="/reservas" variante="principal">
+      <BandaDeBienvenida
+        resumen={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, pendientes: indicadores.datos?.reservas_pendientes })}
+        accion={
+          <Button destino="/reservas" variante="blanco">
+            <Icono nombre="reservas" />
             Ver mis reservas
           </Button>
         }

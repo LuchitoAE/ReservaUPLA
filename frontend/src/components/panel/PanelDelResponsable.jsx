@@ -3,8 +3,9 @@ import { listarAmbientes } from '../../api/ambientesApi'
 import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
 import { ahoraEnPeru } from '../../utils/fechas'
-import { EncabezadoDePagina } from '../navegacion/EncabezadoDePagina'
 import { Button } from '../ui/Button'
+import { Icono } from '../ui/Icono'
+import { BandaDeBienvenida } from './BandaDeBienvenida'
 import { AgendaDeLaSemana } from './AgendaDeLaSemana'
 import { diasDeLaSemana, lunesDe, moverSemana } from './agendaDeLaSemana'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
@@ -29,11 +30,11 @@ export function PanelDelResponsable({ usuario, indicadores }) {
 
   return (
     <>
-      <EncabezadoDePagina
-        titulo="Panel principal"
-        descripcion={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, semana: resumenDeEstaSemana })}
-        acciones={
-          <Button destino="/reservas" variante="principal">
+      <BandaDeBienvenida
+        resumen={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, semana: resumenDeEstaSemana })}
+        accion={
+          <Button destino="/reservas" variante="blanco">
+            <Icono nombre="reservas" />
             Reservas de mis ambientes
           </Button>
         }
