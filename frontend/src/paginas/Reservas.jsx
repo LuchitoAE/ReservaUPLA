@@ -4,13 +4,12 @@ import { listarAmbientes } from '../api/ambientesApi'
 import { listarReservas } from '../api/reservasApi'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { FiltrosDeReservas } from '../components/reservas/FiltrosDeReservas'
-import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
+import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { InsigniaDeEstado } from '../components/ui/InsigniaDeEstado'
 import { TableList } from '../components/ui/TableList'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
-import { avisoDeError } from '../utils/avisoDeError'
 import { formatearFecha } from '../utils/fechas'
 
 const COLUMNAS = [
@@ -127,6 +126,7 @@ export function Reservas() {
     [reservas.datos],
   )
   const cantidad = lista.length
+  const sinConexion = reservas.error?.tipo === 'sin_conexion'
 
   return (
     <>
@@ -140,21 +140,23 @@ export function Reservas() {
         }
       />
       <div className="flex flex-col gap-4">
-        <FiltrosDeReservas
-          filtros={filtros}
-          ambientes={ambientes.datos ?? []}
-          conteos={conteos}
-          alcance={
-            alcance && {
-              texto: alcance.texto,
-              activo: soloLoMio,
-              alCambiar: (activo) => cambiarParametro('todas', activo ? '' : '1'),
+        {!sinConexion && (
+          <FiltrosDeReservas
+            filtros={filtros}
+            ambientes={ambientes.datos ?? []}
+            conteos={conteos}
+            alcance={
+              alcance && {
+                texto: alcance.texto,
+                activo: soloLoMio,
+                alCambiar: (activo) => cambiarParametro('todas', activo ? '' : '1'),
+              }
             }
-          }
-          alCambiar={cambiarParametro}
-          alQuitar={limpiarFiltros}
-        />
-        {reservas.error && <AlertMessage tipo="error" aviso={avisoDeError(reservas.error)} />}
+            alCambiar={cambiarParametro}
+            alQuitar={limpiarFiltros}
+          />
+        )}
+        {reservas.error && <ErrorDeCarga error={reservas.error} alReintentar={reservas.recargar} />}
         {!reservas.cargando && !reservas.error && (
           <p role="status" className="text-texto-suave">
             {cantidad === 0
@@ -164,23 +166,25 @@ export function Reservas() {
                 : `Se encontraron ${cantidad} reservas.`}
           </p>
         )}
-        <TableList
-          titulo="Reservas"
-          columnas={COLUMNAS}
-          filas={lista}
-          claveFila="id_reserva"
-          cargando={reservas.cargando && !reservas.datos}
-          vacio="No hay reservas con estos filtros."
-          textoVacio="Cambie o quite un filtro para ver más reservas."
-          iconoVacio="buscar"
-          accionVacio={<Button onClick={limpiarFiltros}>Limpiar filtros</Button>}
-          accion={{
-            texto: 'Ver',
-            destino: (reserva) => `/reservas/${reserva.id_reserva}`,
-            describir: (reserva) => `la reserva ${reserva.codigo_reserva}`,
-          }}
-          notaPie="Toda la fila abre el detalle de la reserva."
-        />
+        {!reservas.error && (
+          <TableList
+            titulo="Reservas"
+            columnas={COLUMNAS}
+            filas={lista}
+            claveFila="id_reserva"
+            cargando={reservas.cargando && !reservas.datos}
+            vacio="No hay reservas con estos filtros."
+            textoVacio="Cambie o quite un filtro para ver más reservas."
+            iconoVacio="buscar"
+            accionVacio={<Button onClick={limpiarFiltros}>Limpiar filtros</Button>}
+            accion={{
+              texto: 'Ver',
+              destino: (reserva) => `/reservas/${reserva.id_reserva}`,
+              describir: (reserva) => `la reserva ${reserva.codigo_reserva}`,
+            }}
+            notaPie="Toda la fila abre el detalle de la reserva."
+          />
+        )}
       </div>
     </>
   )

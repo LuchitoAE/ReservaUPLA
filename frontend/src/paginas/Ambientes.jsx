@@ -1,15 +1,14 @@
 import { useMemo, useState } from 'react'
 import { listarAmbientes } from '../api/ambientesApi'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
-import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { ChipsDeFiltro } from '../components/ui/ChipsDeFiltro'
+import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { EtiquetaDeAmbiente } from '../components/ui/EtiquetaDeEstado'
 import { TableList } from '../components/ui/TableList'
 import { useFilaNueva } from '../hooks/useFilaNueva'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
-import { avisoDeError } from '../utils/avisoDeError'
 import { ESTADOS_AMBIENTE, TIPOS_AMBIENTE } from '../utils/formato'
 
 // Ambientes registrados (RF-02, diseños AD12 y R05). El administrador ve el acceso al formulario; el responsable ve
@@ -18,7 +17,7 @@ export function Ambientes() {
   const idNuevo = useFilaNueva()
   const { usuarioActual } = useUsuarioActual()
   const esAdministrador = usuarioActual.rol_usuario === 'Administrador'
-  const { datos, cargando, error } = useConsulta(() => listarAmbientes(), [])
+  const { datos, cargando, error, recargar } = useConsulta(() => listarAmbientes(), [])
   const [estado, setEstado] = useState('')
 
   const ambientes = useMemo(() => datos ?? [], [datos])
@@ -78,24 +77,26 @@ export function Ambientes() {
         }
       />
       <div className="flex flex-col gap-4">
-        {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
-        {!cargando && (
+        {error && <ErrorDeCarga error={error} alReintentar={recargar} />}
+        {!cargando && !error && (
           <div className="rounded-xl border border-borde bg-superficie p-4">
             <ChipsDeFiltro etiqueta="Filtrar por estado" opciones={chips} valor={estado} alCambiar={setEstado} />
           </div>
         )}
-        <TableList
-          titulo="Ambientes"
-          columnas={COLUMNAS}
-          filas={filtrados}
-          claveFila="id_ambiente"
-          filaNueva={idNuevo}
-          cargando={cargando}
-          vacio={ambientes.length === 0 ? 'Todavía no hay ambientes registrados.' : 'No hay ambientes con este estado.'}
-          textoVacio={ambientes.length === 0 ? undefined : 'Elija «Todos» para ver el listado completo.'}
-          iconoVacio="ambientes"
-          notaPie="Solo los ambientes disponibles reciben reservas."
-        />
+        {!error && (
+          <TableList
+            titulo="Ambientes"
+            columnas={COLUMNAS}
+            filas={filtrados}
+            claveFila="id_ambiente"
+            filaNueva={idNuevo}
+            cargando={cargando}
+            vacio={ambientes.length === 0 ? 'Todavía no hay ambientes registrados.' : 'No hay ambientes con este estado.'}
+            textoVacio={ambientes.length === 0 ? undefined : 'Elija «Todos» para ver el listado completo.'}
+            iconoVacio="ambientes"
+            notaPie="Solo los ambientes disponibles reciben reservas."
+          />
+        )}
       </div>
     </>
   )

@@ -54,7 +54,7 @@ export function FormularioAmbiente() {
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
-      <GrupoDeCampos numero="1" titulo="Identificación" descripcion="Cómo se llama y qué clase de ambiente es.">
+      <GrupoDeCampos numero="1" columnas={2} titulo="Identificación" descripcion="Cómo se llama y qué clase de ambiente es.">
         <TextInput
           {...campo('nombre_ambiente')}
           etiqueta="Nombre"
@@ -70,7 +70,7 @@ export function FormularioAmbiente() {
           textoVacio="Elija el tipo"
         />
       </GrupoDeCampos>
-      <GrupoDeCampos numero="2" titulo="Capacidad y ubicación" descripcion="Cuántas personas caben y dónde encontrarlo.">
+      <GrupoDeCampos numero="2" columnas={2} titulo="Capacidad y ubicación" descripcion="Cuántas personas caben y dónde encontrarlo.">
         <TextInput
           {...campo('capacidad_ambiente')}
           type="number"
@@ -89,7 +89,7 @@ export function FormularioAmbiente() {
           ayuda="Pabellón y piso, por ejemplo: Pabellón B, segundo piso."
         />
       </GrupoDeCampos>
-      <GrupoDeCampos numero="3" titulo="Estado y responsable" descripcion="Si recibe reservas y quién consulta su uso.">
+      <GrupoDeCampos numero="3" columnas={2} titulo="Estado y responsable" descripcion="Si recibe reservas y quién consulta su uso.">
         <SelectInput
           {...campo('estado_ambiente')}
           etiqueta="Estado"
@@ -103,7 +103,7 @@ export function FormularioAmbiente() {
           ayuda={
             opcionesDeResponsable.length === 0
               ? 'Aún no hay usuarios con el rol «Responsable de ambiente».'
-              : 'Quien consulta el uso del ambiente.'
+              : 'Solo aparecen los usuarios con el rol Responsable de ambiente.'
           }
           opciones={opcionesDeResponsable}
           textoVacio="Sin responsable"

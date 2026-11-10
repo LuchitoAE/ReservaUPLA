@@ -6,10 +6,10 @@ export function NuevoUsuario() {
   return (
     <>
       <EncabezadoDePagina
-        titulo="Registrar usuario"
-        descripcion="Quien solicita reservas, quien las aprueba o quien está a cargo de un ambiente."
+        titulo="Nuevo usuario"
+        descripcion="Registre a una persona con el código que le dio la universidad y elija qué podrá hacer."
       />
-      <section className="max-w-3xl">
+      <section>
         <FormularioUsuario />
       </section>
     </>

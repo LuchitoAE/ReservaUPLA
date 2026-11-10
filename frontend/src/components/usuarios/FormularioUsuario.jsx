@@ -50,11 +50,12 @@ export function FormularioUsuario() {
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
-      <GrupoDeCampos numero="1" titulo="Datos de la persona" descripcion="Con el código ingresará al sistema.">
+      <GrupoDeCampos numero="1" columnas={3} titulo="Datos de la persona" descripcion="Con el código ingresará al sistema.">
         <TextInput
           {...campo('codigo_usuario')}
           etiqueta="Código"
           obligatorio
+          icono="codigo"
           autoComplete="off"
           autoCapitalize="characters"
           spellCheck={false}
@@ -74,6 +75,7 @@ export function FormularioUsuario() {
           type="email"
           etiqueta="Correo"
           obligatorio
+          icono="correo"
           autoComplete="email"
           inputMode="email"
           maximo={USUARIO.correoMaximo}

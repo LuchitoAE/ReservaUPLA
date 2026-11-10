@@ -15,10 +15,11 @@ export function SelectInput({
   opciones,
   textoVacio = 'Elija una opción',
   opcional = false,
+  icono,
   ...resto
 }) {
   return (
-    <CampoBase id={id} etiqueta={etiqueta} obligatorio={obligatorio} ayuda={ayuda} error={error}>
+    <CampoBase id={id} etiqueta={etiqueta} obligatorio={obligatorio} ayuda={ayuda} error={error} icono={icono}>
       <select value={valor} onChange={(evento) => onCambiar(evento.target.value)} onBlur={onSalir} {...resto}>
         <option value="" disabled={!opcional}>
           {textoVacio}

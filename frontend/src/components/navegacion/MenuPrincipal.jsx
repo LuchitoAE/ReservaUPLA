@@ -79,7 +79,7 @@ export function MenuPrincipal({ id, abierto, alElegir, contraido = false }) {
                   aria-label={seccion.nombre}
                   title={seccion.nombre}
                   className={`${ESTILO_OPCION} ${soloIcono} font-semibold focus-visible:outline-3 focus-visible:outline-acento ${
-                    activa ? 'bg-white text-marca-900 shadow-[inset_4px_0_0_var(--color-acento)]' : 'text-white hover:bg-white/10 active:bg-white/20'
+                    activa ? 'bg-lateral-activo text-lateral-activo-texto shadow-[inset_4px_0_0_var(--color-acento)]' : 'text-white hover:bg-white/10 active:bg-white/20'
                   }`}
                 >
                   <Icono nombre={seccion.icono} />

@@ -1,6 +1,5 @@
-import { avisoDeError } from '../../utils/avisoDeError'
-import { AlertMessage } from '../ui/AlertMessage'
 import { Cargando } from '../ui/Cargando'
+import { ErrorDeCarga } from '../ui/ErrorDeCarga'
 import { CardIndicador } from '../ui/CardIndicador'
 
 // Cómo se llama el total y la sexta tarjeta para cada rol (diseños S01, R01 y AD01): cada uno cuenta lo suyo (RF-12).
@@ -27,7 +26,14 @@ const reservas = (n) => `${n} ${n === 1 ? 'reserva' : 'reservas'}`
 //   consulta: lo que devuelve useConsulta al pedir los indicadores. ambientesACargo: solo para el responsable.
 export function IndicadoresDelPanel({ rol, consulta, ambientesACargo = [] }) {
   if (consulta.error) {
-    return <AlertMessage tipo="error" aviso={avisoDeError(consulta.error)} />
+    return (
+      <ErrorDeCarga
+        error={consulta.error}
+        alReintentar={consulta.recargar}
+        titulo="No se pudieron cargar los indicadores."
+        mensaje="Ocurrió un error inesperado. Inténtelo de nuevo en unos minutos; si continúa, avise al administrador del sistema."
+      />
+    )
   }
   if (!consulta.datos) {
     return <Cargando texto="Cargando indicadores…" />

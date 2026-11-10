@@ -1,4 +1,4 @@
-import { formatearMomento } from '../../utils/fechas'
+import { formatearFechaDeMomento } from '../../utils/fechas'
 import { Icono } from '../ui/Icono'
 import { pasosDelHistorial } from './pasosDelHistorial'
 
@@ -18,14 +18,19 @@ export function HistorialDeReserva({ historial }) {
 
   return (
     <section aria-labelledby="titulo-historial" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
-      <h2 id="titulo-historial" className="mb-4 text-lg font-semibold text-titulo">
-        Historial
-      </h2>
+      <div className="mb-4 flex items-center gap-2.5">
+        <Icono nombre="pendiente" className="size-5 text-foco" />
+        <h2 id="titulo-historial" className="text-lg font-semibold text-titulo">
+          Historial
+        </h2>
+      </div>
       <ol className="flex flex-col gap-4">
         {pasos.map((paso) => {
           const { icono, estilo } = APARIENCIA[paso.estado]
+          // Si la reserva sigue pendiente, el diseño no repite la fecha ni el autor del registro: solo «Estado actual».
+          const pendienteActual = paso.actual && paso.estado === 'Pendiente'
           const detalle = [
-            formatearMomento(paso.fecha),
+            !pendienteActual && formatearFechaDeMomento(paso.fecha),
             paso.quien,
             paso.sinAutor && 'anterior al historial: no se registró quién lo hizo',
             paso.actual && 'estado actual',
@@ -38,7 +43,7 @@ export function HistorialDeReserva({ historial }) {
               </span>
               <div className="min-w-0">
                 <p className="font-semibold text-texto">{paso.titulo}</p>
-                <p className="text-sm text-texto-suave">{detalle.join(' · ')}</p>
+                <p className="text-sm text-texto-suave first-letter:uppercase">{detalle.join(' · ')}</p>
               </div>
             </li>
           )

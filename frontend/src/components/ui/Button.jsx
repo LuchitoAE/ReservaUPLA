@@ -14,10 +14,15 @@ const BASE =
 const VARIANTES = {
   principal: 'bg-marca-700 text-white shadow-sm hover:bg-marca-800 active:bg-marca-900',
   blanco:
-    'bg-white text-marca-700 shadow-sm hover:bg-marca-100 active:bg-marca-100 focus-visible:outline-white focus-visible:outline-offset-4',
+    'border border-boton-claro-borde bg-boton-claro text-boton-claro-texto shadow-sm hover:bg-boton-claro-hover active:bg-boton-claro-hover focus-visible:outline-white focus-visible:outline-offset-4',
   secundario: 'border border-borde-control bg-superficie text-texto hover:bg-superficie-tenue active:bg-seleccion',
   aprobar: 'bg-aprobar text-white shadow-sm hover:bg-aprobar-oscuro active:bg-aprobar-oscuro',
   peligro: 'bg-peligro text-white shadow-sm hover:bg-peligro-oscuro active:bg-peligro-oscuro',
+  'peligro-borde': 'border border-error bg-superficie text-error hover:bg-error-fondo active:bg-error-fondo',
+  acento: 'bg-acento text-acento-texto shadow-sm hover:brightness-95 active:translate-y-px',
+  enlace: 'px-2 text-enlace hover:underline underline-offset-2',
+  // Acción secundaria con el texto en azul, como «Reintentar» del error del panel (C04).
+  'enlace-borde': 'border border-borde-control bg-superficie text-enlace hover:bg-superficie-tenue active:bg-seleccion',
 }
 
 export function Button({

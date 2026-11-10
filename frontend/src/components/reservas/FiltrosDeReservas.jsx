@@ -65,7 +65,7 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
           <button
             type="button"
             onClick={() => alcance.alCambiar(false)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-marca-700 bg-seleccion px-4 font-semibold text-marca-700 transition hover:bg-marca-100 focus-visible:outline-3 focus-visible:outline-foco"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-marca-700 bg-seleccion px-4 font-semibold text-enlace transition hover:bg-superficie-tenue focus-visible:outline-3 focus-visible:outline-foco"
           >
             {alcance.texto}
             <Icono nombre="cerrar" className="size-4" />

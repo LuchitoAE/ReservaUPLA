@@ -9,8 +9,8 @@ export const ROLES = {
 // Qué puede hacer cada rol: se muestra al elegirlo y junto al usuario actual (el usuario sabe qué puede hacer con
 // solo mirar la pantalla, Norman).
 export const QUE_HACE_EL_ROL = {
-  Solicitante: 'Pide reservas y cancela las suyas.',
-  Administrador: 'Aprueba, rechaza o cancela reservas.',
+  Solicitante: 'Pide ambientes y sigue sus reservas.',
+  Administrador: 'Aprueba o rechaza y registra ambientes y usuarios.',
   ResponsableDeAmbiente: 'Consulta el uso de los ambientes a su cargo.',
 }
 

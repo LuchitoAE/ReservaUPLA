@@ -20,7 +20,7 @@ export function AlertMessage({ tipo = 'info', titulo, aviso, anunciar = true, ch
   const rol = anunciar ? (tipo === 'error' ? 'alert' : 'status') : undefined
 
   return (
-    <div className={`flex gap-3 rounded-lg border-l-4 p-4 ${ESTILOS[tipo]} ${className}`} role={rol}>
+    <div className={`flex gap-3 rounded-lg border p-4 ${ESTILOS[tipo]} ${className}`} role={rol}>
       <span className="w-4 text-center text-lg leading-6 font-bold" aria-hidden="true">
         {ICONOS[tipo]}
       </span>

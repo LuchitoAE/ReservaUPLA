@@ -152,5 +152,5 @@ export function TableList({
 }
 
 function MarcaNuevo() {
-  return <span className="ml-1 rounded-full bg-info-fondo px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-info-texto">Nuevo</span>
+  return <span className="mt-1 block w-fit rounded-full bg-acento px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-acento-texto">Nuevo</span>
 }

@@ -1,44 +1,64 @@
 import { describe, expect, it } from 'vitest'
 import { cruceAprobado, situacionDeLaReserva } from './situacionDeLaReserva'
 
-// RNF-05 y diseño AD08/AD09: la tarjeta de la decisión dice en qué está la reserva con el color del semáforo; si una
-// pendiente choca con una aprobada, lo dice en ámbar y no deja aprobar (RN-01, RN-08).
+// RNF-05 y diseños AD06/AD08/AD09/S13/S14: la tarjeta de la decisión dice en qué está la reserva con el color del
+// semáforo; si una pendiente choca con una aprobada, lo dice en ámbar y no deja aprobar (RN-01, RN-08).
 describe('situacionDeLaReserva', () => {
+  const reserva = {
+    estado_reserva: 'Pendiente',
+    nombre_ambiente: 'Laboratorio de cómputo 1',
+    fecha_reserva: '2026-11-11',
+  }
+
   it.each([
     ['Aprobada', 'exito', 'Aprobada'],
     ['Rechazada', 'error', 'Rechazada'],
     ['Cancelada', 'cancelada', 'Cancelada'],
-    ['Pendiente', 'aviso', 'Pendiente de aprobación'],
   ])('%s se muestra como «%s» con el título «%s»', (estado, tipo, titulo) => {
-    expect(situacionDeLaReserva({ estado_reserva: estado }, { esAdministrador: true })).toMatchObject({ tipo, titulo, sePuedeAprobar: true })
+    expect(situacionDeLaReserva({ ...reserva, estado_reserva: estado }, { esAdministrador: true })).toMatchObject({
+      tipo,
+      titulo,
+      sePuedeAprobar: true,
+    })
   })
 
-  it('una pendiente que choca con una aprobada se ve en ámbar y no se puede aprobar', () => {
-    const situacion = situacionDeLaReserva(
-      { estado_reserva: 'Pendiente' },
-      { esAdministrador: true, cruce: { codigo_reserva: 'RES-2026-0001', hora_inicio_reserva: '08:00', hora_fin_reserva: '10:00' } },
-    )
+  it('una pendiente libre se ve en verde y dice que el horario sigue libre (AD06)', () => {
+    expect(situacionDeLaReserva(reserva, { esAdministrador: true })).toMatchObject({
+      tipo: 'exito',
+      titulo: 'El horario sigue libre',
+      texto: 'No se cruza con otra reserva aprobada del Laboratorio de cómputo 1.',
+      sePuedeAprobar: true,
+    })
+  })
+
+  it('una pendiente que choca con una aprobada se ve en ámbar y no se puede aprobar (AD09)', () => {
+    const situacion = situacionDeLaReserva(reserva, {
+      esAdministrador: true,
+      cruce: { codigo_reserva: 'RES-2026-0001', hora_inicio_reserva: '08:00', hora_fin_reserva: '10:00' },
+    })
 
     expect(situacion).toMatchObject({ tipo: 'aviso', titulo: 'Choca con una reserva aprobada', sePuedeAprobar: false })
-    expect(situacion.texto).toBe('RES-2026-0001 ya ocupa de 08:00 a 10:00: no se puede aprobar.')
+    expect(situacion.texto).toBe(
+      'RES-2026-0001 ocupa el Laboratorio de cómputo 1 el 11/11/2026 de 08:00 a 10:00. No se puede aprobar; puede rechazarla.',
+    )
   })
 
-  it('cada texto es corto: cabe en el alto fijo de la tarjeta (RNF-04)', () => {
+  it('los textos de la tarjeta son cortos (RNF-04)', () => {
     const cruce = { codigo_reserva: 'RES-2026-0001', hora_inicio_reserva: '08:00', hora_fin_reserva: '10:00' }
     for (const estado of ['Pendiente', 'Aprobada', 'Rechazada', 'Cancelada']) {
       for (const opciones of [{ esAdministrador: true }, { esAdministrador: false }, { esAdministrador: true, cruce }]) {
-        expect(situacionDeLaReserva({ estado_reserva: estado }, opciones).texto.length).toBeLessThanOrEqual(72)
+        expect(situacionDeLaReserva({ ...reserva, estado_reserva: estado }, opciones).texto.length).toBeLessThanOrEqual(120)
       }
     }
   })
 
   it('al solicitante le explica quién decide', () => {
-    expect(situacionDeLaReserva({ estado_reserva: 'Pendiente' }, { esAdministrador: false }).texto).toMatch(/administrador/)
+    expect(situacionDeLaReserva(reserva, { esAdministrador: false }).texto).toMatch(/administrador/)
   })
 
-  it('los estados finales lo dicen', () => {
-    expect(situacionDeLaReserva({ estado_reserva: 'Rechazada' }, {}).texto).toMatch(/estado final/i)
-    expect(situacionDeLaReserva({ estado_reserva: 'Cancelada' }, {}).texto).toMatch(/estado final/i)
+  it('los estados finales dicen qué pasó y qué puede hacer (S13 y S14)', () => {
+    expect(situacionDeLaReserva({ ...reserva, estado_reserva: 'Rechazada' }).texto).toMatch(/registre una nueva solicitud/)
+    expect(situacionDeLaReserva({ ...reserva, estado_reserva: 'Cancelada' }).texto).toMatch(/ya no puede reactivarse/)
   })
 })
 

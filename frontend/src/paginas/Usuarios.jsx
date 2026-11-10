@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react'
 import { listarUsuarios } from '../api/usuariosApi'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
-import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { ChipsDeFiltro } from '../components/ui/ChipsDeFiltro'
+import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { EtiquetaDeEstado } from '../components/ui/EtiquetaDeEstado'
 import { TableList } from '../components/ui/TableList'
 import { useFilaNueva } from '../hooks/useFilaNueva'
 import { useConsulta } from '../hooks/useConsulta'
-import { avisoDeError } from '../utils/avisoDeError'
 import { ROLES } from '../utils/formato'
 
 const COLUMNAS = [
@@ -36,7 +35,7 @@ const CHIPS = [
 // cuántas cuentas hay de cada uno.
 export function Usuarios() {
   const idNuevo = useFilaNueva()
-  const { datos, cargando, error } = useConsulta(() => listarUsuarios(), [])
+  const { datos, cargando, error, recargar } = useConsulta(() => listarUsuarios(), [])
   const [rol, setRol] = useState('')
 
   const usuarios = useMemo(() => datos ?? [], [datos])
@@ -62,24 +61,26 @@ export function Usuarios() {
         }
       />
       <div className="flex flex-col gap-4">
-        {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
-        {!cargando && (
+        {error && <ErrorDeCarga error={error} alReintentar={recargar} />}
+        {!cargando && !error && (
           <div className="rounded-xl border border-borde bg-superficie p-4">
             <ChipsDeFiltro etiqueta="Filtrar por rol" opciones={chips} valor={rol} alCambiar={setRol} />
           </div>
         )}
-        <TableList
-          titulo="Usuarios"
-          columnas={COLUMNAS}
-          filas={filtrados}
-          claveFila="id_usuario"
-          filaNueva={idNuevo}
-          cargando={cargando}
-          vacio={usuarios.length === 0 ? 'Todavía no hay usuarios registrados.' : 'No hay usuarios con este rol.'}
-          textoVacio={usuarios.length === 0 ? undefined : 'Elija «Todos» para ver el listado completo.'}
-          iconoVacio="usuarios"
-          notaPie="Las cuentas las crea el administrador, con el código que da la universidad."
-        />
+        {!error && (
+          <TableList
+            titulo="Usuarios"
+            columnas={COLUMNAS}
+            filas={filtrados}
+            claveFila="id_usuario"
+            filaNueva={idNuevo}
+            cargando={cargando}
+            vacio={usuarios.length === 0 ? 'Todavía no hay usuarios registrados.' : 'No hay usuarios con este rol.'}
+            textoVacio={usuarios.length === 0 ? undefined : 'Elija «Todos» para ver el listado completo.'}
+            iconoVacio="usuarios"
+            notaPie="Las cuentas las crea el administrador, con el código que da la universidad."
+          />
+        )}
       </div>
     </>
   )
