@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { listarAmbientes } from '../api/ambientesApi'
 import { listarReservas } from '../api/reservasApi'
@@ -17,25 +17,27 @@ const COLUMNAS = [
   {
     clave: 'codigo_reserva',
     titulo: 'Código',
+    ancho: 'w-[13%]',
     celda: (reserva) => (
       <Link to={`/reservas/${reserva.id_reserva}`} className="font-semibold whitespace-nowrap text-enlace underline underline-offset-2 hover:decoration-2">
         {reserva.codigo_reserva}
       </Link>
     ),
   },
-  { clave: 'fecha_reserva', titulo: 'Fecha', celda: (reserva) => formatearFecha(reserva.fecha_reserva) },
+  { clave: 'nombre_ambiente', titulo: 'Ambiente', ancho: 'w-[21%]' },
+  { clave: 'fecha_reserva', titulo: 'Fecha', ancho: 'w-[11%]', celda: (reserva) => formatearFecha(reserva.fecha_reserva) },
   {
     clave: 'horario',
     titulo: 'Horario',
+    ancho: 'w-[12%]',
     celda: (reserva) => (
       <span className="tabular-nums whitespace-nowrap">
         {reserva.hora_inicio_reserva} a {reserva.hora_fin_reserva}
       </span>
     ),
   },
-  { clave: 'nombre_ambiente', titulo: 'Ambiente' },
-  { clave: 'nombre_completo_usuario', titulo: 'Solicitante' },
-  { clave: 'estado_reserva', titulo: 'Estado', celda: (reserva) => <InsigniaDeEstado estado={reserva.estado_reserva} /> },
+  { clave: 'nombre_completo_usuario', titulo: 'Solicitante', ancho: 'w-[19%]' },
+  { clave: 'estado_reserva', titulo: 'Estado', ancho: 'w-[14%]', celda: (reserva) => <InsigniaDeEstado estado={reserva.estado_reserva} /> },
 ]
 
 // Qué parte de las reservas ve primero cada rol. El administrador, todas.
@@ -45,6 +47,20 @@ const ALCANCES = {
     texto: 'Solo los ambientes a mi cargo',
     filtro: (usuario) => ({ id_responsable_ambiente: usuario.id_usuario }),
   },
+}
+
+// Cada rol llega con su alcance ya elegido y la pantalla lo dice (diseños S09, R03 y AD04).
+const DESCRIPCIONES = {
+  Solicitante: 'Solicitudes registradas y su estado. Se abre con las suyas; quite el filtro para ver todas.',
+  ResponsableDeAmbiente: 'Solicitudes registradas y su estado. Se abre con las de los ambientes a su cargo.',
+  Administrador: 'Todas las reservas del sistema. Use los filtros para encontrar una.',
+}
+
+const ESTADOS_EN_PLURAL = {
+  Pendiente: 'Pendientes',
+  Aprobada: 'Aprobadas',
+  Rechazada: 'Rechazadas',
+  Cancelada: 'Canceladas',
 }
 
 // RF-05: reservas registradas, con búsqueda por código o solicitante y filtros por estado, ambiente y rango de fechas.
@@ -69,6 +85,21 @@ export function Reservas() {
   const consulta = { ...filtros, ...filtroDeAlcance }
   const reservas = useConsulta(() => listarReservas(consulta), [JSON.stringify(consulta)])
 
+  // Los chips muestran cuántas reservas hay en cada estado con el resto de los filtros puestos: se cuentan sin el
+  // estado, para que al elegir uno los demás conteos sigan diciendo la verdad (diseño S09).
+  const consultaSinEstado = { ...filtros, estado_reserva: '', ...filtroDeAlcance }
+  const paraContar = useConsulta(() => listarReservas(consultaSinEstado), [JSON.stringify(consultaSinEstado)])
+  const conteos = useMemo(() => {
+    const lista = paraContar.datos ?? []
+    const porEstado = Object.fromEntries(Object.keys(ESTADOS_EN_PLURAL).map((estado) => [estado, 0]))
+    lista.forEach((reserva) => {
+      if (reserva.estado_reserva in porEstado) {
+        porEstado[reserva.estado_reserva] += 1
+      }
+    })
+    return { total: lista.length, ...porEstado }
+  }, [paraContar.datos])
+
   // La búsqueda la cambia un temporizador: la función es la misma en cada dibujo y lee la dirección del momento.
   const cambiarParametro = useCallback(
     (nombre, valor) => {
@@ -85,13 +116,23 @@ export function Reservas() {
     [setParametros],
   )
 
-  const cantidad = reservas.datos?.length ?? 0
+  const limpiarFiltros = () => setParametros(parametros.get('todas') ? { todas: '1' } : {})
+
+  // La lista se lee de la fecha más próxima a la más lejana (diseño AD04: «Fecha ↑»), sin depender del orden de la base.
+  const lista = useMemo(
+    () =>
+      [...(reservas.datos ?? [])].sort((una, otra) =>
+        `${una.fecha_reserva} ${una.hora_inicio_reserva}`.localeCompare(`${otra.fecha_reserva} ${otra.hora_inicio_reserva}`),
+      ),
+    [reservas.datos],
+  )
+  const cantidad = lista.length
 
   return (
     <>
       <EncabezadoDePagina
         titulo="Reservas"
-        descripcion="Solicitudes registradas y su estado."
+        descripcion={DESCRIPCIONES[usuarioActual?.rol_usuario] ?? DESCRIPCIONES.Administrador}
         acciones={
           <Button destino="/reservas/nueva" variante="principal">
             Nueva reserva
@@ -102,23 +143,43 @@ export function Reservas() {
         <FiltrosDeReservas
           filtros={filtros}
           ambientes={ambientes.datos ?? []}
-          alcance={alcance && { texto: alcance.texto, activo: soloLoMio, alCambiar: (activo) => cambiarParametro('todas', activo ? '' : '1') }}
+          conteos={conteos}
+          alcance={
+            alcance && {
+              texto: alcance.texto,
+              activo: soloLoMio,
+              alCambiar: (activo) => cambiarParametro('todas', activo ? '' : '1'),
+            }
+          }
           alCambiar={cambiarParametro}
-          alQuitar={() => setParametros(parametros.get('todas') ? { todas: '1' } : {})}
+          alQuitar={limpiarFiltros}
         />
         {reservas.error && <AlertMessage tipo="error" aviso={avisoDeError(reservas.error)} />}
         {!reservas.cargando && !reservas.error && (
           <p role="status" className="text-texto-suave">
-            {cantidad === 1 ? 'Se encontró 1 reserva.' : `Se encontraron ${cantidad} reservas.`}
+            {cantidad === 0
+              ? 'No se encontraron reservas.'
+              : cantidad === 1
+                ? 'Se encontró 1 reserva.'
+                : `Se encontraron ${cantidad} reservas.`}
           </p>
         )}
         <TableList
           titulo="Reservas"
           columnas={COLUMNAS}
-          filas={reservas.datos ?? []}
+          filas={lista}
           claveFila="id_reserva"
           cargando={reservas.cargando && !reservas.datos}
           vacio="No hay reservas con estos filtros."
+          textoVacio="Cambie o quite un filtro para ver más reservas."
+          iconoVacio="buscar"
+          accionVacio={<Button onClick={limpiarFiltros}>Limpiar filtros</Button>}
+          accion={{
+            texto: 'Ver',
+            destino: (reserva) => `/reservas/${reserva.id_reserva}`,
+            describir: (reserva) => `la reserva ${reserva.codigo_reserva}`,
+          }}
+          notaPie="Toda la fila abre el detalle de la reserva."
         />
       </div>
     </>

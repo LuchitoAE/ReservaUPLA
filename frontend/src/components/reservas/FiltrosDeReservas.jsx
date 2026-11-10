@@ -1,23 +1,32 @@
 import { useEffect, useState } from 'react'
-import { ESTADOS_RESERVA, opcionesDe } from '../../utils/formato'
-import { Button } from '../ui/Button'
+import { ESTADOS_RESERVA } from '../../utils/formato'
+import { ChipsDeFiltro } from '../ui/ChipsDeFiltro'
 import { DateInput } from '../ui/DateInput'
+import { Icono } from '../ui/Icono'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
 
 const ESPERA_MS = 350
 
-// Filtros del listado (RF-05): buscar por código o solicitante, estado, ambiente y un rango de fechas. Cada cambio se
-// aplica al momento; la búsqueda espera a que la persona deje de escribir. «Quitar filtros» vuelve a la lista completa.
-// «alcance» depende del rol del usuario actual: el solicitante ve primero sus reservas y el responsable, las de sus
-// ambientes; el administrador ve todas.
-export function FiltrosDeReservas({ filtros, ambientes, alcance, alCambiar, alQuitar }) {
+const ESTADOS_EN_PLURAL = {
+  Pendiente: 'Pendientes',
+  Aprobada: 'Aprobadas',
+  Rechazada: 'Rechazadas',
+  Cancelada: 'Canceladas',
+}
+
+// Filtros del listado (RF-05, diseños S09 y AD04): chips por estado con su conteo, ambiente, rango de fechas y búsqueda
+// por código o solicitante. Cada cambio se aplica al momento; la búsqueda espera a que la persona deje de escribir.
+// «Limpiar filtros» vuelve a la lista completa (y conserva el alcance del rol si seguía puesto).
+// «alcance» depende del rol: el solicitante ve primero sus reservas y el responsable, las de sus ambientes; se quita
+// con la ✕ del chip. El administrador ve todas.
+export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCambiar, alQuitar }) {
   const opcionesDeAmbiente = ambientes.map((ambiente) => ({ valor: ambiente.id_ambiente, etiqueta: ambiente.nombre_ambiente }))
-  const hayFiltros = Object.values(filtros).some(Boolean)
+  const hayFiltros = Object.values(filtros).some(Boolean) || Boolean(alcance?.activo)
   const [texto, setTexto] = useState(filtros.texto)
   const [textoAplicado, setTextoAplicado] = useState(filtros.texto)
 
-  // Si el filtro cambia desde afuera (Quitar filtros, «atrás»), el buscador lo muestra. Si cambió porque se aplicó lo
+  // Si el filtro cambia desde afuera (Limpiar filtros, «atrás»), el buscador lo muestra. Si cambió porque se aplicó lo
   // que la persona escribe, se deja tal cual (con su espacio final, si sigue escribiendo).
   if (filtros.texto !== textoAplicado) {
     setTextoAplicado(filtros.texto)
@@ -34,70 +43,83 @@ export function FiltrosDeReservas({ filtros, ambientes, alcance, alCambiar, alQu
     return () => clearTimeout(temporizador)
   }, [texto, filtros.texto, alCambiar])
 
+  const chipsDeEstado = [
+    { valor: '', etiqueta: 'Todas', cantidad: conteos.total },
+    ...Object.entries(ESTADOS_RESERVA).map(([valor]) => ({
+      valor,
+      etiqueta: ESTADOS_EN_PLURAL[valor],
+      cantidad: conteos[valor] ?? 0,
+    })),
+  ]
+
   return (
     <section aria-label="Filtros" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(0,1.6fr)_repeat(4,minmax(0,1fr))]">
-        <div className="sm:col-span-2 xl:col-span-1">
-          <TextInput
-            id="filtro-texto"
-            etiqueta="Buscar"
-            type="search"
-            valor={texto}
-            onCambiar={setTexto}
-            maxLength={100}
-            ayuda="Por código (RES-2026-0001) o por el nombre de quien la solicitó."
-          />
-        </div>
-        <SelectInput
-          id="filtro-estado"
-          etiqueta="Estado"
-          opcional
-          textoVacio="Todos los estados"
-          opciones={opcionesDe(ESTADOS_RESERVA)}
+      <div className="flex flex-wrap items-center gap-2">
+        <ChipsDeFiltro
+          etiqueta="Filtrar por estado"
+          opciones={chipsDeEstado}
           valor={filtros.estado_reserva}
-          onCambiar={(valor) => alCambiar('estado_reserva', valor)}
+          alCambiar={(valor) => alCambiar('estado_reserva', valor)}
         />
-        <SelectInput
-          id="filtro-ambiente"
-          etiqueta="Ambiente"
-          opcional
-          textoVacio="Todos los ambientes"
-          opciones={opcionesDeAmbiente}
-          valor={filtros.id_ambiente}
-          onCambiar={(valor) => alCambiar('id_ambiente', valor)}
-        />
-        <DateInput
-          id="filtro-desde"
-          etiqueta="Desde"
-          valor={filtros.fecha_desde}
-          maximo={filtros.fecha_hasta || undefined}
-          onCambiar={(valor) => alCambiar('fecha_desde', valor)}
-        />
-        <DateInput
-          id="filtro-hasta"
-          etiqueta="Hasta"
-          valor={filtros.fecha_hasta}
-          minimo={filtros.fecha_desde || undefined}
-          onCambiar={(valor) => alCambiar('fecha_hasta', valor)}
-        />
-      </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {alcance ? (
-          <label className="flex min-h-11 cursor-pointer items-center gap-2.5">
-            <input
-              type="checkbox"
-              checked={alcance.activo}
-              onChange={(evento) => alcance.alCambiar(evento.target.checked)}
-              className="size-5 accent-foco"
-            />
+        {alcance?.activo && (
+          <button
+            type="button"
+            onClick={() => alcance.alCambiar(false)}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-marca-700 bg-seleccion px-4 font-semibold text-marca-700 transition hover:bg-marca-100 focus-visible:outline-3 focus-visible:outline-foco"
+          >
             {alcance.texto}
-          </label>
-        ) : (
-          <span />
+            <Icono nombre="cerrar" className="size-4" />
+            <span className="sr-only">Quitar este filtro y ver todas</span>
+          </button>
         )}
-        <Button onClick={alQuitar} disabled={!hayFiltros}>
-          Quitar filtros
-        </Button>
+      </div>
+
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-end">
+        <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_minmax(0,1.6fr)]">
+          <SelectInput
+            id="filtro-ambiente"
+            etiqueta="Ambiente"
+            opcional
+            textoVacio="Todos los ambientes"
+            opciones={opcionesDeAmbiente}
+            valor={filtros.id_ambiente}
+            onCambiar={(valor) => alCambiar('id_ambiente', valor)}
+          />
+          <DateInput
+            id="filtro-desde"
+            etiqueta="Desde"
+            valor={filtros.fecha_desde}
+            maximo={filtros.fecha_hasta || undefined}
+            onCambiar={(valor) => alCambiar('fecha_desde', valor)}
+          />
+          <DateInput
+            id="filtro-hasta"
+            etiqueta="Hasta"
+            valor={filtros.fecha_hasta}
+            minimo={filtros.fecha_desde || undefined}
+            onCambiar={(valor) => alCambiar('fecha_hasta', valor)}
+          />
+          <div className="sm:col-span-2 xl:col-span-1">
+            <TextInput
+              id="filtro-texto"
+              etiqueta="Buscar"
+              type="search"
+              valor={texto}
+              onCambiar={setTexto}
+              maxLength={100}
+              placeholder="Código o solicitante"
+            />
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={alQuitar}
+          disabled={!hayFiltros}
+          className="inline-flex min-h-11 items-center gap-2 self-start rounded-lg px-2 font-semibold text-enlace underline-offset-2 hover:underline focus-visible:outline-3 focus-visible:outline-foco disabled:cursor-not-allowed disabled:text-texto-suave disabled:no-underline xl:self-end"
+        >
+          <Icono nombre="cerrar" className="size-4" />
+          Limpiar filtros
+        </button>
       </div>
     </section>
   )

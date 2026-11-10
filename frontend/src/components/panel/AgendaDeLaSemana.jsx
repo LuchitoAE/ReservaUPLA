@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { ESTADOS_AMBIENTE } from '../../utils/formato'
+import { EstadoVacio } from '../ui/EstadoVacio'
 import { Icono } from '../ui/Icono'
 import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 import { bloquesDeLaAgenda, diasDeLaSemana, tituloDeLaSemana } from './agendaDeLaSemana'
@@ -36,7 +37,11 @@ export function AgendaDeLaSemana({ ambientes, reservas, lunes, cargando, alCambi
       </div>
 
       {ambientes.length === 0 ? (
-        <p className="text-texto-suave">No tiene ambientes a su cargo. Los asigna el administrador al registrar el ambiente.</p>
+        <EstadoVacio
+          icono="ambientes"
+          titulo="Aún no tiene ambientes a su cargo"
+          texto="Cuando el administrador le asigne un ambiente, aquí verá su agenda de la semana: qué reservas tiene y a qué hora."
+        />
       ) : (
         <>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
