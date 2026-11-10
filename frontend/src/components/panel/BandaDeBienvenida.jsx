@@ -34,7 +34,7 @@ export function BandaDeBienvenida({ titulo = 'Panel principal', resumen, accion 
               <span key={indice} className={`size-6 rounded-md ${TONOS[tono]}`} />
             ))}
           </span>
-          {accion && <div className="w-full sm:w-auto">{accion}</div>}
+          {accion && <div className="hidden sm:block">{accion}</div>}
         </div>
       </div>
     </header>

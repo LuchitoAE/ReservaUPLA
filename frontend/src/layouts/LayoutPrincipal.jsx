@@ -111,13 +111,25 @@ export function LayoutPrincipal() {
 
       <div className="flex min-h-screen min-w-0 flex-col">
         <BarraSuperior />
-        <main id="contenido" tabIndex={-1} className="flex-1 px-4 py-8 focus:outline-none sm:px-7">
+        <main id="contenido" tabIndex={-1} className="flex-1 px-4 py-8 pb-24 focus:outline-none sm:px-7 lg:pb-8">
           <Outlet />
         </main>
         <footer className="border-t border-borde px-4 py-4 text-center text-sm text-texto-suave sm:px-7">
           ReservaUPLA · Universidad Peruana Los Andes · Gestión de reservas de ambientes
         </footer>
       </div>
+
+      {/* En el teléfono, la acción principal del sistema (diseño T2): un botón flotante que sigue a la vista al
+          desplazar, en lugar del botón de la barra lateral, que ahí queda dentro del menú. */}
+      {pathname !== '/reservas/nueva' && (
+        <Link
+          to="/reservas/nueva"
+          className="fixed right-4 bottom-4 z-30 inline-flex min-h-14 items-center gap-2 rounded-full bg-acento px-5 font-semibold text-acento-texto shadow-lg transition hover:brightness-95 active:translate-y-px focus-visible:outline-3 focus-visible:outline-foco lg:hidden"
+        >
+          <Icono nombre="nueva" />
+          Nueva reserva
+        </Link>
+      )}
     </div>
   )
 }
