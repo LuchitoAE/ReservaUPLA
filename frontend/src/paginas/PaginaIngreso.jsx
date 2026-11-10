@@ -40,13 +40,15 @@ export function PaginaIngreso() {
         <TextInput
           {...campo('codigo_usuario')}
           etiqueta="Código"
+          obligatorio
+          icono="codigo"
           autoComplete="username"
           autoCapitalize="characters"
           spellCheck={false}
           maxLength={20}
           ayuda="Su código de la UPLA, por ejemplo P00914K."
         />
-        <CampoDeContrasena {...campo('contrasena_usuario')} etiqueta="Contraseña" />
+        <CampoDeContrasena {...campo('contrasena_usuario')} etiqueta="Contraseña" obligatorio />
         <div className="flex flex-col gap-2">
           <Button type="submit" variante="principal" ocupado={enviando} disabled={faltan.length > 0} aria-describedby="motivo-ingreso">
             {enviando ? 'Ingresando…' : 'Ingresar'}

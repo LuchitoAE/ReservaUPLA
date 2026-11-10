@@ -37,3 +37,14 @@ export const ESTADOS_RESERVA = {
 export function opcionesDe(etiquetas) {
   return Object.entries(etiquetas).map(([valor, etiqueta]) => ({ valor, etiqueta }))
 }
+
+// Iniciales para el avatar (chip de la sesión y Mi cuenta): «Luis Aquino Espinoza» → «LA».
+export function inicialesDe(nombreCompleto) {
+  return nombreCompleto
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte[0])
+    .join('')
+    .toUpperCase()
+}

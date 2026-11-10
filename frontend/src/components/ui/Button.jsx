@@ -8,7 +8,8 @@ import { Link } from 'react-router'
 const BASE =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 font-semibold transition ' +
   'active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foco ' +
-  'disabled:cursor-not-allowed disabled:opacity-55 disabled:active:translate-y-0'
+  'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-deshabilitado disabled:text-deshabilitado-texto ' +
+  'disabled:shadow-none disabled:active:translate-y-0'
 
 const VARIANTES = {
   principal: 'bg-marca-700 text-white shadow-sm hover:bg-marca-800 active:bg-marca-900',

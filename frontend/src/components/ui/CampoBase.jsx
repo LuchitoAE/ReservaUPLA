@@ -1,4 +1,5 @@
 import { cloneElement } from 'react'
+import { Icono } from './Icono'
 
 // Lo común de todos los campos (TextInput, SelectInput, DateInput, TimeInput): etiqueta, control y una línea debajo,
 // siempre en ese orden y con el mismo aspecto. El borde rojo sale del propio aria-invalid: lo que se ve y lo que
@@ -10,9 +11,10 @@ const ESTILO_CONTROL =
 
 // La línea bajo el control siempre ocupa su lugar (RNF-04, diseño S05): muestra el error si lo hay; si no, el aviso
 // (por ejemplo, Bloq Mayús activado, que no es un error); si no, la ayuda. Así un error no agranda el campo ni empuja
-// lo que sigue. «contador» va a la derecha de esa línea. «adorno»: algo dentro del control, a la derecha (el botón
-// «Mostrar» de la contraseña).
-export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, contador, adorno, aviso, className = '', children }) {
+// lo que sigue. «contador» va a la derecha de esa línea. «icono»: una pista dentro del control, a la izquierda (la
+// credencial del código, el candado de la contraseña), siempre decorativa porque la etiqueta ya nombra el campo.
+// «adorno»: algo dentro del control, a la derecha (el ojo que muestra la contraseña).
+export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, contador, adorno, aviso, icono, className = '', children }) {
   const idAyuda = ayuda ? `${id}-ayuda` : null
   const idError = error ? `${id}-error` : null
   const descritoPor = error ? idError : idAyuda
@@ -29,13 +31,19 @@ export function CampoBase({ id, etiqueta, obligatorio = false, ayuda, error, con
         )}
       </label>
       <div className="relative">
+        {icono && (
+          <Icono
+            nombre={icono}
+            className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-texto-suave"
+          />
+        )}
         {cloneElement(children, {
           id,
           name: id,
           'aria-invalid': Boolean(error),
           'aria-describedby': descritoPor || undefined,
           'aria-required': obligatorio || undefined,
-          className: `${ESTILO_CONTROL} ${adorno ? 'pr-24' : ''} ${children.props.className ?? ''}`,
+          className: `${ESTILO_CONTROL} ${icono ? 'pl-11' : ''} ${adorno ? 'pr-12' : ''} ${children.props.className ?? ''}`,
         })}
         {adorno}
       </div>

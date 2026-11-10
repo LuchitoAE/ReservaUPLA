@@ -35,6 +35,7 @@ export function PanelDelAdministrador({ usuario, indicadores }) {
             id="por-aprobar"
             titulo="Pendientes por aprobar"
             descripcion="Primero las más próximas"
+            icono="pendiente"
             enlace={{ destino: '/reservas?estado_reserva=Pendiente', texto: 'Ver todas' }}
           >
             {pendientes.cargando && !pendientes.datos ? (
@@ -48,7 +49,7 @@ export function PanelDelAdministrador({ usuario, indicadores }) {
               />
             )}
           </Seccion>
-          <Seccion id="uso" titulo="Reservas por ambiente" descripcion="Todas las registradas, de más a menos">
+          <Seccion id="uso" titulo="Reservas por ambiente" descripcion="Todas las registradas, de más a menos" icono="total">
             {indicadores.datos && <UsoDeAmbientes usos={indicadores.datos.reservas_por_ambiente} />}
           </Seccion>
         </div>

@@ -71,6 +71,10 @@
   --color-rechazada-texto: #7f1d1d;
   --color-cancelada-fondo: #e2e8f0;
   --color-cancelada-texto: #334155;
+  /* Botón deshabilitado: gris plano, sin sombra, para que se lea como «todavía no» y no como una acción azul apagada
+     (diseño AC01). */
+  --color-deshabilitado: #e6ebf3;
+  --color-deshabilitado-texto: #64748b;
   /* Gris de la tarjeta «Canceladas» del panel: relleno sólido bajo un ícono blanco, igual en los dos modos (el texto
      de arriba sí cambia con el tema, por eso no se reutiliza). */
   --color-cancelada-solida: #475569;
@@ -116,6 +120,8 @@
     --color-rechazada-texto: #fecaca;
     --color-cancelada-fondo: #243241;
     --color-cancelada-texto: #cbd5e1;
+    --color-deshabilitado: #1d2f47;
+    --color-deshabilitado-texto: #93a4ba;
 }
 
 @layer base {

@@ -39,7 +39,13 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
       <div className="flex flex-col gap-6">
         <IndicadoresDelPanel rol={usuario.rol_usuario} consulta={indicadores} />
         <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <Seccion id="proximas" titulo="Mis próximas reservas" descripcion="Ordenadas por fecha" enlace={{ destino: '/reservas', texto: 'Ver todas' }}>
+          <Seccion
+            id="proximas"
+            titulo="Mis próximas reservas"
+            descripcion="Ordenadas por fecha"
+            icono="reservas"
+            enlace={{ destino: '/reservas', texto: 'Ver todas' }}
+          >
             {proximas.cargando && !proximas.datos ? (
               <p className="text-texto-suave">Cargando…</p>
             ) : (
@@ -47,7 +53,7 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
             )}
           </Seccion>
           <div className="flex flex-col gap-6">
-            <Seccion id="como-avanza" titulo="Cómo avanza una reserva">
+            <Seccion id="como-avanza" titulo="Cómo avanza una reserva" icono="info">
               <ol className="flex flex-col gap-3">
                 {PASOS.map((paso) => (
                   <li key={paso.titulo} className="flex gap-3">
@@ -62,7 +68,7 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
                 ))}
               </ol>
             </Seccion>
-            <Seccion id="ambientes" titulo="Ambientes" enlace={{ destino: '/ambientes', texto: 'Ver' }}>
+            <Seccion id="ambientes" titulo="Ambientes" icono="ambientes" enlace={{ destino: '/ambientes', texto: 'Ver' }}>
               <ListaDeAmbientes ambientes={ambientes.datos ?? []} />
             </Seccion>
           </div>

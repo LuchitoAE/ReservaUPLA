@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { Icono } from '../ui/Icono'
 import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 
 // '2026-11-10' → { dia: 'MAR', numero: 10, mes: 'NOV' }, para el recuadro de la fecha (diseño S01 y AD01).
@@ -19,6 +20,7 @@ export function ListaDeReservas({ reservas, vacio, accion = 'Ver', conSolicitant
     <ul className="divide-y divide-borde">
       {reservas.map((reserva) => {
         const { dia, numero, mes } = partesDeLaFecha(reserva.fecha_reserva)
+        const esRevisar = accion === 'Revisar'
         return (
           <li key={reserva.id_reserva} className="flex items-center gap-3 py-3">
             <span className="flex w-14 shrink-0 flex-col items-center rounded-lg bg-seleccion py-1 text-titulo" aria-hidden="true">
@@ -32,7 +34,8 @@ export function ListaDeReservas({ reservas, vacio, accion = 'Ver', conSolicitant
                 <span className="tabular-nums">
                   {reserva.hora_inicio_reserva} a {reserva.hora_fin_reserva}
                 </span>
-                {conSolicitante && ` · ${reserva.nombre_completo_usuario}`} · {reserva.codigo_reserva}
+                {conSolicitante && ` · ${reserva.nombre_completo_usuario}`} ·{' '}
+                <span className="whitespace-nowrap">{reserva.codigo_reserva}</span>
               </p>
               <span className="sr-only">{`${dia} ${numero} ${mes}`}</span>
             </div>
@@ -41,9 +44,12 @@ export function ListaDeReservas({ reservas, vacio, accion = 'Ver', conSolicitant
             </span>
             <Link
               to={`/reservas/${reserva.id_reserva}`}
-              className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-3 font-semibold text-enlace underline-offset-2 hover:underline focus-visible:outline-3 focus-visible:outline-foco"
+              className={`inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg font-semibold text-enlace underline-offset-2 hover:underline focus-visible:outline-3 focus-visible:outline-foco ${
+                esRevisar ? 'border border-borde-control px-4 hover:bg-superficie-tenue' : 'px-3'
+              }`}
             >
               {accion}
+              {!esRevisar && <Icono nombre="siguiente" className="size-4" />}
               <span className="sr-only"> la reserva {reserva.codigo_reserva}</span>
             </Link>
           </li>
