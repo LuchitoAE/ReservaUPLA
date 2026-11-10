@@ -43,6 +43,13 @@ internal sealed class RepositorioDeUsuarios : IRepositorioDeUsuarios
         return await _contexto.Usuarios.AnyAsync(u => u.Activo_Usuario && u.Rol_Usuario == Roles_Usuario.Administrador, cancelacion);
     }
 
+    // El usuario llega sin seguimiento (ObtenerPorIdAsync lee con AsNoTracking): Update lo marca como cambiado.
+    public async Task ActualizarAsync(Usuario usuario, CancellationToken cancelacion = default)
+    {
+        _contexto.Usuarios.Update(usuario);
+        await _contexto.SaveChangesAsync(cancelacion);
+    }
+
     public async Task AgregarAsync(Usuario usuario, CancellationToken cancelacion = default)
     {
         _contexto.Usuarios.Add(usuario);

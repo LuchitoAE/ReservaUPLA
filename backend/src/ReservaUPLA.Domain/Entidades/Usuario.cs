@@ -130,6 +130,42 @@ public sealed class Usuario
             : "La contraseña debe tener al menos una mayúscula, una minúscula y un número.";
     }
 
+    // RF-11: cambia la contraseña de la propia cuenta. La actual debe coincidir con la guardada; la nueva cumple RN-13
+    // y no repite la actual. Si algo falla, informa todos los errores juntos, cada uno con su campo, y no cambia nada.
+    public void CambiarContrasena(
+        string? actual,
+        string? nueva,
+        Func<string, ContrasenaCifrada, bool> verificar,
+        Func<string, ContrasenaCifrada> cifrar)
+    {
+        var errores = new ErroresDeValidacion();
+
+        if (string.IsNullOrEmpty(actual))
+        {
+            errores.Agregar("Contrasena_Actual", "Escriba su contraseña actual.");
+        }
+        else if (!verificar(actual, new ContrasenaCifrada(Sal_Contrasena_Usuario, Hash_Contrasena_Usuario)))
+        {
+            errores.Agregar("Contrasena_Actual", "La contraseña actual no es correcta.");
+        }
+
+        var mensaje_nueva = RevisarContrasena(nueva);
+        if (mensaje_nueva is not null)
+        {
+            errores.Agregar("Contrasena_Nueva", mensaje_nueva);
+        }
+        else if (nueva == actual)
+        {
+            errores.Agregar("Contrasena_Nueva", "Debe ser distinta de la actual.");
+        }
+
+        errores.LanzarSiHay();
+
+        var cifrada = cifrar(nueva!);
+        Sal_Contrasena_Usuario = cifrada.Sal;
+        Hash_Contrasena_Usuario = cifrada.Hash;
+    }
+
     // RN-05: solo un administrador activo aprueba o rechaza reservas.
     public bool EsAdministrador() => Activo_Usuario && Rol_Usuario == Roles_Usuario.Administrador;
 }
