@@ -1,4 +1,4 @@
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 
 namespace ReservaUPLA.Application.Interfaces;
 
@@ -6,5 +6,5 @@ namespace ReservaUPLA.Application.Interfaces;
 // indicadores no depende de métodos que no usa (ISP).
 public interface IConsultaDeIndicadores
 {
-    Task<IndicadoresDto> ObtenerAsync(CancellationToken cancelacion = default);
+    Task<DatosDeIndicadores> ObtenerAsync(CancellationToken cancelacion = default);
 }

@@ -16,14 +16,14 @@ public static class DependencyInjection
         services.AddDbContext<ReservaUPLADbContext>(opciones => opciones.UseNpgsql(cadena_conexion));
 
         services.AddSingleton<IReloj, RelojDelSistema>();
-        services.AddSingleton<IHasherDeContrasenas, HasherPbkdf2>();
+        services.AddSingleton<IProtectorDeContrasenas, HasherPbkdf2>();
 
         // Guardar entidades (repositorios) y leer para mostrar (consultas): cada contrato con su clase.
-        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IRepositorioDeUsuarios, UsuarioRepository>();
         services.AddScoped<IConsultaDeUsuarios, ConsultaDeUsuarios>();
-        services.AddScoped<IAmbienteRepository, AmbienteRepository>();
+        services.AddScoped<IRepositorioDeAmbientes, AmbienteRepository>();
         services.AddScoped<IConsultaDeAmbientes, ConsultaDeAmbientes>();
-        services.AddScoped<IReservaRepository, ReservaRepository>();
+        services.AddScoped<IRepositorioDeReservas, ReservaRepository>();
         services.AddScoped<IConsultaDeReservas, ConsultaDeReservas>();
         services.AddScoped<IConsultaDeIndicadores, ConsultaDeIndicadores>();
 

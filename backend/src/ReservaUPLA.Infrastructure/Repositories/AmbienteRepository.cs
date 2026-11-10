@@ -8,7 +8,7 @@ using ReservaUPLA.Infrastructure.Persistence.Configurations;
 namespace ReservaUPLA.Infrastructure.Repositories;
 
 // Implementación con Entity Framework Core y PostgreSQL del contrato de ambientes.
-internal sealed class AmbienteRepository : IAmbienteRepository
+internal sealed class AmbienteRepository : IRepositorioDeAmbientes
 {
     private readonly ReservaUPLADbContext _contexto;
 

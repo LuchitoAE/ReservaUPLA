@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.WebApi.Seguridad;
@@ -12,7 +12,7 @@ public static class Sesion
 {
     public const string Administrador = nameof(Roles_Usuario.Administrador);
 
-    public static ClaimsPrincipal CrearPrincipal(UsuarioDto usuario) => new(new ClaimsIdentity(
+    public static ClaimsPrincipal CrearPrincipal(DatosDeUsuario usuario) => new(new ClaimsIdentity(
         [
             new Claim(ClaimTypes.NameIdentifier, usuario.Id_Usuario.ToString()),
             new Claim(ClaimTypes.Name, usuario.Nombre_Completo_Usuario),

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.WebApi.Respuestas;
 
@@ -13,8 +13,8 @@ namespace ReservaUPLA.WebApi.Controllers;
 public sealed class DashboardController : ControllerBase
 {
     [HttpGet("indicadores")]
-    [ProducesResponseType<RespuestaApi<IndicadoresDto>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<RespuestaApi<IndicadoresDto>>> ObtenerIndicadores(
+    [ProducesResponseType<RespuestaApi<DatosDeIndicadores>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<RespuestaApi<DatosDeIndicadores>>> ObtenerIndicadores(
         [FromServices] IConsultaDeIndicadores consulta,
         CancellationToken cancelacion)
     {

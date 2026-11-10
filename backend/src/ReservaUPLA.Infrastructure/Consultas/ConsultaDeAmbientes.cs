@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Infrastructure.Persistence;
@@ -16,7 +16,7 @@ internal sealed class ConsultaDeAmbientes : IConsultaDeAmbientes
         _contexto = contexto;
     }
 
-    public async Task<IReadOnlyList<AmbienteDto>> ListarAsync(
+    public async Task<IReadOnlyList<DatosDeAmbiente>> ListarAsync(
         Estados_Ambiente? estado_ambiente, Guid? id_responsable_ambiente, CancellationToken cancelacion = default)
     {
         var ambientes = _contexto.Ambientes.AsNoTracking();
@@ -36,7 +36,7 @@ internal sealed class ConsultaDeAmbientes : IConsultaDeAmbientes
                 join responsable in _contexto.Usuarios on ambiente.Id_Responsable_Ambiente equals responsable.Id_Usuario into responsables
                 from responsable in responsables.DefaultIfEmpty()
                 orderby ambiente.Nombre_Ambiente
-                select new AmbienteDto(
+                select new DatosDeAmbiente(
                     ambiente.Id_Ambiente,
                     ambiente.Nombre_Ambiente,
                     ambiente.Tipo_Ambiente,

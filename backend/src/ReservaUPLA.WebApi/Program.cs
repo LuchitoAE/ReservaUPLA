@@ -18,7 +18,7 @@ var cadena_conexion = builder.Configuration.GetConnectionString("ReservaUPLA")
     ?? throw new InvalidOperationException("Falta la cadena de conexión 'ReservaUPLA' en los user-secrets.");
 
 // Punto de composición: aquí se eligen las implementaciones concretas de cada contrato.
-builder.Services.AddApplication();
+builder.Services.AgregarAplicacion();
 builder.Services.AddInfrastructure(cadena_conexion);
 
 // La API responde solo JSON: sin el formateador de texto, Swagger no ofrece text/plain.

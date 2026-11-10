@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Entidades;
 using ReservaUPLA.Infrastructure.Persistence;
@@ -17,7 +17,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
         _contexto = contexto;
     }
 
-    public async Task<IReadOnlyList<ReservaResumenDto>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default)
+    public async Task<IReadOnlyList<ResumenDeReserva>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default)
     {
         var reservas = Filtrar(_contexto.Reservas.AsNoTracking(), filtro);
 
@@ -27,7 +27,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
                 join ambiente in _contexto.Ambientes on reserva.Id_Ambiente equals ambiente.Id_Ambiente
                 join usuario in _contexto.Usuarios on reserva.Id_Usuario equals usuario.Id_Usuario
                 orderby reserva.Fecha_Reserva descending, reserva.Hora_Inicio_Reserva, ambiente.Nombre_Ambiente
-                select new ReservaResumenDto(
+                select new ResumenDeReserva(
                     reserva.Id_Reserva,
                     reserva.Codigo_Reserva,
                     reserva.Fecha_Reserva,
@@ -41,7 +41,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
             .ToListAsync(cancelacion);
     }
 
-    public async Task<ReservaDetalleDto?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default)
+    public async Task<DetalleDeReserva?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default)
     {
         var fila = await (
                 from reserva in _contexto.Reservas.AsNoTracking()
@@ -52,7 +52,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
             .FirstOrDefaultAsync(cancelacion);
 
         // Los estados siguientes los decide el estado actual (patrón State): se calculan aquí, no en SQL.
-        return fila is null ? null : ReservaDetalleDto.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente);
+        return fila is null ? null : DetalleDeReserva.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente);
     }
 
     private IQueryable<Reserva> Filtrar(IQueryable<Reserva> reservas, FiltroDeReservas filtro)

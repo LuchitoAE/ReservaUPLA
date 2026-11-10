@@ -1,5 +1,5 @@
-using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
-using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
+using ReservaUPLA.Application.CasosDeUso.Autenticacion.IniciarSesion;
+using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.Pruebas.Dobles;
@@ -12,22 +12,22 @@ public sealed class IniciarSesionPruebas
     private const string Mensaje = "El código o la contraseña no son correctos. Revíselos e inténtelo de nuevo.";
 
     private readonly RepositorioDeUsuariosEnMemoria _repositorio = new();
-    private readonly HasherDeContrasenasFalso _hasher = new();
+    private readonly ProtectorDeContrasenasFalso _protector_de_contrasenas = new();
 
     private async Task RegistrarLuisAsync()
     {
-        await new RegistrarUsuarioUseCase(_repositorio, _hasher).EjecutarAsync(new RegistrarUsuarioCommand(
+        await new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas).EjecutarAsync(new RegistrarUsuarioComando(
             "P00914K", "Luis Aquino Espinoza", "luis.aquino@upla.edu.pe", Roles_Usuario.Solicitante, "Reserva2026"));
     }
 
-    private IniciarSesionUseCase CasoDeUso() => new(_repositorio, _hasher);
+    private IniciarSesionCasoDeUso CasoDeUso() => new(_repositorio, _protector_de_contrasenas);
 
     [Fact]
     public async Task Ingresa_con_el_codigo_aunque_lo_escriba_en_minusculas()
     {
         await RegistrarLuisAsync();
 
-        var usuario = await CasoDeUso().EjecutarAsync(new IniciarSesionCommand(" p00914k", "Reserva2026"));
+        var usuario = await CasoDeUso().EjecutarAsync(new IniciarSesionComando(" p00914k", "Reserva2026"));
 
         Assert.Equal("P00914K", usuario.Codigo_Usuario);
     }
@@ -40,7 +40,7 @@ public sealed class IniciarSesionPruebas
         await RegistrarLuisAsync();
 
         var error = await Assert.ThrowsAsync<SesionNoValidaExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new IniciarSesionCommand(codigo, contrasena)));
+            CasoDeUso().EjecutarAsync(new IniciarSesionComando(codigo, contrasena)));
 
         Assert.Equal(Mensaje, error.Message);
     }
@@ -49,7 +49,7 @@ public sealed class IniciarSesionPruebas
     public async Task Pide_el_codigo_y_la_contrasena_si_faltan()
     {
         var error = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new IniciarSesionCommand("", "")));
+            CasoDeUso().EjecutarAsync(new IniciarSesionComando("", "")));
 
         Assert.Equal(["Escriba su código."], error.Errores["Codigo_Usuario"]);
         Assert.Equal(["Escriba su contraseña."], error.Errores["Contrasena_Usuario"]);

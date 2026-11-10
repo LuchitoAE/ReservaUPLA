@@ -6,7 +6,7 @@ namespace ReservaUPLA.Infrastructure.Servicios;
 
 // PBKDF2 con SHA-256, 600 000 iteraciones, sal aleatoria de 16 bytes y hash de 32 bytes (como NovaPortal).
 // La comparación tarda lo mismo acierte o no (FixedTimeEquals): no da pistas por el tiempo de respuesta.
-internal sealed class HasherPbkdf2 : IHasherDeContrasenas
+internal sealed class HasherPbkdf2 : IProtectorDeContrasenas
 {
     private const int Iteraciones = 600_000;
     private const int Bytes_Sal = 16;

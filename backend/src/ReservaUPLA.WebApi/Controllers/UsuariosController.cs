@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
+using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
@@ -21,11 +21,11 @@ public sealed class UsuariosController : ControllerBase
 {
     // RF-01: registrar un usuario.
     [HttpPost]
-    [ProducesResponseType<RespuestaApi<UsuarioDto>>(StatusCodes.Status201Created)]
+    [ProducesResponseType<RespuestaApi<DatosDeUsuario>>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public async Task<ActionResult<RespuestaApi<UsuarioDto>>> Registrar(
-        RegistrarUsuarioCommand comando,
-        [FromServices] RegistrarUsuarioUseCase caso_de_uso,
+    public async Task<ActionResult<RespuestaApi<DatosDeUsuario>>> Registrar(
+        RegistrarUsuarioComando comando,
+        [FromServices] RegistrarUsuarioCasoDeUso caso_de_uso,
         CancellationToken cancelacion)
     {
         var usuario = await caso_de_uso.EjecutarAsync(comando, cancelacion);
@@ -37,9 +37,9 @@ public sealed class UsuariosController : ControllerBase
 
     // Lista de usuarios, para la página de usuarios y para elegir al usuario actual o a un responsable.
     [HttpGet]
-    [ProducesResponseType<RespuestaApi<IReadOnlyList<UsuarioDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<RespuestaApi<IReadOnlyList<DatosDeUsuario>>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public async Task<ActionResult<RespuestaApi<IReadOnlyList<UsuarioDto>>>> Listar(
+    public async Task<ActionResult<RespuestaApi<IReadOnlyList<DatosDeUsuario>>>> Listar(
         [FromServices] IConsultaDeUsuarios consulta,
         CancellationToken cancelacion,
         [FromQuery] Roles_Usuario? rol_usuario = null,

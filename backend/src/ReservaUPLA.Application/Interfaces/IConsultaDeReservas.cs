@@ -1,4 +1,4 @@
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 
 namespace ReservaUPLA.Application.Interfaces;
 
@@ -6,7 +6,7 @@ namespace ReservaUPLA.Application.Interfaces;
 // detalle). Separada del repositorio: leer para mostrar y guardar entidades son responsabilidades distintas (SRP).
 public interface IConsultaDeReservas
 {
-    Task<IReadOnlyList<ReservaResumenDto>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default);
+    Task<IReadOnlyList<ResumenDeReserva>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default);
 
-    Task<ReservaDetalleDto?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default);
+    Task<DetalleDeReserva?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default);
 }

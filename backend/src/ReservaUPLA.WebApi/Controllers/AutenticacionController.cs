@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
+using ReservaUPLA.Application.CasosDeUso.Autenticacion.IniciarSesion;
 using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
@@ -19,12 +19,12 @@ public sealed class AutenticacionController : ControllerBase
 {
     [HttpPost("ingreso")]
     [AllowAnonymous]
-    [ProducesResponseType<RespuestaApi<UsuarioDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<RespuestaApi<DatosDeUsuario>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
-    public async Task<ActionResult<RespuestaApi<UsuarioDto>>> IniciarSesion(
-        IniciarSesionCommand comando,
-        [FromServices] IniciarSesionUseCase caso_de_uso,
+    public async Task<ActionResult<RespuestaApi<DatosDeUsuario>>> IniciarSesion(
+        IniciarSesionComando comando,
+        [FromServices] IniciarSesionCasoDeUso caso_de_uso,
         CancellationToken cancelacion)
     {
         var usuario = await caso_de_uso.EjecutarAsync(comando, cancelacion);
@@ -35,9 +35,9 @@ public sealed class AutenticacionController : ControllerBase
 
     // La SPA pregunta al abrirse si ya hay una sesión (por ejemplo, después de recargar la página).
     [HttpGet("sesion")]
-    [ProducesResponseType<RespuestaApi<UsuarioDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<RespuestaApi<DatosDeUsuario>>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
-    public async Task<ActionResult<RespuestaApi<UsuarioDto>>> ObtenerSesion(
+    public async Task<ActionResult<RespuestaApi<DatosDeUsuario>>> ObtenerSesion(
         [FromServices] IConsultaDeUsuarios consulta,
         CancellationToken cancelacion)
     {

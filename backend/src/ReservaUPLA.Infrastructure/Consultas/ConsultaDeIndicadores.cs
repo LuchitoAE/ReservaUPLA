@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Infrastructure.Persistence;
@@ -16,7 +16,7 @@ internal sealed class ConsultaDeIndicadores : IConsultaDeIndicadores
         _contexto = contexto;
     }
 
-    public async Task<IndicadoresDto> ObtenerAsync(CancellationToken cancelacion = default)
+    public async Task<DatosDeIndicadores> ObtenerAsync(CancellationToken cancelacion = default)
     {
         // Cantidad de reservas por estado: SELECT estado_reserva, count(*) ... GROUP BY estado_reserva.
         var por_estado = await _contexto.Reservas
@@ -41,14 +41,14 @@ internal sealed class ConsultaDeIndicadores : IConsultaDeIndicadores
                 .OrderByDescending(uso => uso.Total)
                 .ThenBy(uso => uso.Nombre_Ambiente)
                 .ToListAsync(cancelacion))
-            .Select(uso => new UsoDeAmbienteDto(uso.Id_Ambiente, uso.Nombre_Ambiente, uso.Total, uso.Aprobadas))
+            .Select(uso => new DatosDeUsoDeAmbiente(uso.Id_Ambiente, uso.Nombre_Ambiente, uso.Total, uso.Aprobadas))
             .ToList();
 
         // «Ambiente con mayor número de reservas» (caso, sección 10). Si hay empate, van todos los empatados.
         var maximo = por_ambiente.Count == 0 ? 0 : por_ambiente.Max(uso => uso.Total_Reservas);
         var mas_utilizados = maximo == 0 ? [] : por_ambiente.Where(uso => uso.Total_Reservas == maximo).ToList();
 
-        return new IndicadoresDto(
+        return new DatosDeIndicadores(
             por_estado.Values.Sum(),
             Contar(Estados_Reserva.Pendiente),
             Contar(Estados_Reserva.Aprobada),
