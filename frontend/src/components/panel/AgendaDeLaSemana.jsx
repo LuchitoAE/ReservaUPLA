@@ -25,11 +25,14 @@ export function AgendaDeLaSemana({ ambientes, reservas, lunes, cargando, alCambi
 
   return (
     <section aria-labelledby="titulo-agenda" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 sm:p-6">
-      <div>
-        <h2 id="titulo-agenda" className="text-lg font-semibold text-titulo">
-          Agenda de la semana
-        </h2>
-        <p className="text-sm text-texto-suave">Reservas aprobadas y pendientes de cada ambiente a su cargo.</p>
+      <div className="flex items-start gap-2.5">
+        <Icono nombre="reservas" className="mt-0.5 size-5 text-foco" />
+        <div>
+          <h2 id="titulo-agenda" className="text-lg font-semibold text-titulo">
+            Agenda de la semana
+          </h2>
+          <p className="text-sm text-texto-suave">Reservas aprobadas y pendientes de cada ambiente a su cargo.</p>
+        </div>
       </div>
 
       {ambientes.length === 0 ? (
