@@ -53,7 +53,7 @@ dotnet tool restore
 env ASPNETCORE_ENVIRONMENT=Development dotnet ef database update --project src/ReservaUPLA.Infrastructure --startup-project src/ReservaUPLA.WebApi
 ```
 
-`ASPNETCORE_ENVIRONMENT=Development` hace falta para que `dotnet ef` lea los user-secrets. Las tablas empiezan vacías: los usuarios, los ambientes y las reservas se registran desde la aplicación (o desde Swagger).
+`ASPNETCORE_ENVIRONMENT=Development` hace falta para que `dotnet ef` lea los user-secrets. Una migración nueva (`dotnet ef migrations add Nombre` con los mismos `--project` y `--startup-project`) se crea sola en `Migraciones/`, junto a las demás. Las tablas empiezan vacías: los usuarios, los ambientes y las reservas se registran desde la aplicación (o desde Swagger).
 
 ```fish
 psql -h localhost -U reservaupla -d reservaupla     # la clave la toma de ~/.pgpass
@@ -128,7 +128,7 @@ Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella respon
 | GET | `/api/reservas?estado_reserva=&id_ambiente=&fecha_reserva=&id_usuario=&id_responsable_ambiente=` | RF-05 listado | 200 |
 | GET | `/api/reservas/{id}` | RF-06 detalle | 200, 404 |
 | PATCH | `/api/reservas/{id}/estado` | RF-07 cambiar estado | 200, 400, 403 (RN-05), 404, 409 (RN-01, RN-06) |
-| GET | `/api/dashboard/indicadores` | RF-08 indicadores | 200 |
+| GET | `/api/panel/indicadores` | RF-08 indicadores del panel principal (antes `/api/dashboard/indicadores`) | 200 |
 
 Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /api/autenticacion/ingreso` con un código y su contraseña: la cookie queda guardada y los demás endpoints ya responden. También `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
 
@@ -136,20 +136,21 @@ Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /
 
 ```
 backend/src/
-  ReservaUPLA.Domain/          Usuario, Ambiente, Reserva; Horario y CodigoDeUsuario (objetos de valor); estados de la reserva
-                               (patrón State) y su fábrica (Factory); reglas y excepciones de negocio
-  ReservaUPLA.Application/     Casos de uso (registrar, disponibilidad, cambiar estado), DTOs de entrada y salida,
-                               interfaces de repositorios, consultas y reloj
-  ReservaUPLA.Infrastructure/  DbContext, mapeos, migraciones, repositorios y consultas (módulo de salida) con EF Core
-  ReservaUPLA.WebApi/          Controladores, ManejadorDeErrores (RFC 9457), formato JSON, Swagger y el arranque
-                               (primer administrador y cuentas de prueba)
+  ReservaUPLA.Domain/          Entidades/ (Usuario, Ambiente, Reserva), Comun/ (Horario, CodigoDeUsuario: objetos de
+                               valor), Estados/ (patrón State y su fábrica, Factory), Enumeraciones/ y Excepciones/
+  ReservaUPLA.Application/     CasosDeUso/ (…CasoDeUso con su …Comando), Datos/ (DatosDe…, DetalleDe…, ResumenDe…) e
+                               Interfaces/ (IRepositorioDe…, IConsultaDe…, IProtectorDeContrasenas, IReloj)
+  ReservaUPLA.Infrastructure/  Persistencia/ (ContextoDeReservaUPLA y Configuraciones/), Migraciones/, Repositorios/,
+                               Consultas/ (módulo de salida) y Servicios/ con EF Core
+  ReservaUPLA.WebApi/          Controladores/ (…Controlador), ManejadorDeErrores (RFC 9457), formato JSON, Swagger y
+                               Arranque/ (primer administrador y cuentas de prueba)
 backend/tests/
   ReservaUPLA.Pruebas/         Pruebas unitarias (xUnit) del dominio y de los casos de uso, con dobles en memoria
 frontend/src/
   api/                         clienteApi.js y un archivo por recurso
   components/ui/               TextInput, SelectInput, DateInput, TimeInput, Button, AlertMessage,
                                ModalConfirmacion, TableList, CardIndicador y otros
-  components/<módulo>/         Formularios y piezas de usuarios, ambientes, reservas y dashboard
+  components/<módulo>/         Formularios y piezas de usuarios, ambientes, reservas y del panel principal
   components/autenticacion/    Marco del ingreso y panel «Agenda del campus» (sus reglas, con pruebas, en agendaDelCampus.js)
   assets/campus/               Fotos del panel del ingreso, a color y en azul (WebP de 1000 px de alto, sin metadatos)
   hooks/                       useFormulario, useConsulta, useDisponibilidad, useUsuarioActual, useAgendaViva…
