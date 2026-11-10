@@ -3,7 +3,7 @@ using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Application.Interfaces;
 
-// Módulo de salida de usuarios: lee la base y entrega directamente los DTOs que muestra la interfaz.
+// Módulo de salida de usuarios: lee la base y entrega directamente los datos que muestra la interfaz.
 // Va separada del repositorio: leer para mostrar y guardar entidades son responsabilidades distintas (SRP).
 public interface IConsultaDeUsuarios
 {

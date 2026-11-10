@@ -9,13 +9,13 @@ namespace ReservaUPLA.WebApi.Arranque;
 // escribe en el registro de la API y sigue: la API arranca igual.
 public static class CuentasIniciales
 {
-    public static async Task CrearCuentasInicialesAsync(this WebApplication app)
+    public static async Task CrearCuentasInicialesAsync(this WebApplication aplicacion)
     {
-        using var alcance = app.Services.CreateScope();
+        using var alcance = aplicacion.Services.CreateScope();
         var servicios = alcance.ServiceProvider;
         var registro = servicios.GetRequiredService<ILoggerFactory>().CreateLogger("ReservaUPLA.Arranque");
 
-        var primer_administrador = app.Configuration.GetSection("PrimerAdministrador").Get<CuentaInicial>();
+        var primer_administrador = aplicacion.Configuration.GetSection("PrimerAdministrador").Get<CuentaInicial>();
         await IntentarAsync(registro, "el primer administrador", async () =>
         {
             var resultado = await servicios.GetRequiredService<CrearPrimerAdministradorCasoDeUso>().EjecutarAsync(primer_administrador);
@@ -28,12 +28,12 @@ public static class CuentasIniciales
             Informar(registro, "Primer administrador", primer_administrador?.Codigo_Usuario, resultado);
         });
 
-        if (!app.Environment.IsDevelopment())
+        if (!aplicacion.Environment.IsDevelopment())
         {
             return;
         }
 
-        var cuentas_de_prueba = app.Configuration.GetSection("CuentasDePrueba").Get<CuentaInicial[]>() ?? [];
+        var cuentas_de_prueba = aplicacion.Configuration.GetSection("CuentasDePrueba").Get<CuentaInicial[]>() ?? [];
         await IntentarAsync(registro, "las cuentas de prueba", async () =>
         {
             var resultados = await servicios.GetRequiredService<CrearCuentasDePruebaCasoDeUso>().EjecutarAsync(cuentas_de_prueba);

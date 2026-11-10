@@ -7,7 +7,7 @@ using ReservaUPLA.Infrastructure.Persistencia;
 namespace ReservaUPLA.Infrastructure.Consultas;
 
 // Consultas de solo lectura para el módulo de salida. Unen reservas con usuarios y ambientes en una sola consulta
-// SQL y traen solo las columnas que el DTO necesita (proyección), sin cargar entidades completas.
+// SQL y traen solo las columnas que los datos de salida necesitan (proyección), sin cargar entidades completas.
 internal sealed class ConsultaDeReservas : IConsultaDeReservas
 {
     private readonly ContextoDeReservaUPLA _contexto;
