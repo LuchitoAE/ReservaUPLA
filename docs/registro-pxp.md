@@ -117,3 +117,32 @@ siguieron el orden (rojo y verde).
 **Retrospectiva.** Revisar qué ejercitó de verdad cada prueba del sistema, y no solo si pasó, mostró una prueba que se
 saltaba lo nuevo. Medir los altos en el navegador encontró lo que la revisión del diseño dejaba pasar: el texto cabe o no
 según el ancho real.
+
+## Iteración 4 · Mi cuenta, búsqueda y panel según el rol (09-10/11/2026, 22:58 a 23:30)
+
+Ramas `feature/rf-11-mi-cuenta` (merge `838ad00`), `feature/rf-05-busqueda-en-reservas` (merge `c55df84`) y
+`feature/rf-12-panel-por-rol` (merge `32018b4`, al final de la iteración). RF-05, RF-08, RF-11, RF-12, RF-13 y RF-14
+(con el interruptor, que en la iteración 3 había quedado pendiente).
+
+| Tarea | Resultado |
+|---|---|
+| Pruebas de `revisarErrores` y de las reglas de la cuenta primero (rojo) | Vitest; el error de la API se mantiene hasta que cambia el campo |
+| `Usuario.CambiarContrasena`, `CambiarContrasenaCasoDeUso` y `PUT /api/cuenta/contrasena` (actual correcta, RN-13 y distinta de la actual) | 39 pruebas xUnit |
+| Pantalla Mi cuenta (diseños S15 y S16): sus datos, el cambio de contraseña y el interruptor del sonido, con el enlace en el panel de la sesión | `MiCuenta.jsx`, `Interruptor.jsx` y `cuentaApi.js`; el reproductor lee la preferencia en cada aviso |
+| Búsqueda del listado (RF-05): `texto` por código o solicitante, `fecha_desde` y `fecha_hasta` en `GET /api/reservas`, con `%` y `_` escapados | Buscador con espera y «Desde / Hasta» en `FiltrosDeReservas`; los filtros viven en la dirección |
+| Panel según el rol (RF-12 y RF-13): `AlcanceDeIndicadores` y `ObtenerIndicadoresDelPanelCasoDeUso`; paneles del solicitante y del administrador, y el del responsable con la agenda de la semana | 92 pruebas Vitest; los tres paneles se dibujan; «Dashboard» pasa a «Panel principal» en toda la interfaz |
+| Pruebas del sistema | 48 de 48 de punta a punta (`pruebas.py`, con la búsqueda y los textos nuevos); verificaciones propias: Mi cuenta 14 de 14 (con un usuario temporal, borrado) y paneles por rol 18 de 18 |
+| Unión a develop | `git merge --no-ff` de las tres ramas; la última, `32018b4` |
+
+| Defecto | Se introdujo en | Se encontró en | Corrección |
+|---|---|---|---|
+| El error que devolvía la API se borraba al pasar el foco a otro campo: al enviar con Enter se veía un instante y desaparecía | Código (iteración 1) | Prueba de Mi cuenta | `revisarErrores` guarda el valor que tenía el campo cuando la API lo rechazó y mantiene el mensaje hasta que ese campo cambia; con pruebas |
+
+Los comandos de zsh mal escritos durante las pruebas no son defecto del producto: el error estaba en la orden, no en el
+sistema, y no se anotan como tales.
+
+**Retrospectiva.** Escribir primero la prueba del error que se borraba dejó claro qué debía pasar: un mensaje del
+servidor no lo puede decidir la regla del navegador, que no conoce ese dato. Separar lo que falla en el producto de lo
+que falla al escribir un comando evita anotar defectos falsos y buscar en el código lo que estaba en la terminal. Unir
+la rama del panel al final, con las otras dos ya integradas, hizo que las pruebas del sistema corrieran sobre el código
+completo y no sobre una parte.

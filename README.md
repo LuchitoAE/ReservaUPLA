@@ -12,10 +12,10 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RF-02 | Registrar ambientes universitarios | Ambientes → Registrar ambiente |
 | RF-03 | Registrar solicitudes de reserva | Nueva reserva |
 | RF-04 | Validar la disponibilidad antes de registrar | Panel «Disponibilidad del ambiente» del formulario; la API la vuelve a revisar |
-| RF-05 | Listar reservas registradas | Reservas (filtros por estado, ambiente y fecha) |
+| RF-05 | Listar reservas registradas | Reservas (búsqueda por código o solicitante y filtros por estado, ambiente y rango de fechas) |
 | RF-06 | Consultar el detalle de una reserva, con su historial (quién hizo cada cambio y cuándo) | Clic en el código de una reserva |
 | RF-07 | Cambiar el estado: Pendiente, Aprobada, Rechazada o Cancelada | Botones del detalle, con confirmación |
-| RF-08 | Indicadores básicos en un dashboard | Dashboard (página de inicio) |
+| RF-08 | Indicadores básicos en un dashboard | Panel principal (página de inicio), con el alcance del rol |
 
 | Regla | Cómo se cumple |
 |---|---|
@@ -27,6 +27,12 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RN-06 Una reserva rechazada no se modifica | El estado Rechazada no admite cambios; la API responde 409 |
 
 **Inicio de sesión.** Cada usuario entra con su código (7 letras o dígitos, por ejemplo P00914K) y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. No hay registro propio: las cuentas las crea el administrador con el código que entrega la universidad.
+
+**Panel principal según el rol.** La página de inicio muestra lo que cada rol necesita (RF-12). El solicitante ve sus indicadores, sus próximas reservas, cómo avanza una reserva y los ambientes que puede pedir; el responsable de ambiente ve los indicadores de los ambientes a su cargo y la agenda de la semana (RF-13), de lunes a domingo entre las 07:00 y las 22:00, con las aprobadas en verde y las pendientes en ámbar: elige el ambiente, pasa de una semana a otra y abre el detalle desde un bloque. El administrador ve todos los indicadores, las pendientes por aprobar (primero las más próximas) y las reservas por ambiente. La API cuenta con el alcance del rol que lee de la base: nadie puede pedir por la API el panel de otro.
+
+**Búsqueda en el listado.** Además de los filtros por estado, ambiente y fecha, el listado se busca por código (RES-2026-0001) o por el nombre de quien solicitó, y por un rango «Desde / Hasta» (RF-05). La búsqueda aplica cuando la persona deja de escribir, y todos los filtros quedan en la dirección (`?texto=…&fecha_desde=…`): se pueden compartir y «atrás» vuelve al filtro anterior. El solicitante abre el listado con «Solo mis reservas» y el responsable con «Solo los ambientes a mi cargo»; al desmarcar la casilla ven todas.
+
+**Mi cuenta.** En «Mi cuenta» cada usuario ve sus datos —código, nombre, correo, rol y estado, que corrige el administrador—, cambia su contraseña escribiendo la actual y la nueva dos veces (la nueva cumple las mismas reglas y no puede ser la actual, RF-11) y enciende o apaga el sonido de los avisos (RF-14). Al cambiar la contraseña la sesión sigue abierta; el interruptor del sonido se guarda en ese navegador y empieza apagado.
 
 **Avisos sin saltos.** El resultado de cada acción (registrar, aprobar, rechazar, cancelar) aparece en un aviso flotante abajo a la derecha, con el color del estado: verde, ámbar, rojo o gris, siempre con ícono y nombre. No mueve el contenido, se cierra a los 8 s (no mientras el puntero o el foco están encima) y lo anuncia el lector de pantalla; los errores y los avisos que piden hacer algo no se cierran solos. Los mensajes dentro de una tarjeta y la línea bajo cada campo tienen alto fijo, y el resumen de errores va junto al botón de enviar (RNF-04, RNF-05). Los avisos pueden sonar (RF-14): empieza apagado.
 
@@ -127,10 +133,11 @@ Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella respon
 | GET | `/api/ambientes?estado_ambiente=&id_responsable_ambiente=` | Lista de ambientes | 200 |
 | POST | `/api/reservas` | RF-03 registrar reserva | 201, 400, 409 (RN-01) |
 | GET | `/api/reservas/disponibilidad?id_ambiente=&fecha_reserva=&hora_inicio_reserva=&hora_fin_reserva=` | RF-04 disponibilidad | 200, 400, 404 |
-| GET | `/api/reservas?estado_reserva=&id_ambiente=&fecha_reserva=&id_usuario=&id_responsable_ambiente=` | RF-05 listado | 200 |
+| GET | `/api/reservas?estado_reserva=&id_ambiente=&fecha_reserva=&id_usuario=&id_responsable_ambiente=&texto=&fecha_desde=&fecha_hasta=` | RF-05 listado; `texto` busca por código o solicitante y `fecha_desde`/`fecha_hasta` acotan el rango | 200, 400 |
 | GET | `/api/reservas/{id}` | RF-06 detalle con su historial (`historial_reserva`) | 200, 404 |
 | PATCH | `/api/reservas/{id}/estado` | RF-07 cambiar estado | 200, 400, 403 (RN-05), 404, 409 (RN-01, RN-06) |
-| GET | `/api/panel/indicadores` | RF-08 indicadores del panel principal (antes `/api/dashboard/indicadores`) | 200 |
+| GET | `/api/panel/indicadores` | RF-08 y RF-12: indicadores del panel principal según el rol de la sesión (antes `/api/dashboard/indicadores`) | 200 |
+| PUT | `/api/cuenta/contrasena` | RF-11: cambiar la contraseña del usuario de la sesión con `contrasena_actual` y `contrasena_nueva` (400 si la actual no coincide o la nueva no cumple RN-13) | 200, 400 |
 
 Para probarla: Swagger en http://localhost:5320/swagger. Primero ejecute `POST /api/autenticacion/ingreso` con un código y su contraseña: la cookie queda guardada y los demás endpoints ya responden. También `backend/src/ReservaUPLA.WebApi/ReservaUPLA.WebApi.http` en VS Code (extensión REST Client).
 
