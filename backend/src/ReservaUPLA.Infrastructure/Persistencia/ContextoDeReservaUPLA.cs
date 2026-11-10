@@ -19,6 +19,8 @@ public sealed class ContextoDeReservaUPLA : DbContext
 
     public DbSet<Reserva> Reservas => Set<Reserva>();
 
+    public DbSet<Historial> Historiales => Set<Historial>();
+
     protected override void OnModelCreating(ModelBuilder modelo)
     {
         // btree_gist permite que una restricción de exclusión compare el ambiente (=) y el horario (&&) a la vez (RN-01).

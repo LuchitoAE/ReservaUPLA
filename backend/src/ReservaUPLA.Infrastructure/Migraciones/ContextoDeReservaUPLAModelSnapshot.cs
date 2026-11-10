@@ -80,6 +80,42 @@ namespace ReservaUPLA.Infrastructure.Migraciones
                         });
                 });
 
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Historial", b =>
+                {
+                    b.Property<Guid>("Id_Historial")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_historial");
+
+                    b.Property<string>("Estado_Historial")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("estado_historial");
+
+                    b.Property<DateTime>("Fecha_Historial")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_historial");
+
+                    b.Property<Guid>("Id_Reserva")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_reserva");
+
+                    b.Property<Guid?>("Id_Usuario")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_usuario");
+
+                    b.HasKey("Id_Historial")
+                        .HasName("pk_historiales");
+
+                    b.HasIndex("Id_Usuario")
+                        .HasDatabaseName("ix_historiales_id_usuario");
+
+                    b.HasIndex("Id_Reserva", "Fecha_Historial")
+                        .HasDatabaseName("ix_historiales_id_reserva_fecha_historial");
+
+                    b.ToTable("historiales", (string)null);
+                });
+
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
                     b.Property<Guid>("Id_Reserva")
@@ -224,6 +260,22 @@ namespace ReservaUPLA.Infrastructure.Migraciones
                         .HasConstraintName("fk_ambientes_usuarios_responsable");
                 });
 
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Historial", b =>
+                {
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Reserva", null)
+                        .WithMany("Historial_Reserva")
+                        .HasForeignKey("Id_Reserva")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_historiales_reservas");
+
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_historiales_usuarios");
+                });
+
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
                     b.HasOne("ReservaUPLA.Domain.Entidades.Ambiente", null)
@@ -239,6 +291,11 @@ namespace ReservaUPLA.Infrastructure.Migraciones
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reservas_usuarios");
+                });
+
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
+                {
+                    b.Navigation("Historial_Reserva");
                 });
 #pragma warning restore 612, 618
         }

@@ -66,6 +66,15 @@ internal sealed class Reserva_Configuracion : IEntityTypeConfiguration<Reserva>
             .HasConstraintName("fk_reservas_ambientes")
             .OnDelete(DeleteBehavior.Restrict);
 
+        // RF-06: la reserva es dueña de su historial (campo _historial). Al cambiar de estado, la entrada nueva se
+        // inserta con la reserva aunque el historial no se haya leído.
+        reserva.HasMany(r => r.Historial_Reserva)
+            .WithOne()
+            .HasForeignKey(h => h.Id_Reserva)
+            .HasConstraintName("fk_historiales_reservas")
+            .OnDelete(DeleteBehavior.Cascade);
+        reserva.Navigation(r => r.Historial_Reserva).HasField("_historial");
+
         // La disponibilidad se consulta por ambiente y fecha; el listado y el dashboard filtran por estado.
         reserva.HasIndex(r => new { r.Id_Ambiente, r.Fecha_Reserva }).HasDatabaseName("ix_reservas_id_ambiente_fecha_reserva");
         reserva.HasIndex(r => r.Estado_Reserva).HasDatabaseName("ix_reservas_estado_reserva");

@@ -3,8 +3,9 @@ using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Application.Datos;
 
-// Todo lo que se muestra de una reserva (RF-06): sus datos, los del solicitante y los del ambiente, y a qué estados
-// puede pasar (lo responde su estado actual, patrón State). La interfaz no necesita otra consulta.
+// Todo lo que se muestra de una reserva (RF-06): sus datos, los del solicitante y los del ambiente, a qué estados
+// puede pasar (lo responde su estado actual, patrón State) y su historial, del más antiguo al más reciente. La
+// interfaz no necesita otra consulta.
 public sealed record DetalleDeReserva(
     Guid Id_Reserva,
     string Codigo_Reserva,
@@ -23,9 +24,11 @@ public sealed record DetalleDeReserva(
     string Nombre_Ambiente,
     Tipos_Ambiente Tipo_Ambiente,
     int Capacidad_Ambiente,
-    string Ubicacion_Ambiente)
+    string Ubicacion_Ambiente,
+    IReadOnlyList<DatosDeHistorial> Historial_Reserva)
 {
-    public static DetalleDeReserva DesdeEntidades(Reserva reserva, Usuario solicitante, Ambiente ambiente) => new(
+    public static DetalleDeReserva DesdeEntidades(
+        Reserva reserva, Usuario solicitante, Ambiente ambiente, IReadOnlyList<DatosDeHistorial> historial) => new(
         reserva.Id_Reserva,
         reserva.Codigo_Reserva,
         reserva.Fecha_Reserva,
@@ -43,5 +46,6 @@ public sealed record DetalleDeReserva(
         ambiente.Nombre_Ambiente,
         ambiente.Tipo_Ambiente,
         ambiente.Capacidad_Ambiente,
-        ambiente.Ubicacion_Ambiente);
+        ambiente.Ubicacion_Ambiente,
+        historial);
 }

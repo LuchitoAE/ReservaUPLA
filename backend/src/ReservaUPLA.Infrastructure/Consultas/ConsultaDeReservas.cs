@@ -51,8 +51,25 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
                 select new { reserva, ambiente, usuario })
             .FirstOrDefaultAsync(cancelacion);
 
+        if (fila is null)
+        {
+            return null;
+        }
+
+        // RF-06: el historial con el nombre de quien hizo cada cambio (left join: las entradas anteriores al
+        // historial no tienen usuario), del más antiguo al más reciente.
+        var historial = await (
+                from entrada in _contexto.Historiales.AsNoTracking()
+                join usuario in _contexto.Usuarios on entrada.Id_Usuario equals usuario.Id_Usuario into autores
+                from autor in autores.DefaultIfEmpty()
+                where entrada.Id_Reserva == id_reserva
+                orderby entrada.Fecha_Historial, entrada.Id_Historial
+                select new DatosDeHistorial(entrada.Estado_Historial, entrada.Fecha_Historial, entrada.Id_Usuario,
+                    autor == null ? null : autor.Nombre_Completo_Usuario))
+            .ToListAsync(cancelacion);
+
         // Los estados siguientes los decide el estado actual (patrón State): se calculan aquí, no en SQL.
-        return fila is null ? null : DetalleDeReserva.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente);
+        return DetalleDeReserva.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente, historial);
     }
 
     private IQueryable<Reserva> Filtrar(IQueryable<Reserva> reservas, FiltroDeReservas filtro)
