@@ -5,7 +5,7 @@ export function Cargando({ texto, className = '', sinMarco = false }) {
   return (
     <p
       role="status"
-      className={`flex items-center gap-3 text-texto-suave ${sinMarco ? '' : 'rounded-xl border border-borde bg-superficie p-6'} ${className}`}
+      className={`flex items-center gap-3 text-texto-suave ${sinMarco ? '' : 'rounded-xl border border-borde bg-superficie p-6 shadow-tarjeta'} ${className}`}
     >
       <span className="size-5 animate-spin rounded-full border-2 border-foco border-r-transparent" aria-hidden="true" />
       {texto}

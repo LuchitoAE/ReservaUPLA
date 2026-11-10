@@ -183,3 +183,9 @@ de la revisión (secciones 4p y 4q del CONTEXTO). No cambia el alcance funcional
 **Retrospectiva.** Comparar píxel a píxel los colores del PNG encontró diferencias que la vista no notaba. Las pruebas
 de punta a punta volvieron a avisar de selectores y textos que el rediseño cambió: conviene ejecutarlas al cerrar cada
 parte, no al final. Dividir el diseño en ocho partes mantuvo cada cambio revisable y dejó el historial de git legible.
+
+**Ajustes del alumno (10/11/2026, tarde).** Las tarjetas y los campos se veían planos: se agregaron sombras
+(`shadow-tarjeta`, `shadow-tarjeta-alta` y `shadow-campo`, negras en modo oscuro) a formularios, tablas, paneles,
+indicadores, Mi cuenta, ingreso y errores. Se quitó «Los campos con * son obligatorios.» de los tres formularios
+(no está en S03, AD13 ni AD16) y, al hacerlo, la tarjeta «Disponibilidad» quedó alineada con el primer grupo del
+formulario de reserva (0 px de diferencia a 1440). Verificado con 97 Vitest y 81 de 81 de punta a punta.

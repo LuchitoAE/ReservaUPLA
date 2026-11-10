@@ -51,6 +51,12 @@
   --color-foco: #0063a8;
   --color-seleccion: #e6f0f9;
 
+  /* Elevación: una sombra corta y otra amplia y suave para que las tarjetas y los campos se lean sobre el fondo sin
+     competir con el borde. En modo oscuro la sombra es negra y algo más marcada. */
+  --shadow-tarjeta: 0 1px 3px rgb(15 23 42 / 0.1), 0 8px 18px -4px rgb(15 23 42 / 0.16);
+  --shadow-campo: 0 1px 2px rgb(15 23 42 / 0.08);
+  --shadow-tarjeta-alta: 0 2px 4px rgb(15 23 42 / 0.12), 0 14px 28px -6px rgb(15 23 42 / 0.2);
+
   --color-error: #b91c1c;
   --color-error-fondo: #fef2f2;
   --color-error-texto: #7f1d1d;
@@ -152,6 +158,9 @@
     --color-cancelada-texto: #cbd5e1;
     --color-deshabilitado: #1d2f47;
     --color-deshabilitado-texto: #93a4ba;
+    --shadow-tarjeta: 0 1px 3px rgb(0 0 0 / 0.55), 0 10px 20px -4px rgb(0 0 0 / 0.55);
+    --shadow-campo: 0 1px 2px rgb(0 0 0 / 0.55);
+    --shadow-tarjeta-alta: 0 2px 4px rgb(0 0 0 / 0.6), 0 16px 30px -6px rgb(0 0 0 / 0.6);
 }
 
 @layer base {

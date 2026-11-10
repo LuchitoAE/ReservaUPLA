@@ -17,7 +17,7 @@ export function HistorialDeReserva({ historial }) {
   const pasos = pasosDelHistorial(historial)
 
   return (
-    <section aria-labelledby="titulo-historial" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+    <section aria-labelledby="titulo-historial" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
       <div className="mb-4 flex items-center gap-2.5">
         <Icono nombre="pendiente" className="size-5 text-foco" />
         <h2 id="titulo-historial" className="text-lg font-semibold text-titulo">

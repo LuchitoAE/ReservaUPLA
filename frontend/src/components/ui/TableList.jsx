@@ -65,7 +65,7 @@ export function TableList({
 
   if (filas.length === 0) {
     return (
-      <div className="rounded-xl border border-borde bg-superficie">
+      <div className="rounded-xl border border-borde bg-superficie shadow-tarjeta">
         <table aria-hidden="true" className="hidden w-full text-left text-sm md:table">
           {encabezado}
         </table>
@@ -100,7 +100,7 @@ export function TableList({
   )
 
   return (
-    <div className="rounded-xl border border-borde bg-superficie">
+    <div className="rounded-xl border border-borde bg-superficie shadow-tarjeta">
       <table className="hidden w-full text-left text-sm md:table">
         <caption className="sr-only">{titulo}</caption>
         {encabezado}

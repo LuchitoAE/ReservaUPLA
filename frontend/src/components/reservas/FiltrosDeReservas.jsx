@@ -53,7 +53,7 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
   ]
 
   return (
-    <section aria-label="Filtros" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-4">
+    <section aria-label="Filtros" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-4 shadow-tarjeta">
       <div className="flex flex-wrap items-center gap-2">
         <ChipsDeFiltro
           etiqueta="Filtrar por estado"

@@ -15,7 +15,7 @@ export function SoloParaRoles({ roles, children }) {
   return (
     <>
       <EncabezadoDePagina titulo="Acceso restringido" descripcion="Esta sección es solo para el administrador del sistema." />
-      <div className="flex flex-col items-start gap-4 rounded-xl border border-borde bg-superficie p-6">
+      <div className="flex flex-col items-start gap-4 rounded-xl border border-borde bg-superficie p-6 shadow-tarjeta">
         <p>Si necesita registrar usuarios o ambientes, pídaselo al administrador.</p>
         <Button destino="/" variante="principal">
           <Icono nombre="inicio" />

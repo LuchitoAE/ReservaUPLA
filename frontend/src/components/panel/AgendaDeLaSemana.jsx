@@ -25,7 +25,7 @@ export function AgendaDeLaSemana({ ambientes, reservas, lunes, cargando, alCambi
   const bloques = elegido ? bloquesDeLaAgenda(reservas.filter((reserva) => reserva.id_ambiente === elegido.id_ambiente), lunes) : []
 
   return (
-    <section aria-labelledby="titulo-agenda" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+    <section aria-labelledby="titulo-agenda" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
       <div className="flex items-start gap-2.5">
         <Icono nombre="reservas" className="mt-0.5 size-5 text-foco" />
         <div>

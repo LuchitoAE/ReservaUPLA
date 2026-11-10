@@ -15,9 +15,9 @@ const TONOS = {
   estrella: 'bg-acento text-acento-texto',
 }
 
-const MARCO = 'flex min-h-32 flex-col rounded-xl border border-borde bg-superficie p-4'
+const MARCO = 'flex min-h-32 flex-col rounded-xl border border-borde bg-superficie p-4 shadow-tarjeta'
 const INTERACCION =
-  'transition hover:border-borde-control hover:shadow-md active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foco'
+  'transition hover:border-borde-control hover:shadow-tarjeta-alta active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foco'
 
 export function CardIndicador({ titulo, valor, detalle, icono, tono = 'neutro', variante = 'numero', destino }) {
   const contenido = (

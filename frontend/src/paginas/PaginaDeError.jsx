@@ -13,7 +13,7 @@ export function PaginaDeError() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-fondo p-6">
       <title>Algo salió mal · ReservaUPLA</title>
-      <section className="flex w-full max-w-[35rem] flex-col gap-5 rounded-2xl border border-borde bg-superficie p-8 shadow-sm">
+      <section className="flex w-full max-w-[35rem] flex-col gap-5 rounded-2xl border border-borde bg-superficie p-8 shadow-tarjeta">
         <span
           className="flex size-11 items-center justify-center rounded-full bg-rechazada-fondo text-rechazada-texto"
           aria-hidden="true"
