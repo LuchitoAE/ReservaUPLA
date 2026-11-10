@@ -55,7 +55,7 @@
   --color-peligro: #b91c1c;
   --color-peligro-oscuro: #991b1b;
 
-  /* Barras del dashboard: un solo tono (magnitud), el azul UPLA. */
+  /* Barras del panel principal: un solo tono (magnitud), el azul UPLA. */
   --color-barra: #0063a8;
 
   /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */

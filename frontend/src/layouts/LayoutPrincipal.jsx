@@ -34,7 +34,7 @@ export function LayoutPrincipal() {
     )
   }
 
-  // Al cerrar la sesión no se recuerda la página: al volver a entrar se empieza por el dashboard.
+  // Al cerrar la sesión no se recuerda la página: al volver a entrar se empieza por el panel principal.
   if (!usuarioActual) {
     const estado =
       motivoSinSesion === 'salida'

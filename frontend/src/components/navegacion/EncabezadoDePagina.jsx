@@ -11,7 +11,7 @@ export function EncabezadoDePagina({ titulo, descripcion, migas = [], acciones, 
         {conMigas && (
           <nav aria-label="Ruta de navegación" className="mb-2 text-sm text-texto-suave">
             <ol className="flex flex-wrap items-center gap-1.5">
-              {[{ nombre: 'Dashboard', ruta: '/' }, ...migas].map((miga) => (
+              {[{ nombre: 'Panel principal', ruta: '/' }, ...migas].map((miga) => (
                 <li key={miga.ruta} className="flex items-center gap-1.5">
                   <Link to={miga.ruta} className="text-enlace underline underline-offset-2 hover:decoration-2">
                     {miga.nombre}

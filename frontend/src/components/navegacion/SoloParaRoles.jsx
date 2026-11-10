@@ -17,7 +17,7 @@ export function SoloParaRoles({ roles, children }) {
       <div className="flex flex-col items-start gap-4 rounded-xl border border-borde bg-superficie p-6">
         <p>Si necesita registrar usuarios o ambientes, pídaselo al administrador.</p>
         <Button destino="/" variante="principal">
-          Ir al dashboard
+          Ir al panel principal
         </Button>
       </div>
     </>

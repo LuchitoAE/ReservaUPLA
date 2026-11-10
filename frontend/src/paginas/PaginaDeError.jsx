@@ -29,7 +29,7 @@ export function PaginaDeError() {
             to="/"
             className="inline-flex min-h-11 items-center justify-center rounded-lg border border-borde-control px-5 font-semibold text-texto transition hover:bg-superficie-tenue active:translate-y-px"
           >
-            Ir al dashboard
+            Ir al panel principal
           </Link>
         </div>
       </section>

@@ -3,7 +3,7 @@
 // «activaEn»: direcciones en las que la sección se marca como actual (también sus subpáginas); «excepto», las que
 // tienen su propia entrada en el menú.
 export const SECCIONES = [
-  { ruta: '/', nombre: 'Dashboard', icono: 'inicio', activaEn: ['/'] },
+  { ruta: '/', nombre: 'Panel principal', icono: 'inicio', activaEn: ['/'] },
   { ruta: '/reservas', nombre: 'Reservas', icono: 'reservas', activaEn: ['/reservas/*'], excepto: ['/reservas/nueva'] },
   { ruta: '/reservas/nueva', nombre: 'Nueva reserva', icono: 'nueva', activaEn: ['/reservas/nueva'] },
   { ruta: '/ambientes', nombre: 'Ambientes', icono: 'ambientes', activaEn: ['/ambientes/*'] },
