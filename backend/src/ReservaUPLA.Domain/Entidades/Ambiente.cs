@@ -1,7 +1,7 @@
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Enumeraciones;
 
-namespace ReservaUPLA.Domain.Entities;
+namespace ReservaUPLA.Domain.Entidades;
 
 // Laboratorio, auditorio o sala que se puede reservar (RF-02). El modelo del caso se amplía con el responsable
 // del ambiente (opcional), que es quien consulta su uso (actor «Responsable de ambiente»).

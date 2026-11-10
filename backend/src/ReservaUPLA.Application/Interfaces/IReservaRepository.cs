@@ -1,4 +1,4 @@
-using ReservaUPLA.Domain.Entities;
+using ReservaUPLA.Domain.Entidades;
 
 namespace ReservaUPLA.Application.Interfaces;
 

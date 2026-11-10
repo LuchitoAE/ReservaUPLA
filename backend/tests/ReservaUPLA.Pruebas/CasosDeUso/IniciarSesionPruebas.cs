@@ -1,7 +1,7 @@
 using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
-using ReservaUPLA.Domain.Enums;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Enumeraciones;
+using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.Pruebas.Dobles;
 
 namespace ReservaUPLA.Pruebas.CasosDeUso;
@@ -39,7 +39,7 @@ public sealed class IniciarSesionPruebas
     {
         await RegistrarLuisAsync();
 
-        var error = await Assert.ThrowsAsync<SesionNoValidaException>(() =>
+        var error = await Assert.ThrowsAsync<SesionNoValidaExcepcion>(() =>
             CasoDeUso().EjecutarAsync(new IniciarSesionCommand(codigo, contrasena)));
 
         Assert.Equal(Mensaje, error.Message);
@@ -48,7 +48,7 @@ public sealed class IniciarSesionPruebas
     [Fact]
     public async Task Pide_el_codigo_y_la_contrasena_si_faltan()
     {
-        var error = await Assert.ThrowsAsync<DatosNoValidosException>(() =>
+        var error = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
             CasoDeUso().EjecutarAsync(new IniciarSesionCommand("", "")));
 
         Assert.Equal(["Escriba su código."], error.Errores["Codigo_Usuario"]);

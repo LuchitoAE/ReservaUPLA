@@ -28,7 +28,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
             modelBuilder.HasSequence<int>("reservas_numero_seq");
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Ambiente", b =>
                 {
                     b.Property<Guid>("Id_Ambiente")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Reserva", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
                     b.Property<Guid>("Id_Reserva")
                         .ValueGeneratedOnAdd()
@@ -159,7 +159,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Usuario", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Usuario", b =>
                 {
                     b.Property<Guid>("Id_Usuario")
                         .ValueGeneratedOnAdd()
@@ -198,25 +198,25 @@ namespace ReservaUPLA.Infrastructure.Migrations
                     b.ToTable("usuarios", (string)null);
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Ambiente", b =>
                 {
-                    b.HasOne("ReservaUPLA.Domain.Entities.Usuario", null)
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("Id_Responsable_Ambiente")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_ambientes_usuarios_responsable");
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Reserva", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
-                    b.HasOne("ReservaUPLA.Domain.Entities.Ambiente", null)
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Ambiente", null)
                         .WithMany()
                         .HasForeignKey("Id_Ambiente")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reservas_ambientes");
 
-                    b.HasOne("ReservaUPLA.Domain.Entities.Usuario", null)
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("Id_Usuario")
                         .OnDelete(DeleteBehavior.Restrict)

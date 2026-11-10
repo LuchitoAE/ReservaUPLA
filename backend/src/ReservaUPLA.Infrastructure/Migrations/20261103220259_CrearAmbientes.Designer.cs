@@ -25,7 +25,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Ambiente", b =>
                 {
                     b.Property<Guid>("Id_Ambiente")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Usuario", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Usuario", b =>
                 {
                     b.Property<Guid>("Id_Usuario")
                         .ValueGeneratedOnAdd()
@@ -119,9 +119,9 @@ namespace ReservaUPLA.Infrastructure.Migrations
                     b.ToTable("usuarios", (string)null);
                 });
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Ambiente", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Ambiente", b =>
                 {
-                    b.HasOne("ReservaUPLA.Domain.Entities.Usuario", null)
+                    b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("Id_Responsable_Ambiente")
                         .OnDelete(DeleteBehavior.Restrict)

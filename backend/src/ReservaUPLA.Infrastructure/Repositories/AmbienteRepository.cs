@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.Infrastructure.Persistence;
 using ReservaUPLA.Infrastructure.Persistence.Configurations;
 
@@ -39,7 +39,7 @@ internal sealed class AmbienteRepository : IAmbienteRepository
         }
         catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Ambiente_Configuration.Indice_Nombre))
         {
-            throw new DatosNoValidosException(nameof(Ambiente.Nombre_Ambiente), "Ya existe un ambiente con este nombre.");
+            throw new DatosNoValidosExcepcion(nameof(Ambiente.Nombre_Ambiente), "Ya existe un ambiente con este nombre.");
         }
     }
 }

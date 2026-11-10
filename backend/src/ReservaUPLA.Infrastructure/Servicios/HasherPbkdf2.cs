@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
+using ReservaUPLA.Domain.Comun;
 
 namespace ReservaUPLA.Infrastructure.Servicios;
 

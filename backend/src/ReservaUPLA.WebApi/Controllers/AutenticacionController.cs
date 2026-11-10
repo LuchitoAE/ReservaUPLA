@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
@@ -45,7 +45,7 @@ public sealed class AutenticacionController : ControllerBase
         if (usuario is null)
         {
             await HttpContext.SignOutAsync();
-            throw new SesionNoValidaException("Su sesión ya no es válida. Vuelva a ingresar.");
+            throw new SesionNoValidaExcepcion("Su sesión ya no es válida. Vuelva a ingresar.");
         }
 
         return RespuestaApi.Exito(usuario, $"Sesión de {usuario.Nombre_Completo_Usuario}.");

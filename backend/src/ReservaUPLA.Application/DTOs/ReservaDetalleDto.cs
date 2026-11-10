@@ -1,5 +1,5 @@
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Application.DTOs;
 

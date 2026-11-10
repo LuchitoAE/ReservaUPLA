@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.WebApi.Middleware;
 
@@ -33,14 +33,14 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
     {
         var problema = excepcion switch
         {
-            DatosNoValidosException datos_no_validos => DatosNoValidos(datos_no_validos),
-            SesionNoValidaException sesion =>
+            DatosNoValidosExcepcion datos_no_validos => DatosNoValidos(datos_no_validos),
+            SesionNoValidaExcepcion sesion =>
                 Problema(StatusCodes.Status401Unauthorized, "No se pudo iniciar sesión.", sesion.Message),
-            AccionNoPermitidaException no_permitida =>
+            AccionNoPermitidaExcepcion no_permitida =>
                 Problema(StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", no_permitida.Message),
-            RecursoNoEncontradoException no_encontrado =>
+            RecursoNoEncontradoExcepcion no_encontrado =>
                 Problema(StatusCodes.Status404NotFound, "No se encontró lo que se buscaba.", no_encontrado.Message),
-            ConflictoDeNegocioException conflicto =>
+            ConflictoDeNegocioExcepcion conflicto =>
                 Problema(StatusCodes.Status409Conflict, "La operación choca con los datos registrados.", conflicto.Message),
             _ => ErrorInesperado(contexto, excepcion),
         };
@@ -64,7 +64,7 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
 
     // Las claves llegan con el nombre de la propiedad (Fecha_Reserva) y salen como viajan en el JSON
     // (fecha_reserva): el frontend muestra cada mensaje junto a su campo.
-    private ValidationProblemDetails DatosNoValidos(DatosNoValidosException excepcion)
+    private ValidationProblemDetails DatosNoValidos(DatosNoValidosExcepcion excepcion)
     {
         var politica = _opciones_json.JsonSerializerOptions.PropertyNamingPolicy;
         var errores = excepcion.Errores.ToDictionary(error => politica?.ConvertName(error.Key) ?? error.Key, error => error.Value);

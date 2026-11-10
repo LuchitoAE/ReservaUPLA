@@ -1,7 +1,7 @@
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Pruebas.Dominio;
 
@@ -26,7 +26,7 @@ public sealed class UsuarioPruebas
     [Fact]
     public void Registrar_rechaza_un_codigo_que_ya_existe()
     {
-        var error = Assert.Throws<DatosNoValidosException>(() => Registrar(codigo_ya_registrado: true));
+        var error = Assert.Throws<DatosNoValidosExcepcion>(() => Registrar(codigo_ya_registrado: true));
 
         Assert.Equal(["Este código ya existe."], error.Errores["Codigo_Usuario"]);
     }
@@ -34,7 +34,7 @@ public sealed class UsuarioPruebas
     [Fact]
     public void Registrar_junta_el_error_del_codigo_con_los_demas()
     {
-        var error = Assert.Throws<DatosNoValidosException>(() =>
+        var error = Assert.Throws<DatosNoValidosExcepcion>(() =>
             Usuario.Registrar("", "Luis", "correo", Roles_Usuario.Solicitante, "corta", false, false, Cifrar));
 
         Assert.Contains("Codigo_Usuario", error.Errores.Keys);

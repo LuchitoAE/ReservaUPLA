@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ReservaUPLA.Domain.Entities;
+using ReservaUPLA.Domain.Entidades;
 
 namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
 

@@ -1,6 +1,6 @@
 using System.Text;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
+using ReservaUPLA.Domain.Comun;
 
 namespace ReservaUPLA.Pruebas.Dobles;
 

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.Infrastructure.Persistence;
 using ReservaUPLA.Infrastructure.Persistence.Configurations;
 
@@ -58,7 +58,7 @@ internal sealed class ReservaRepository : IReservaRepository
         catch (DbUpdateException error) when (ErroresDePostgres.EsExclusionViolada(error, Reserva_Configuration.Restriccion_Sin_Cruce))
         {
             // Dos aprobaciones del mismo horario al mismo tiempo: la base detiene la segunda (RN-01).
-            throw new ConflictoDeNegocioException(
+            throw new ConflictoDeNegocioExcepcion(
                 "El ambiente ya tiene una reserva aprobada que se cruza con este horario. Elija otro horario u otro ambiente.");
         }
     }

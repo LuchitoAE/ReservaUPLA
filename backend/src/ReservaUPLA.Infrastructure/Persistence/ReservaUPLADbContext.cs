@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaUPLA.Domain.Entities;
+using ReservaUPLA.Domain.Entidades;
 
 namespace ReservaUPLA.Infrastructure.Persistence;
 

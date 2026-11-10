@@ -1,4 +1,4 @@
-namespace ReservaUPLA.Domain.Enums;
+namespace ReservaUPLA.Domain.Enumeraciones;
 
 // Estados de una reserva (RF-07). Toda reserva nace Pendiente.
 public enum Estados_Reserva

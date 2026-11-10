@@ -1,4 +1,4 @@
-namespace ReservaUPLA.Domain.Enums;
+namespace ReservaUPLA.Domain.Enumeraciones;
 
 // Situación del ambiente. Solo uno Disponible recibe reservas.
 public enum Estados_Ambiente

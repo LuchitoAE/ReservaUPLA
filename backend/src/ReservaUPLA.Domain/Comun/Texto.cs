@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace ReservaUPLA.Domain.Common;
+namespace ReservaUPLA.Domain.Comun;
 
 // Normaliza los textos ANTES de validarlos: así la regla se aplica a lo que de verdad se guarda.
 // El frontend aplica la misma regla en src/utils/normalizarTexto.js.

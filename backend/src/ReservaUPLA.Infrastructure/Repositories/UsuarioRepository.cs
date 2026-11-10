@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
+using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.Infrastructure.Persistence;
 using ReservaUPLA.Infrastructure.Persistence.Configurations;
 
@@ -54,12 +54,12 @@ internal sealed class UsuarioRepository : IUsuarioRepository
         catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuration.Indice_Codigo))
         {
             // Dos registros con el mismo código al mismo tiempo: el segundo lo detiene el índice único.
-            throw new DatosNoValidosException(nameof(Usuario.Codigo_Usuario), "Este código ya existe.");
+            throw new DatosNoValidosExcepcion(nameof(Usuario.Codigo_Usuario), "Este código ya existe.");
         }
         catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuration.Indice_Correo))
         {
             // Lo mismo con el correo.
-            throw new DatosNoValidosException(nameof(Usuario.Correo_Usuario), "Ya existe un usuario con este correo.");
+            throw new DatosNoValidosExcepcion(nameof(Usuario.Correo_Usuario), "Ya existe un usuario con este correo.");
         }
     }
 }

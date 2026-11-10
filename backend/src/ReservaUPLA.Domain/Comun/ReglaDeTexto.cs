@@ -1,4 +1,4 @@
-namespace ReservaUPLA.Domain.Common;
+namespace ReservaUPLA.Domain.Comun;
 
 // Reglas de un campo de texto. Reutilizable: cada entidad declara las suyas y ErroresDeValidacion las aplica.
 // «Nombre» va al inicio de los mensajes («El motivo debe…»); «Mensaje_Obligatorio» se muestra si llega vacío.

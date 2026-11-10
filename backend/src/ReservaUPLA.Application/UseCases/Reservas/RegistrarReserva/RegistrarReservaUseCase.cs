@@ -1,6 +1,6 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
+using ReservaUPLA.Domain.Entidades;
 
 namespace ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
 
@@ -33,7 +33,7 @@ public sealed class RegistrarReservaUseCase
             ? await _ambiente_repository.ObtenerPorIdAsync(id_ambiente, cancelacion)
             : null;
 
-        // Si algún dato falla, Solicitar lanza DatosNoValidosException con todos los errores.
+        // Si algún dato falla, Solicitar lanza DatosNoValidosExcepcion con todos los errores.
         var reserva = Reserva.Solicitar(
             solicitante,
             ambiente,

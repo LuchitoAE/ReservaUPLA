@@ -1,6 +1,6 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Application.UseCases.Reservas.CambiarEstadoReserva;
 
@@ -29,7 +29,7 @@ public sealed class CambiarEstadoReservaUseCase
         Guid id_reserva, CambiarEstadoReservaCommand comando, Guid id_usuario_sesion, CancellationToken cancelacion = default)
     {
         var reserva = await _reserva_repository.ObtenerPorIdAsync(id_reserva, cancelacion)
-            ?? throw new RecursoNoEncontradoException("No existe una reserva con el identificador indicado.");
+            ?? throw new RecursoNoEncontradoExcepcion("No existe una reserva con el identificador indicado.");
 
         var usuario = await _usuario_repository.ObtenerPorIdAsync(id_usuario_sesion, cancelacion);
 

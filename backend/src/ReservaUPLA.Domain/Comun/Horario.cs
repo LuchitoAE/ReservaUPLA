@@ -1,4 +1,4 @@
-namespace ReservaUPLA.Domain.Common;
+namespace ReservaUPLA.Domain.Comun;
 
 // Objeto de valor: un día y un tramo de horas. Dos horarios son iguales si tienen los mismos datos.
 // Sabe responder si se cruza con otro (RN-01): mismo día y los tramos se superponen. Que uno termine a las 10:00

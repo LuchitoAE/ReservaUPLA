@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Infrastructure.Persistence;
 
 namespace ReservaUPLA.Infrastructure.Consultas;

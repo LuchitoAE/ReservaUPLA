@@ -1,7 +1,7 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Entities;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Entidades;
 
 namespace ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Ambientes.RegistrarAmbiente;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 

@@ -1,5 +1,5 @@
 using ReservaUPLA.Application.UseCases.Usuarios.CuentasIniciales;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.WebApi.Arranque;
 
@@ -50,7 +50,7 @@ public static class CuentasIniciales
         {
             await accion();
         }
-        catch (DatosNoValidosException error)
+        catch (DatosNoValidosExcepcion error)
         {
             // Por ejemplo, una contraseña configurada que no cumple RN-13: se dice qué campo falló, nunca su valor.
             registro.LogWarning("No se pudo crear {Que}: {Errores}", que,

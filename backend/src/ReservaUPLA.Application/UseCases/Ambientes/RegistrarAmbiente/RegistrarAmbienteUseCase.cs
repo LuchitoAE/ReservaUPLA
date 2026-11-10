@@ -1,8 +1,8 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Application.UseCases.Ambientes.RegistrarAmbiente;
 

@@ -1,6 +1,6 @@
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
-using ReservaUPLA.Domain.Common;
+using ReservaUPLA.Domain.Comun;
 
 namespace ReservaUPLA.Application.UseCases.Usuarios.CuentasIniciales;
 

@@ -1,7 +1,7 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Application.UseCases.Autenticacion.IniciarSesion;
 
@@ -41,6 +41,6 @@ public sealed class IniciarSesionUseCase
             && usuario.Activo_Usuario
             && _hasher.Verificar(comando.Contrasena_Usuario!, new ContrasenaCifrada(usuario.Sal_Contrasena_Usuario, usuario.Hash_Contrasena_Usuario));
 
-        return valida ? UsuarioDto.DesdeEntidad(usuario!) : throw new SesionNoValidaException(Mensaje_Generico);
+        return valida ? UsuarioDto.DesdeEntidad(usuario!) : throw new SesionNoValidaExcepcion(Mensaje_Generico);
     }
 }

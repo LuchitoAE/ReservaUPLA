@@ -1,9 +1,9 @@
 using ReservaUPLA.Application.DTOs;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
 
@@ -25,11 +25,11 @@ public sealed class ConsultarDisponibilidadUseCase
     {
         if (hora_fin_reserva <= hora_inicio_reserva)
         {
-            throw new DatosNoValidosException(nameof(Reserva.Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio.");
+            throw new DatosNoValidosExcepcion(nameof(Reserva.Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio.");
         }
 
         var ambiente = await _ambiente_repository.ObtenerPorIdAsync(id_ambiente, cancelacion)
-            ?? throw new RecursoNoEncontradoException("No existe un ambiente con el identificador indicado.");
+            ?? throw new RecursoNoEncontradoExcepcion("No existe un ambiente con el identificador indicado.");
 
         var reservas = await _reserva_repository.ListarDelAmbienteEnLaFechaAsync(id_ambiente, fecha_reserva, cancelacion);
         var del_dia = reservas

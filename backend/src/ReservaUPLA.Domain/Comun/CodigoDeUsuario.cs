@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
-namespace ReservaUPLA.Domain.Common;
+namespace ReservaUPLA.Domain.Comun;
 
 // Objeto de valor del código con el que cada persona ingresa (RN-14): 7 letras (A-Z) o dígitos, sin espacios y en
 // mayúsculas. Admite los códigos que entrega la universidad (P00914K) y las cuentas de prueba (ADMIN01).
@@ -38,7 +38,7 @@ public sealed partial record CodigoDeUsuario
         var normalizado = Normalizar(texto);
         var mensaje = Revisar(normalizado);
 
-        return mensaje is null ? new CodigoDeUsuario(normalizado) : throw new DatosNoValidosException("Codigo_Usuario", mensaje);
+        return mensaje is null ? new CodigoDeUsuario(normalizado) : throw new DatosNoValidosExcepcion("Codigo_Usuario", mensaje);
     }
 
     public override string ToString() => Valor;

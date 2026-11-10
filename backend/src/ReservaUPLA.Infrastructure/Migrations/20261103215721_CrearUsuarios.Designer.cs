@@ -25,7 +25,7 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ReservaUPLA.Domain.Entities.Usuario", b =>
+            modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Usuario", b =>
                 {
                     b.Property<Guid>("Id_Usuario")
                         .ValueGeneratedOnAdd()

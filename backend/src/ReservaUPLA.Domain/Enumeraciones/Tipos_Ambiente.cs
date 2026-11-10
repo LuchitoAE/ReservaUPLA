@@ -1,4 +1,4 @@
-namespace ReservaUPLA.Domain.Enums;
+namespace ReservaUPLA.Domain.Enumeraciones;
 
 // Clases de ambientes que administra la universidad (situación problemática del caso).
 public enum Tipos_Ambiente

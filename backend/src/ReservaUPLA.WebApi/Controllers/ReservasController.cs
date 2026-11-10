@@ -5,7 +5,7 @@ using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.UseCases.Reservas.CambiarEstadoReserva;
 using ReservaUPLA.Application.UseCases.Reservas.ConsultarDisponibilidad;
 using ReservaUPLA.Application.UseCases.Reservas.RegistrarReserva;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 

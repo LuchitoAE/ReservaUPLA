@@ -1,9 +1,9 @@
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Domain.Estados;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
-namespace ReservaUPLA.Domain.Entities;
+namespace ReservaUPLA.Domain.Entidades;
 
 // Solicitud de uso de un ambiente en una fecha y un horario (RF-03). Concentra las reglas del caso:
 //   RN-02 todos los datos; RN-03 fin mayor que inicio; RN-04 entre 07:00 y 22:00;
@@ -158,7 +158,7 @@ public sealed class Reserva
 
         if (cruce is not null)
         {
-            throw new ConflictoDeNegocioException(
+            throw new ConflictoDeNegocioExcepcion(
                 $"El ambiente ya está reservado {cruce.ObtenerHorario()} ({cruce.Codigo_Reserva}, aprobada). " +
                 "Elija otro horario u otro ambiente.");
         }
@@ -179,12 +179,12 @@ public sealed class Reserva
     {
         if (usuario is null || !usuario.Activo_Usuario)
         {
-            throw new AccionNoPermitidaException("Inicie sesión con un usuario activo para cambiar el estado.");
+            throw new AccionNoPermitidaExcepcion("Inicie sesión con un usuario activo para cambiar el estado.");
         }
 
         if (!Enum.IsDefined(nuevo_estado))
         {
-            throw new DatosNoValidosException(nameof(Estado_Reserva), "Elija el nuevo estado: aprobada, rechazada o cancelada.");
+            throw new DatosNoValidosExcepcion(nameof(Estado_Reserva), "Elija el nuevo estado: aprobada, rechazada o cancelada.");
         }
 
         ObtenerEstado().ValidarCambio(nuevo_estado, this, usuario);

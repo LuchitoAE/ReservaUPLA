@@ -1,6 +1,6 @@
 using ReservaUPLA.Application.UseCases.Usuarios.CuentasIniciales;
 using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Pruebas.Dobles;
 
 namespace ReservaUPLA.Pruebas.CasosDeUso;

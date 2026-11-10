@@ -1,6 +1,6 @@
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Excepciones;
 
-namespace ReservaUPLA.Domain.Common;
+namespace ReservaUPLA.Domain.Comun;
 
 // Junta los errores de todos los campos: el usuario los ve todos de una vez, no uno por intento.
 // La usan las tres entidades; cada una declara sus reglas y esta clase las aplica igual.
@@ -57,7 +57,7 @@ public sealed class ErroresDeValidacion
     {
         if (_errores.Count > 0)
         {
-            throw new DatosNoValidosException(_errores.ToDictionary(error => error.Key, error => error.Value.ToArray()));
+            throw new DatosNoValidosExcepcion(_errores.ToDictionary(error => error.Key, error => error.Value.ToArray()));
         }
     }
 }

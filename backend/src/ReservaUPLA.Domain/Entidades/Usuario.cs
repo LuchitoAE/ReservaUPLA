@@ -1,7 +1,7 @@
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Enumeraciones;
 
-namespace ReservaUPLA.Domain.Entities;
+namespace ReservaUPLA.Domain.Entidades;
 
 // Persona que usa el sistema (RF-01). Su rol decide qué puede hacer: solicitar, aprobar o consultar su ambiente.
 // Solo se crea con Registrar, que normaliza y exige las reglas; un usuario nuevo nace activo. Ingresa con su código
