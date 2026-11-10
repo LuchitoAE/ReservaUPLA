@@ -8,7 +8,6 @@ export function NuevoAmbiente() {
       <EncabezadoDePagina
         titulo="Registrar ambiente"
         descripcion="Un laboratorio, auditorio o sala que la universidad presta para reservas."
-        migas={[{ nombre: 'Ambientes', ruta: '/ambientes' }]}
       />
       <section className="max-w-3xl">
         <FormularioAmbiente />

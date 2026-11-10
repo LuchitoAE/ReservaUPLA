@@ -15,8 +15,6 @@ import { avisoDeError } from '../utils/avisoDeError'
 import { formatearFechaLarga } from '../utils/fechas'
 import { TIPOS_AMBIENTE } from '../utils/formato'
 
-const MIGAS = [{ nombre: 'Reservas', ruta: '/reservas' }]
-
 // RF-06: todo sobre una reserva, agrupado por lo que el usuario busca (cuándo, dónde, quién y para qué), y su historial.
 // RF-07: al lado, en qué está y las acciones que el usuario actual puede hacer. El resultado de cada cambio sale en un
 // aviso flotante con el color de su estado (RNF-04, RNF-05): nada empuja las tarjetas.
@@ -29,7 +27,7 @@ export function DetalleReserva() {
   if (cargando && !reserva) {
     return (
       <>
-        <EncabezadoDePagina titulo="Reserva" migas={MIGAS} />
+        <EncabezadoDePagina titulo="Reserva" />
         <Cargando texto="Cargando la reserva…" />
       </>
     )
@@ -38,7 +36,7 @@ export function DetalleReserva() {
   if (error) {
     return (
       <>
-        <EncabezadoDePagina titulo="Reserva no encontrada" migas={MIGAS} />
+        <EncabezadoDePagina titulo="Reserva no encontrada" />
         <div className="flex flex-col items-start gap-4">
           <AlertMessage tipo="error" aviso={avisoDeError(error)} className="self-stretch" />
           <Button destino="/reservas">Volver a reservas</Button>
@@ -52,7 +50,6 @@ export function DetalleReserva() {
       <EncabezadoDePagina
         titulo={`Reserva ${reserva.codigo_reserva}`}
         descripcion={`${reserva.nombre_ambiente} · ${reserva.hora_inicio_reserva} a ${reserva.hora_fin_reserva}`}
-        migas={MIGAS}
       />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6">
