@@ -147,3 +147,39 @@ servidor no lo puede decidir la regla del navegador, que no conoce ese dato. Sep
 que falla al escribir un comando evita anotar defectos falsos y buscar en el código lo que estaba en la terminal. Unir
 la rama del panel al final, con las otras dos ya integradas, hizo que las pruebas del sistema corrieran sobre el código
 completo y no sobre una parte.
+
+## Iteración 5 · Diseño del caso por partes (10/11/2026, 08:22 a 15:30)
+
+Ramas `feature/diseno-barra-superior` (merge `fb5fdca`), `feature/diseno-banda-e-indicadores` (`1e2c508`),
+`feature/diseno-telefono` (`77a7737`), `feature/diseno-disponibilidad-al-costado` (`af55c7a`),
+`feature/diseno-detalles` (`d4bb0a4`), `feature/diseno-agenda` (`bbc98db`), `feature/diseno-listados` (`65813ff`) y
+`feature/diseno-formularios-errores` (`992ecae`). Cierra el diseño de los 57 PNG por rol y estado y las brechas 1 a 33
+de la revisión (secciones 4p y 4q del CONTEXTO). No cambia el alcance funcional: ajusta la interfaz a los diseños.
+
+| Tarea | Resultado |
+|---|---|
+| Revisión de los 57 PNG y plan por partes (5.1 a 5.9) | Brechas numeradas y una rama, un commit y un merge `--no-ff` por parte |
+| 5.1 Barra superior, chip de usuario y barra lateral | Migas deducidas de la ruta, tema, sesión, botón dorado, grupo de administración y menú contraíble |
+| 5.2–5.3 Banda, indicadores, teléfono | Banda con rejilla y acción blanca; seis indicadores en una fila; dos columnas y botón flotante en el teléfono |
+| 5.4 Disponibilidad al costado | Tarjeta de 24 rem con línea de tiempo del día; formulario a dos columnas |
+| 5.5–5.6 Detalles y agenda | Íconos, chevrons, asteriscos, ojo, avatar, fichas y conteo de errores; agenda con siete días y 07:00–22:00 (RN-04) |
+| 5.7 Listados | Chips con conteo, filtros, acción «Ver», fila que abre el detalle y estados vacíos |
+| 5.8 Formularios, errores y modo oscuro | Grupos numerados, tarjeta de decisión por rol y estado, C01–C08, paleta oscura y azul de acción `#0b74c4` |
+| Pruebas | Oxlint limpio, 97 Vitest (5 nuevas de las migas), 39 xUnit, `pnpm build` y 81 de 81 de punta a punta |
+| Cierre documental (5.9) | ERS y SDD 0100 con fecha 10/11/2026, figuras desde `imagenes/`, README y este registro |
+
+| Defecto | Se introdujo en | Se encontró en | Corrección |
+|---|---|---|---|
+| `/reservas/nuevas` mostraba «Reserva no encontrada» (C03) en vez de «Página no encontrada» (C02): la ruta `reservas/:idReserva` capturaba cualquier texto | Código (ruta) | Captura de C02 | El detalle exige un UUID; la miga y la página dicen «Página no encontrada» |
+| Con los indicadores caídos, el panel seguía mostrando secciones a medias (C04) | Código (panel) | Captura de C04 | Encabezado y aviso solos, con «Reintentar» |
+| El modo oscuro usaba fondo `#0c1626`, superficie `#13233a` y botón `#0063a8`, distintos de los PNG (`#070f1e`, `#16294a`, `#0b74c4`) | Diseño (tokens) | Comparación de colores con los diseños | Tokens medidos y aplicados a barra lateral, banda, botón claro y acciones |
+| «Limpiar filtros» tenía texto azul oscuro sobre fondo azul en modo oscuro (1,9:1) | Código (tokens) | Revisión de contraste | `text-enlace`, que se aclara en oscuro |
+| Las pruebas de punta a punta medían la barra lateral con `.bg-marca-900`, que pasó a `.bg-lateral` | Pruebas | Pruebas del sistema | Selector actualizado |
+| La prueba de «la reserva queda a nombre de quien inició sesión» leía el grupo «¿Quién la solicita?», que se quitó porque no está en S03 | Pruebas | Pruebas del sistema | La prueba lee la descripción de la página |
+| El historial mostraba fecha y hora; AD06 y S11 piden la fecha larga y, si sigue pendiente, solo «Estado actual» | Código (historial) | Comparación con AD06 | `formatearFechaDeMomento` y el caso pendiente |
+| La página de error C06 medía 448 px y el título 24 px; el diseño pide 560 px, 30 px y pantalla completa | Código (C06) | Captura de C06 | Tarjeta de 35 rem, título de 30 px y botones del sistema |
+| El «Volver a reservas» del detalle en error iba con borde; C03 lo pide relleno | Código (detalle) | Captura de C03 | Variante principal solo en el error |
+
+**Retrospectiva.** Comparar píxel a píxel los colores del PNG encontró diferencias que la vista no notaba. Las pruebas
+de punta a punta volvieron a avisar de selectores y textos que el rediseño cambió: conviene ejecutarlas al cerrar cada
+parte, no al final. Dividir el diseño en ocho partes mantuvo cada cambio revisable y dejó el historial de git legible.
