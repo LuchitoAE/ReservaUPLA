@@ -44,7 +44,7 @@ export function IndicadoresDelPanel({ rol, consulta, ambientesACargo = [] }) {
       </h2>
       {/* Seis en una fila, como el diseño (AD01, S01, R01): solo cuando cada tarjeta conserva el ancho del diseño
           (unos 170 px). Con menos espacio se reparten en tres por fila para que los nombres no se partan. */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 3xl:grid-cols-6">
         <CardIndicador
           titulo={TOTAL[rol] ?? TOTAL.Administrador}
           valor={indicadores.total_reservas}
