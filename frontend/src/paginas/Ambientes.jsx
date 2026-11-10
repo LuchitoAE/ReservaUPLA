@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react'
 import { listarAmbientes } from '../api/ambientesApi'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
-import { Button } from '../components/ui/Button'
 import { ChipsDeFiltro } from '../components/ui/ChipsDeFiltro'
 import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { EtiquetaDeAmbiente } from '../components/ui/EtiquetaDeEstado'
@@ -16,7 +14,6 @@ import { ESTADOS_AMBIENTE, TIPOS_AMBIENTE } from '../utils/formato'
 export function Ambientes() {
   const idNuevo = useFilaNueva()
   const { usuarioActual } = useUsuarioActual()
-  const esAdministrador = usuarioActual.rol_usuario === 'Administrador'
   const { datos, cargando, error, recargar } = useConsulta(() => listarAmbientes(), [])
   const [estado, setEstado] = useState('')
 
@@ -65,17 +62,6 @@ export function Ambientes() {
 
   return (
     <>
-      <EncabezadoDePagina
-        titulo="Ambientes"
-        descripcion="Laboratorios, auditorios y salas que se pueden reservar."
-        acciones={
-          esAdministrador && (
-            <Button destino="/ambientes/nuevo" variante="principal">
-              Nuevo ambiente
-            </Button>
-          )
-        }
-      />
       <div className="flex flex-col gap-4">
         {error && <ErrorDeCarga error={error} alReintentar={recargar} />}
         {!cargando && !error && (

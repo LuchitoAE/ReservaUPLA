@@ -1,6 +1,5 @@
 import { cambiarContrasena } from '../api/cuentaApi'
 import { ReglasDeContrasena } from '../components/autenticacion/ReglasDeContrasena'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AccionesDeFormulario } from '../components/ui/AccionesDeFormulario'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { CampoDeContrasena } from '../components/ui/CampoDeContrasena'
@@ -55,7 +54,6 @@ export function MiCuenta() {
 
   return (
     <>
-      <EncabezadoDePagina titulo="Mi cuenta" descripcion="Sus datos, su contraseña y las preferencias de este navegador." />
       <div className="flex flex-col gap-6">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
           <section aria-labelledby="titulo-datos" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6 lg:self-start">

@@ -5,9 +5,11 @@ import { AgendaDelCampus } from './AgendaDelCampus'
 // tarjeta a la derecha, 65/35 con un mínimo de 448 px para el formulario. Por debajo de 1024 px, una sola columna:
 // el panel queda arriba, como franja. El logo es un recurso institucional de la UPLA, solo para este prototipo
 // académico.
-export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, children }) {
+export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, saliendo = false, children }) {
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[minmax(0,65fr)_minmax(28rem,35fr)]">
+    <div
+      className={`animar-pagina min-h-screen transition-opacity duration-150 motion-reduce:transition-none lg:grid lg:grid-cols-[minmax(0,65fr)_minmax(28rem,35fr)] ${saliendo ? 'opacity-0' : 'opacity-100'}`}
+    >
       <title>{`${tituloPestana} · ReservaUPLA`}</title>
       <AgendaDelCampus />
       {/* En una columna, la tarjeta empieza debajo del botón de tema (antes lo tapaba en el teléfono). */}

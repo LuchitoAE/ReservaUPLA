@@ -56,6 +56,8 @@
   --shadow-tarjeta: 0 1px 3px rgb(15 23 42 / 0.1), 0 8px 18px -4px rgb(15 23 42 / 0.16);
   --shadow-campo: 0 1px 2px rgb(15 23 42 / 0.08);
   --shadow-tarjeta-alta: 0 2px 4px rgb(15 23 42 / 0.12), 0 14px 28px -6px rgb(15 23 42 / 0.2);
+  /* La barra superior blanca necesita una sombra propia, más marcada que la de las tarjetas, para separarse del fondo. */
+  --shadow-barra: 0 2px 4px rgb(15 23 42 / 0.06), 0 8px 20px -8px rgb(15 23 42 / 0.3);
 
   --color-error: #b91c1c;
   --color-error-fondo: #fef2f2;
@@ -158,9 +160,58 @@
     --color-cancelada-texto: #cbd5e1;
     --color-deshabilitado: #1d2f47;
     --color-deshabilitado-texto: #93a4ba;
-    --shadow-tarjeta: 0 1px 3px rgb(0 0 0 / 0.55), 0 10px 20px -4px rgb(0 0 0 / 0.55);
-    --shadow-campo: 0 1px 2px rgb(0 0 0 / 0.55);
-    --shadow-tarjeta-alta: 0 2px 4px rgb(0 0 0 / 0.6), 0 16px 30px -6px rgb(0 0 0 / 0.6);
+    /* En oscuro se prueba un borde de luz blanco sobre el halo negro: el blanco solo no separa la tarjeta del fondo. */
+    --shadow-tarjeta: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(255 255 255 / 0.05), 0 10px 20px -4px rgb(0 0 0 / 0.55);
+    --shadow-campo: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 1px 2px rgb(0 0 0 / 0.45);
+    --shadow-tarjeta-alta: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 2px 4px rgb(255 255 255 / 0.06), 0 16px 30px -6px rgb(0 0 0 / 0.6);
+    --shadow-barra: 0 2px 4px rgb(0 0 0 / 0.4), 0 8px 20px -8px rgb(0 0 0 / 0.7);
+}
+
+/* Animaciones de la interfaz (opción A): cortas, discretas y con respeto por «menos movimiento». */
+@keyframes aparecer-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes escribir-titulo {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animar-pagina {
+  animation: aparecer-pagina 180ms ease-out;
+}
+
+.titulo-entrando {
+  display: inline-block;
+  animation: escribir-titulo 120ms ease-out;
+}
+
+.titulo-saliendo {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 70ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animar-pagina,
+  .titulo-entrando {
+    animation: none;
+  }
+
+  .titulo-saliendo {
+    transition: none;
+  }
 }
 
 @layer base {

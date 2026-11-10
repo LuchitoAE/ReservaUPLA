@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { listarAmbientes } from '../../api/ambientesApi'
 import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
@@ -5,12 +6,12 @@ import { ahoraEnPeru } from '../../utils/fechas'
 import { Button } from '../ui/Button'
 import { EstadoVacio } from '../ui/EstadoVacio'
 import { Icono } from '../ui/Icono'
-import { BandaDeBienvenida } from './BandaDeBienvenida'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
 import { ListaDeAmbientes } from './ListaDeAmbientes'
 import { ListaDeReservas } from './ListaDeReservas'
 import { proximasPrimero } from './ordenDeReservas'
 import { resumenDelPanel } from './resumenDelPanel'
+import { useBandaDePagina } from '../../contexto/contextoBanda'
 import { Seccion } from './Seccion'
 
 const PASOS = [
@@ -25,19 +26,22 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
   const hoy = ahoraEnPeru().fecha
   const proximas = useConsulta(() => listarReservas({ id_usuario: usuario.id_usuario, fecha_desde: hoy }), [])
   const ambientes = useConsulta(() => listarAmbientes(), [])
+  const { fijarBanda } = useBandaDePagina() ?? {}
+
+  // El saludo del panel cambia cuando llegan los indicadores; la banda se queda quieta y solo actualiza su línea.
+  useEffect(() => {
+    fijarBanda?.({
+      descripcion: resumenDelPanel({
+        rol: usuario.rol_usuario,
+        nombre: usuario.nombre_completo_usuario,
+        pendientes: indicadores.datos?.reservas_pendientes,
+      }),
+    })
+    return () => fijarBanda?.(null)
+  }, [fijarBanda, usuario.rol_usuario, usuario.nombre_completo_usuario, indicadores.datos])
 
   return (
-    <>
-      <BandaDeBienvenida
-        resumen={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, pendientes: indicadores.datos?.reservas_pendientes })}
-        accion={
-          <Button destino="/reservas" variante="blanco">
-            <Icono nombre="reservas" />
-            Ver mis reservas
-          </Button>
-        }
-      />
-      <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
         <IndicadoresDelPanel rol={usuario.rol_usuario} consulta={indicadores} />
         <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
           <Seccion
@@ -91,7 +95,6 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
             </Seccion>
           </div>
         </div>
-      </div>
-    </>
+    </div>
   )
 }

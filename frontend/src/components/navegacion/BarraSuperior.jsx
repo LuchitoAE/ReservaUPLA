@@ -14,7 +14,7 @@ export function BarraSuperior() {
   const actual = migas[migas.length - 1]
 
   return (
-    <header className="sticky top-0 z-30 hidden items-center justify-between gap-4 border-b border-borde bg-superficie px-7 py-3 shadow-tarjeta lg:flex">
+    <header className="sticky top-0 z-30 hidden items-center justify-between gap-4 border-b border-borde bg-superficie px-7 py-3 shadow-barra lg:flex">
       <nav aria-label="Ruta de navegación" className="min-w-0 text-sm">
         <ol className="flex flex-wrap items-center gap-1.5">
           {migas.slice(0, -1).map((miga) => (

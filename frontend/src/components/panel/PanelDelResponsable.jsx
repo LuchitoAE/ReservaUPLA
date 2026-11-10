@@ -1,11 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { listarAmbientes } from '../../api/ambientesApi'
 import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
 import { ahoraEnPeru } from '../../utils/fechas'
-import { Button } from '../ui/Button'
-import { Icono } from '../ui/Icono'
-import { BandaDeBienvenida } from './BandaDeBienvenida'
+import { useBandaDePagina } from '../../contexto/contextoBanda'
 import { AgendaDeLaSemana } from './AgendaDeLaSemana'
 import { diasDeLaSemana, lunesDe, moverSemana } from './agendaDeLaSemana'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
@@ -23,23 +21,29 @@ export function PanelDelResponsable({ usuario, indicadores }) {
   const semana = useConsulta(() => reservasDeLaSemana(usuario.id_usuario, lunes), [lunes])
   const estaSemana = useConsulta(() => reservasDeLaSemana(usuario.id_usuario, lunesActual), [])
 
-  const resumenDeEstaSemana = estaSemana.datos && {
-    aprobadas: estaSemana.datos.filter((reserva) => reserva.estado_reserva === 'Aprobada').length,
-    pendientes: estaSemana.datos.filter((reserva) => reserva.estado_reserva === 'Pendiente').length,
-  }
+  const resumenDeEstaSemana = useMemo(
+    () =>
+      estaSemana.datos && {
+        aprobadas: estaSemana.datos.filter((reserva) => reserva.estado_reserva === 'Aprobada').length,
+        pendientes: estaSemana.datos.filter((reserva) => reserva.estado_reserva === 'Pendiente').length,
+      },
+    [estaSemana.datos],
+  )
+  const { fijarBanda } = useBandaDePagina() ?? {}
+
+  useEffect(() => {
+    fijarBanda?.({
+      descripcion: resumenDelPanel({
+        rol: usuario.rol_usuario,
+        nombre: usuario.nombre_completo_usuario,
+        semana: resumenDeEstaSemana,
+      }),
+    })
+    return () => fijarBanda?.(null)
+  }, [fijarBanda, usuario.rol_usuario, usuario.nombre_completo_usuario, resumenDeEstaSemana])
 
   return (
-    <>
-      <BandaDeBienvenida
-        resumen={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, semana: resumenDeEstaSemana })}
-        accion={
-          <Button destino="/reservas" variante="blanco">
-            <Icono nombre="reservas" />
-            Reservas de mis ambientes
-          </Button>
-        }
-      />
-      <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
         <IndicadoresDelPanel rol={usuario.rol_usuario} consulta={indicadores} ambientesACargo={ambientes.datos ?? []} />
         <AgendaDeLaSemana
           ambientes={ambientes.datos ?? []}
@@ -48,7 +52,6 @@ export function PanelDelResponsable({ usuario, indicadores }) {
           cargando={(semana.cargando && !semana.datos) || (ambientes.cargando && !ambientes.datos)}
           alCambiarSemana={(semanas) => setLunes((actual) => moverSemana(actual, semanas))}
         />
-      </div>
-    </>
+    </div>
   )
 }

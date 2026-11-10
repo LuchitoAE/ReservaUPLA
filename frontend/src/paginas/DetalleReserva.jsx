@@ -2,14 +2,13 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { obtenerReserva } from '../api/reservasApi'
 import { avisoDeReserva } from '../avisos/avisosDeReserva'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AccionesDeEstado } from '../components/reservas/AccionesDeEstado'
 import { HistorialDeReserva } from '../components/reservas/HistorialDeReserva'
-import { Button } from '../components/ui/Button'
 import { Cargando } from '../components/ui/Cargando'
 import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { Icono } from '../components/ui/Icono'
 import { InsigniaDeEstado } from '../components/ui/InsigniaDeEstado'
+import { useBandaDePagina } from '../contexto/contextoBanda'
 import { useMigaDePagina } from '../contexto/contextoMiga'
 import { useAviso } from '../hooks/useAviso'
 import { useConsulta } from '../hooks/useConsulta'
@@ -39,6 +38,8 @@ export function DetalleReserva() {
   const { datos: reserva, cargando, error, recargar } = useConsulta(() => obtenerReserva(idReserva), [idReserva])
   const mostrarAviso = useAviso()
   const { fijarMiga } = useMigaDePagina() ?? {}
+  const { fijarBanda } = useBandaDePagina() ?? {}
+  const idValido = esIdentificadorDeReserva(idReserva)
 
   // La barra superior muestra el código de la reserva en cuanto se conoce (AD06, AD08 y AD09); mientras carga queda
   // «Reserva» (C08). Al salir de la página se borra para no dejarlo en la miga de otra pantalla.
@@ -47,59 +48,56 @@ export function DetalleReserva() {
     return () => fijarMiga?.(null)
   }, [reserva?.codigo_reserva, fijarMiga])
 
+  // La banda muestra el código y el estado cuando llegan; mientras tanto queda «Reserva» y, si falla, dice qué pasó.
+  useEffect(() => {
+    if (!idValido) {
+      return undefined
+    }
+    if (error) {
+      const noEncontrada = error.tipo === 'no_encontrado'
+      fijarBanda?.({
+        titulo: noEncontrada ? 'Reserva no encontrada' : 'No se pudo cargar la reserva',
+        descripcion: noEncontrada ? 'No existe una reserva con el identificador indicado.' : null,
+        insignia: null,
+      })
+    } else if (reserva) {
+      fijarBanda?.({
+        titulo: `Reserva ${reserva.codigo_reserva}`,
+        descripcion: `${reserva.nombre_ambiente} · ${reserva.hora_inicio_reserva} a ${reserva.hora_fin_reserva}`,
+        insignia: <InsigniaDeEstado estado={reserva.estado_reserva} />,
+      })
+    } else {
+      fijarBanda?.(null)
+    }
+    return () => fijarBanda?.(null)
+  }, [idValido, fijarBanda, reserva, error])
+
   // «/reservas/nuevas» no es el detalle de ninguna reserva: es una dirección que no existe (diseño C02).
-  if (!esIdentificadorDeReserva(idReserva)) {
+  if (!idValido) {
     return <PaginaNoEncontrada />
   }
 
   if (cargando && !reserva) {
-    return (
-      <>
-        <EncabezadoDePagina titulo="Reserva" />
-        <Cargando texto="Cargando la reserva…" />
-      </>
-    )
+    return <Cargando texto="Cargando la reserva…" />
   }
 
   if (error) {
     const noEncontrada = error.tipo === 'no_encontrado'
     return (
-      <>
-        <EncabezadoDePagina
-          titulo={noEncontrada ? 'Reserva no encontrada' : 'No se pudo cargar la reserva'}
-          descripcion={noEncontrada ? 'No existe una reserva con el identificador indicado.' : undefined}
-        />
-        <div className="flex flex-col items-start gap-4">
-          {noEncontrada ? (
-            <p className="self-stretch rounded-xl border border-borde bg-superficie p-6 shadow-tarjeta">
-              Puede que la dirección esté incompleta. Búsquela en el listado por su código.
-            </p>
-          ) : (
-            <ErrorDeCarga error={error} alReintentar={recargar} />
-          )}
-          <Button destino="/reservas" variante="principal">
-            <Icono nombre="anterior" />
-            Volver a reservas
-          </Button>
-        </div>
-      </>
+      <div className="flex flex-col items-start gap-4">
+        {noEncontrada ? (
+          <p className="self-stretch rounded-xl border border-borde bg-superficie p-6 shadow-tarjeta">
+            Puede que la dirección esté incompleta. Búsquela en el listado por su código.
+          </p>
+        ) : (
+          <ErrorDeCarga error={error} alReintentar={recargar} />
+        )}
+      </div>
     )
   }
 
   return (
-    <>
-      <EncabezadoDePagina
-        titulo={`Reserva ${reserva.codigo_reserva}`}
-        descripcion={`${reserva.nombre_ambiente} · ${reserva.hora_inicio_reserva} a ${reserva.hora_fin_reserva}`}
-        insignia={<InsigniaDeEstado estado={reserva.estado_reserva} />}
-        acciones={
-          <Button destino="/reservas">
-            <Icono nombre="anterior" />
-            Volver a reservas
-          </Button>
-        }
-      />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6">
           <section aria-labelledby="titulo-datos" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
             <div className="flex items-center gap-2.5">
@@ -149,8 +147,7 @@ export function DetalleReserva() {
             }}
           />
         </aside>
-      </div>
-    </>
+    </div>
   )
 }
 

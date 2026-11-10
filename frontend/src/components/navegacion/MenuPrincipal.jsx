@@ -36,7 +36,10 @@ export function MenuPrincipal({ id, abierto, alElegir, contraido = false }) {
   }
 
   const soloIcono = contraido ? 'lg:justify-center' : ''
-  const textoContraido = contraido ? 'lg:sr-only' : ''
+  const textoContraido = contraido
+    ? 'lg:max-w-0 lg:overflow-hidden lg:opacity-0'
+    : 'lg:max-w-52 lg:opacity-100'
+  const transicionTexto = 'whitespace-nowrap transition-[max-width,opacity] duration-150 motion-reduce:transition-none'
 
   return (
     <nav
@@ -51,7 +54,7 @@ export function MenuPrincipal({ id, abierto, alElegir, contraido = false }) {
         className={`mb-3 flex min-h-11 items-center justify-center gap-2 rounded-lg bg-acento px-3 font-semibold text-acento-texto transition hover:brightness-95 active:translate-y-px focus-visible:outline-3 focus-visible:outline-white ${soloIcono}`}
       >
         <Icono nombre="nueva" />
-        <span className={textoContraido}>Nueva reserva</span>
+        <span className={`${transicionTexto} ${textoContraido}`}>Nueva reserva</span>
       </Link>
 
       <ul className="flex flex-col gap-1">
@@ -60,7 +63,7 @@ export function MenuPrincipal({ id, abierto, alElegir, contraido = false }) {
             return (
               <li
                 key={fila.clave}
-                className={`px-3 pt-4 pb-1 text-xs font-semibold tracking-wide text-marca-100 uppercase ${contraido ? 'lg:hidden' : ''}`}
+                className={`overflow-hidden px-3 pt-4 pb-1 text-xs font-semibold tracking-wide text-marca-100 uppercase transition-[max-height,opacity,padding] duration-150 motion-reduce:transition-none ${contraido ? 'lg:max-h-0 lg:py-0 lg:opacity-0' : 'lg:max-h-10 lg:opacity-100'}`}
               >
                 {fila.nombre}
               </li>
@@ -83,12 +86,12 @@ export function MenuPrincipal({ id, abierto, alElegir, contraido = false }) {
                   }`}
                 >
                   <Icono nombre={seccion.icono} />
-                  <span className={textoContraido}>{seccion.nombre}</span>
+                  <span className={`${transicionTexto} ${textoContraido}`}>{seccion.nombre}</span>
                 </Link>
               ) : (
                 <span className={`${ESTILO_OPCION} ${soloIcono} text-marca-100`}>
                   <Icono nombre={seccion.icono} />
-                  <span className={`flex flex-col ${textoContraido}`}>
+                  <span className={`flex flex-col ${transicionTexto} ${textoContraido}`}>
                     {seccion.nombre}
                     <span className="text-xs">Próximamente</span>
                   </span>
