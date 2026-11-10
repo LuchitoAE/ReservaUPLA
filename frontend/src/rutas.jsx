@@ -5,6 +5,7 @@ import { RaizDeLaApp } from './layouts/RaizDeLaApp'
 import { Ambientes } from './paginas/Ambientes'
 import { PanelPrincipal } from './paginas/PanelPrincipal'
 import { DetalleReserva } from './paginas/DetalleReserva'
+import { MiCuenta } from './paginas/MiCuenta'
 import { NuevaReserva } from './paginas/NuevaReserva'
 import { NuevoAmbiente } from './paginas/NuevoAmbiente'
 import { NuevoUsuario } from './paginas/NuevoUsuario'
@@ -35,6 +36,7 @@ export const rutas = createBrowserRouter([
           { path: 'reservas/nueva', element: <NuevaReserva /> },
           { path: 'reservas/:idReserva', element: <DetalleReserva /> },
           { path: 'ambientes', element: <Ambientes /> },
+          { path: 'mi-cuenta', element: <MiCuenta /> },
           { path: 'ambientes/nuevo', element: <SoloParaRoles roles={ADMINISTRADOR}><NuevoAmbiente /></SoloParaRoles> },
           { path: 'usuarios', element: <SoloParaRoles roles={ADMINISTRADOR}><Usuarios /></SoloParaRoles> },
           { path: 'usuarios/nuevo', element: <SoloParaRoles roles={ADMINISTRADOR}><NuevoUsuario /></SoloParaRoles> },
