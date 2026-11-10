@@ -36,16 +36,18 @@ export function FiltrosDeReservas({ filtros, ambientes, alcance, alCambiar, alQu
 
   return (
     <section aria-label="Filtros" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-4">
-      <TextInput
-        id="filtro-texto"
-        etiqueta="Buscar"
-        type="search"
-        valor={texto}
-        onCambiar={setTexto}
-        maxLength={100}
-        ayuda="Por código (RES-2026-0001) o por el nombre de quien la solicitó."
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[minmax(0,1.6fr)_repeat(4,minmax(0,1fr))]">
+        <div className="sm:col-span-2 xl:col-span-1">
+          <TextInput
+            id="filtro-texto"
+            etiqueta="Buscar"
+            type="search"
+            valor={texto}
+            onCambiar={setTexto}
+            maxLength={100}
+            ayuda="Por código (RES-2026-0001) o por el nombre de quien la solicitó."
+          />
+        </div>
         <SelectInput
           id="filtro-estado"
           etiqueta="Estado"
