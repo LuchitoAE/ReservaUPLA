@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, Outlet, useLocation } from 'react-router'
 import logoUpla from '../assets/logo-upla-blanco.png'
+import fuego from '../assets/fuego1.png'
 import { BarraSuperior } from '../components/navegacion/BarraSuperior'
 import { MenuDeUsuario } from '../components/navegacion/MenuDeUsuario'
 import { MenuPrincipal } from '../components/navegacion/MenuPrincipal'
@@ -114,7 +115,17 @@ export function LayoutPrincipal() {
 
         <div className="flex min-h-screen min-w-0 flex-col">
           <BarraSuperior />
-          <main id="contenido" tabIndex={-1} className="flex-1 px-4 py-8 pb-24 focus:outline-none sm:px-7 lg:pb-8">
+          <main id="contenido" tabIndex={-1} className="relative isolate flex-1 overflow-hidden px-4 py-8 pb-24 focus:outline-none sm:px-7 lg:pb-8">
+            {/* Fondo del panel (prueba): la llama de la UPLA grande, pegada al borde izquierdo y detrás del contenido.
+                Es decorativa: no dice nada que el texto no diga. */}
+            {pathname === '/' && (
+              <img
+                src={fuego}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute top-0 -left-7 -z-10 h-full w-auto max-w-none select-none"
+              />
+            )}
             <Outlet />
           </main>
           <footer className="border-t border-borde px-4 py-4 text-center text-sm text-texto-suave sm:px-7">
