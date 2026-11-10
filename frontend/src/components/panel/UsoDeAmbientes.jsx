@@ -11,7 +11,7 @@ export function UsoDeAmbientes({ usos }) {
   return (
     <ol className="flex flex-col gap-3">
       {usos.map((uso) => (
-        <li key={uso.id_ambiente} className="grid gap-1.5 sm:grid-cols-[15rem_minmax(0,1fr)] sm:items-center sm:gap-4">
+        <li key={uso.id_ambiente} className="grid gap-1.5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] xl:items-center xl:gap-4">
           <span className="font-medium break-words">{uso.nombre_ambiente}</span>
           <span className="flex items-center gap-3">
             <span className="h-5 flex-1" aria-hidden="true">
@@ -22,10 +22,13 @@ export function UsoDeAmbientes({ usos }) {
                 />
               )}
             </span>
-            <span className="w-48 shrink-0 text-sm text-texto-suave">
-              <strong className="text-texto tabular-nums">{uso.total_reservas}</strong>{' '}
-              {uso.total_reservas === 1 ? 'reserva' : 'reservas'} · {uso.reservas_aprobadas}{' '}
-              {uso.reservas_aprobadas === 1 ? 'aprobada' : 'aprobadas'}
+            <span className="shrink-0 whitespace-nowrap text-sm text-texto-suave">
+              <strong className="text-texto tabular-nums">{uso.total_reservas}</strong>
+              <span className="sr-only">
+                {' '}
+                {uso.total_reservas === 1 ? 'reserva' : 'reservas'}, {uso.reservas_aprobadas}{' '}
+                {uso.reservas_aprobadas === 1 ? 'aprobada' : 'aprobadas'}
+              </span>
             </span>
           </span>
         </li>

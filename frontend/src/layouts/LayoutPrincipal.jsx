@@ -88,10 +88,10 @@ export function LayoutPrincipal() {
       </div>
 
       <div className="flex min-h-screen min-w-0 flex-col">
-        <main id="contenido" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 focus:outline-none sm:px-8">
+        <main id="contenido" tabIndex={-1} className="flex-1 px-4 py-8 focus:outline-none sm:px-7">
           <Outlet />
         </main>
-        <footer className="border-t border-borde px-4 py-4 text-center text-sm text-texto-suave sm:px-8">
+        <footer className="border-t border-borde px-4 py-4 text-center text-sm text-texto-suave sm:px-7">
           ReservaUPLA · Universidad Peruana Los Andes · Gestión de reservas de ambientes
         </footer>
       </div>
