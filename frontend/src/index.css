@@ -58,6 +58,10 @@
   /* Barras del panel principal: un solo tono (magnitud), el azul UPLA. */
   --color-barra: #0063a8;
 
+  /* Punto de quiebre propio: desde 1420 px el contenido deja sitio para las seis tarjetas de indicadores del panel
+     con el ancho del diseño (unos 170 px cada una). Con menos, se reparten en tres por fila. */
+  --breakpoint-3xl: 88.75rem;
+
   /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */
   --color-pendiente-fondo: #fef3c7;
   --color-pendiente-texto: #78350f;
@@ -67,6 +71,9 @@
   --color-rechazada-texto: #7f1d1d;
   --color-cancelada-fondo: #e2e8f0;
   --color-cancelada-texto: #334155;
+  /* Gris de la tarjeta «Canceladas» del panel: relleno sólido bajo un ícono blanco, igual en los dos modos (el texto
+     de arriba sí cambia con el tema, por eso no se reutiliza). */
+  --color-cancelada-solida: #475569;
 }
 
 /* Modo oscuro. Al abrir, index.html pone data-tema según la elección guardada o, si no la hay, según el sistema

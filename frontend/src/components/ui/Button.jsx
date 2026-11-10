@@ -12,6 +12,8 @@ const BASE =
 
 const VARIANTES = {
   principal: 'bg-marca-700 text-white shadow-sm hover:bg-marca-800 active:bg-marca-900',
+  blanco:
+    'bg-white text-marca-700 shadow-sm hover:bg-marca-100 active:bg-marca-100 focus-visible:outline-white focus-visible:outline-offset-4',
   secundario: 'border border-borde-control bg-superficie text-texto hover:bg-superficie-tenue active:bg-seleccion',
   aprobar: 'bg-aprobar text-white shadow-sm hover:bg-aprobar-oscuro active:bg-aprobar-oscuro',
   peligro: 'bg-peligro text-white shadow-sm hover:bg-peligro-oscuro active:bg-peligro-oscuro',

@@ -5,16 +5,16 @@ import { CardIndicador } from '../ui/CardIndicador'
 
 // Cómo se llama el total y la sexta tarjeta para cada rol (diseños S01, R01 y AD01): cada uno cuenta lo suyo (RF-12).
 const TOTAL = {
-  Solicitante: { titulo: 'Mis reservas', descripcion: 'Todas las que registré' },
-  ResponsableDeAmbiente: { titulo: 'En sus ambientes', descripcion: 'Registradas en los ambientes a su cargo' },
-  Administrador: { titulo: 'Total de reservas', descripcion: 'Registradas en el sistema' },
+  Solicitante: 'Mis reservas',
+  ResponsableDeAmbiente: 'En sus ambientes',
+  Administrador: 'Total de reservas',
 }
 
 const POR_ESTADO = [
-  { estado: 'Pendiente', titulo: 'Pendientes', clave: 'reservas_pendientes', descripcion: 'En espera de aprobación' },
-  { estado: 'Aprobada', titulo: 'Aprobadas', clave: 'reservas_aprobadas', descripcion: 'Ambiente ocupado en su horario' },
-  { estado: 'Rechazada', titulo: 'Rechazadas', clave: 'reservas_rechazadas', descripcion: 'No se pueden modificar' },
-  { estado: 'Cancelada', titulo: 'Canceladas', clave: 'reservas_canceladas', descripcion: 'Su horario quedó libre' },
+  { estado: 'Pendiente', titulo: 'Pendientes', clave: 'reservas_pendientes' },
+  { estado: 'Aprobada', titulo: 'Aprobadas', clave: 'reservas_aprobadas' },
+  { estado: 'Rechazada', titulo: 'Rechazadas', clave: 'reservas_rechazadas' },
+  { estado: 'Cancelada', titulo: 'Canceladas', clave: 'reservas_canceladas' },
 ]
 
 // El listado ya se abre con lo que le toca a cada rol: el enlace solo agrega el estado.
@@ -35,28 +35,27 @@ export function IndicadoresDelPanel({ rol, consulta, ambientesACargo = [] }) {
 
   const indicadores = consulta.datos
   const masUtilizados = indicadores.ambientes_mas_utilizados
-  const total = TOTAL[rol] ?? TOTAL.Administrador
+  const fuera = ambientesACargo.filter((ambiente) => ambiente.estado_ambiente !== 'Disponible').length
 
   return (
     <section aria-labelledby="titulo-indicadores">
       <h2 id="titulo-indicadores" className="sr-only">
         Indicadores
       </h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+      {/* Seis en una fila, como el diseño (AD01, S01, R01): solo cuando cada tarjeta conserva el ancho del diseño
+          (unos 170 px). Con menos espacio se reparten en tres por fila para que los nombres no se partan. */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-6">
         <CardIndicador
-          titulo={total.titulo}
+          titulo={TOTAL[rol] ?? TOTAL.Administrador}
           valor={indicadores.total_reservas}
-          descripcion={total.descripcion}
           icono="total"
           destino={listadoDe(null)}
-          accion="Ver todas"
         />
         {POR_ESTADO.map((indicador) => (
           <CardIndicador
             key={indicador.estado}
             titulo={indicador.titulo}
             valor={indicadores[indicador.clave]}
-            descripcion={indicador.descripcion}
             icono={indicador.estado.toLowerCase()}
             tono={indicador.estado}
             destino={listadoDe(indicador.estado)}
@@ -64,28 +63,31 @@ export function IndicadoresDelPanel({ rol, consulta, ambientesACargo = [] }) {
         ))}
         {rol === 'ResponsableDeAmbiente' ? (
           <CardIndicador
+            variante="texto"
             titulo="A su cargo"
-            valor={<span className="block py-1 text-xl leading-snug">{`${ambientesACargo.length} ${ambientesACargo.length === 1 ? 'ambiente' : 'ambientes'}`}</span>}
-            descripcion={(() => {
-              const fuera = ambientesACargo.filter((ambiente) => ambiente.estado_ambiente !== 'Disponible').length
-              return fuera === 0 ? 'Todos disponibles' : `${fuera} no ${fuera === 1 ? 'disponible' : 'disponibles'} ahora`
-            })()}
+            valor={`${ambientesACargo.length} ${ambientesACargo.length === 1 ? 'ambiente' : 'ambientes'}`}
+            detalle={
+              ambientesACargo.length === 0
+                ? 'Sin ambientes asignados'
+                : fuera === 0
+                  ? 'Todos disponibles'
+                  : `${fuera} en mantenimiento`
+            }
             icono="ambientes"
+            tono="info"
           />
         ) : (
           <CardIndicador
+            variante="texto"
             titulo={rol === 'Solicitante' ? 'El que más usa' : 'Ambiente más utilizado'}
-            valor={
-              <span className="block py-1 text-xl leading-snug">
-                {masUtilizados.length > 0 ? masUtilizados.map((uso) => uso.nombre_ambiente).join(' y ') : '—'}
-              </span>
-            }
-            descripcion={
+            valor={masUtilizados.length > 0 ? masUtilizados.map((uso) => uso.nombre_ambiente).join(' y ') : '—'}
+            detalle={
               masUtilizados.length === 0
                 ? 'Aún no hay reservas'
                 : `${reservas(masUtilizados[0].total_reservas)}${masUtilizados.length > 1 ? ' cada uno (empate)' : ''}`
             }
             icono="estrella"
+            tono="estrella"
           />
         )}
       </div>
