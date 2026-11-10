@@ -14,7 +14,7 @@ import { reglasDeIngreso } from '../reglas/usuario'
 // se llega (sesión cerrada o terminada) va arriba y no desaparece al escribir. No hay registro
 // propio: el código lo entrega la universidad y la cuenta la crea el administrador (RN-07).
 export function PaginaIngreso() {
-  const { usuarioActual, iniciarSesion } = useUsuarioActual()
+  const { usuarioActual, iniciarSesion, transicionando } = useUsuarioActual()
   const { state } = useLocation()
   const navegar = useNavigate()
   const formulario = useFormulario({
@@ -34,7 +34,7 @@ export function PaginaIngreso() {
   }
 
   return (
-    <MarcoDeAcceso titulo="Iniciar sesión" tituloPestana="Ingresar" descripcion="Ingrese con su código y su contraseña.">
+    <MarcoDeAcceso titulo="Iniciar sesión" tituloPestana="Ingresar" descripcion="Ingrese con su código y su contraseña." saliendo={transicionando}>
       <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
         {state?.aviso && <AlertMessage tipo="info" titulo={state.aviso} />}
         <TextInput

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ESTADOS_RESERVA } from '../../utils/formato'
+import { Button } from '../ui/Button'
 import { ChipsDeFiltro } from '../ui/ChipsDeFiltro'
 import { DateInput } from '../ui/DateInput'
 import { Icono } from '../ui/Icono'
@@ -22,7 +23,9 @@ const ESTADOS_EN_PLURAL = {
 // con la ✕ del chip. El administrador ve todas.
 export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCambiar, alQuitar }) {
   const opcionesDeAmbiente = ambientes.map((ambiente) => ({ valor: ambiente.id_ambiente, etiqueta: ambiente.nombre_ambiente }))
-  const hayFiltros = Object.values(filtros).some(Boolean) || Boolean(alcance?.activo)
+  // El alcance por defecto del rol no cuenta como filtro: «Limpiar filtros» solo se habilita si hay algo que quitar
+  // (un filtro o el alcance cambiado a «ver todas»).
+  const hayFiltros = Object.values(filtros).some(Boolean) || alcance?.activo === false
   const [texto, setTexto] = useState(filtros.texto)
   const [textoAplicado, setTextoAplicado] = useState(filtros.texto)
 
@@ -61,21 +64,28 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
           valor={filtros.estado_reserva}
           alCambiar={(valor) => alCambiar('estado_reserva', valor)}
         />
-        {alcance?.activo && (
+        {alcance && (
           <button
             type="button"
-            onClick={() => alcance.alCambiar(false)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-marca-700 bg-seleccion px-4 font-semibold text-enlace transition hover:bg-superficie-tenue focus-visible:outline-3 focus-visible:outline-foco"
+            aria-pressed={alcance.activo}
+            onClick={() => alcance.alCambiar(!alcance.activo)}
+            className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 font-semibold transition focus-visible:outline-3 focus-visible:outline-foco ${
+              alcance.activo
+                ? 'border-marca-700 bg-seleccion text-enlace hover:bg-superficie-tenue'
+                : 'border-borde-control bg-superficie text-texto hover:bg-superficie-tenue'
+            }`}
           >
             {alcance.texto}
-            <Icono nombre="cerrar" className="size-4" />
-            <span className="sr-only">Quitar este filtro y ver todas</span>
+            {alcance.activo && <Icono nombre="cerrar" className="size-4" />}
+            <span className="sr-only">
+              {alcance.activo ? 'Quitar este filtro y ver todas' : 'Volver a ver solo lo mío'}
+            </span>
           </button>
         )}
       </div>
 
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-end">
-        <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_minmax(0,1.6fr)]">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-start">
+        <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(11rem,1.2fr)_10rem_10rem_minmax(0,1.2fr)]">
           <SelectInput
             id="filtro-ambiente"
             etiqueta="Ambiente"
@@ -111,15 +121,10 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
             />
           </div>
         </div>
-        <button
-          type="button"
-          onClick={alQuitar}
-          disabled={!hayFiltros}
-          className="inline-flex min-h-11 items-center gap-2 self-start rounded-lg px-2 font-semibold text-enlace underline-offset-2 hover:underline focus-visible:outline-3 focus-visible:outline-foco disabled:cursor-not-allowed disabled:text-texto-suave disabled:no-underline xl:self-end"
-        >
+        <Button variante="secundario" onClick={alQuitar} disabled={!hayFiltros} className="self-start xl:mt-7">
           <Icono nombre="cerrar" className="size-4" />
           Limpiar filtros
-        </button>
+        </Button>
       </div>
     </section>
   )

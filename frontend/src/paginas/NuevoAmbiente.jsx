@@ -1,17 +1,10 @@
 import { FormularioAmbiente } from '../components/ambientes/FormularioAmbiente'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 
 // Página del formulario de registro de ambientes (RF-02).
 export function NuevoAmbiente() {
   return (
-    <>
-      <EncabezadoDePagina
-        titulo="Nuevo ambiente"
-        descripcion="Registre un laboratorio, un auditorio o una sala para que se pueda reservar."
-      />
-      <section>
-        <FormularioAmbiente />
-      </section>
-    </>
+    <section>
+      <FormularioAmbiente />
+    </section>
   )
 }

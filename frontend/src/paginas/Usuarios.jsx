@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react'
 import { listarUsuarios } from '../api/usuariosApi'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
-import { Button } from '../components/ui/Button'
 import { ChipsDeFiltro } from '../components/ui/ChipsDeFiltro'
 import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
 import { EtiquetaDeEstado } from '../components/ui/EtiquetaDeEstado'
@@ -51,15 +49,6 @@ export function Usuarios() {
 
   return (
     <>
-      <EncabezadoDePagina
-        titulo="Usuarios"
-        descripcion="Personas que solicitan, aprueban o supervisan las reservas."
-        acciones={
-          <Button destino="/usuarios/nuevo" variante="principal">
-            Nuevo usuario
-          </Button>
-        }
-      />
       <div className="flex flex-col gap-4">
         {error && <ErrorDeCarga error={error} alReintentar={recargar} />}
         {!cargando && !error && (

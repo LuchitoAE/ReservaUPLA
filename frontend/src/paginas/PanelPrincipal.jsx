@@ -1,10 +1,8 @@
 import { obtenerIndicadores } from '../api/panelApi'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { PanelDelAdministrador } from '../components/panel/PanelDelAdministrador'
 import { PanelDelResponsable } from '../components/panel/PanelDelResponsable'
 import { PanelDelSolicitante } from '../components/panel/PanelDelSolicitante'
 import { IndicadoresDelPanel } from '../components/panel/IndicadoresDelPanel'
-import { resumenDelPanel } from '../components/panel/resumenDelPanel'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 
@@ -25,15 +23,7 @@ export function PanelPrincipal() {
   const Panel = PANELES[usuarioActual.rol_usuario] ?? PanelDelAdministrador
 
   if (indicadores.error) {
-    return (
-      <>
-        <EncabezadoDePagina
-          titulo="Panel principal"
-          descripcion={resumenDelPanel({ rol: usuarioActual.rol_usuario, nombre: usuarioActual.nombre_completo_usuario })}
-        />
-        <IndicadoresDelPanel rol={usuarioActual.rol_usuario} consulta={indicadores} />
-      </>
-    )
+    return <IndicadoresDelPanel rol={usuarioActual.rol_usuario} consulta={indicadores} />
   }
 
   return <Panel usuario={usuarioActual} indicadores={indicadores} />

@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { listarAmbientes } from '../api/ambientesApi'
 import { listarReservas } from '../api/reservasApi'
-import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { FiltrosDeReservas } from '../components/reservas/FiltrosDeReservas'
 import { Button } from '../components/ui/Button'
 import { ErrorDeCarga } from '../components/ui/ErrorDeCarga'
@@ -46,13 +45,6 @@ const ALCANCES = {
     texto: 'Solo los ambientes a mi cargo',
     filtro: (usuario) => ({ id_responsable_ambiente: usuario.id_usuario }),
   },
-}
-
-// Cada rol llega con su alcance ya elegido y la pantalla lo dice (diseños S09, R03 y AD04).
-const DESCRIPCIONES = {
-  Solicitante: 'Solicitudes registradas y su estado. Se abre con las suyas; quite el filtro para ver todas.',
-  ResponsableDeAmbiente: 'Solicitudes registradas y su estado. Se abre con las de los ambientes a su cargo.',
-  Administrador: 'Todas las reservas del sistema. Use los filtros para encontrar una.',
 }
 
 const ESTADOS_EN_PLURAL = {
@@ -115,7 +107,8 @@ export function Reservas() {
     [setParametros],
   )
 
-  const limpiarFiltros = () => setParametros(parametros.get('todas') ? { todas: '1' } : {})
+  // Limpiar vuelve a la vista inicial del rol: sin filtros y con «solo lo mío» otra vez.
+  const limpiarFiltros = () => setParametros({})
 
   // La lista se lee de la fecha más próxima a la más lejana (diseño AD04: «Fecha ↑»), sin depender del orden de la base.
   const lista = useMemo(
@@ -130,15 +123,6 @@ export function Reservas() {
 
   return (
     <>
-      <EncabezadoDePagina
-        titulo="Reservas"
-        descripcion={DESCRIPCIONES[usuarioActual?.rol_usuario] ?? DESCRIPCIONES.Administrador}
-        acciones={
-          <Button destino="/reservas/nueva" variante="principal">
-            Nueva reserva
-          </Button>
-        }
-      />
       <div className="flex flex-col gap-4">
         {!sinConexion && (
           <FiltrosDeReservas
