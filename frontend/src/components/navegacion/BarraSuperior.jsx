@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router'
+import { useMigaDePagina } from '../../contexto/contextoMiga'
 import { migasDeRuta } from './migas'
 import { MenuDeUsuario } from './MenuDeUsuario'
 import { BotonTema } from '../ui/BotonTema'
@@ -8,7 +9,8 @@ import { BotonTema } from '../ui/BotonTema'
 // En el teléfono no se muestra: la marca y el menú ocupan la cabecera y la ruta sobra (diseño T2).
 export function BarraSuperior() {
   const { pathname } = useLocation()
-  const migas = migasDeRuta(pathname)
+  const { codigoDeReserva } = useMigaDePagina() ?? {}
+  const migas = migasDeRuta(pathname, codigoDeReserva)
   const actual = migas[migas.length - 1]
 
   return (

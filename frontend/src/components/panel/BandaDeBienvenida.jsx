@@ -17,7 +17,7 @@ const TONOS = {
 // empieza con un bloque que dice quién entró y qué puede hacer de inmediato.
 export function BandaDeBienvenida({ titulo = 'Panel principal', resumen, accion }) {
   return (
-    <header className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-marca-900 via-marca-800 to-marca-700 px-5 py-5 text-white shadow-sm sm:px-8">
+    <header className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-r from-banda-1 via-banda-2 to-banda-3 px-5 py-5 text-white shadow-sm sm:px-8">
       <title>{`${titulo} · ReservaUPLA`}</title>
 
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">

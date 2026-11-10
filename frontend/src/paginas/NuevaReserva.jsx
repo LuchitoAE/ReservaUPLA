@@ -11,7 +11,7 @@ export function NuevaReserva() {
     <>
       <EncabezadoDePagina
         titulo="Nueva reserva"
-        descripcion="Solicite un ambiente para una fecha y un horario entre las 07:00 y las 22:00."
+        descripcion="Solicite un ambiente para una fecha y un horario entre las 07:00 y las 22:00. Queda a nombre de quien inició sesión."
       />
       <section>
         {registrada ? (

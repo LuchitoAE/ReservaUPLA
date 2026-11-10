@@ -20,6 +20,21 @@
   --color-marca-900: #1f365c;
   --color-acento: #ffcb70;
   --color-acento-texto: #5a3a00;
+  /* Barra lateral (marca y menú): en modo oscuro se hunde en un azul casi negro (diseños AD18 y S17), así que no
+     reutiliza marca-900. «lateral-activo» es la fila de la sección actual: blanca en modo claro y gris azulada en el
+     oscuro. */
+  --color-lateral: #1f365c;
+  --color-lateral-activo: #ffffff;
+  --color-lateral-activo-texto: #1f365c;
+  /* Banda de bienvenida del panel: el degradado azul institucional (diseños S01, S17 y R06). */
+  --color-banda-1: #1f365c;
+  --color-banda-2: #004f87;
+  --color-banda-3: #0063a8;
+  /* Botón claro sobre la banda: blanco en modo claro; en el oscuro, azul de superficie con borde (S17 y R06). */
+  --color-boton-claro: #ffffff;
+  --color-boton-claro-texto: #0063a8;
+  --color-boton-claro-hover: #dcebf7;
+  --color-boton-claro-borde: transparent;
   /* Azul noche del panel del ingreso: la rejilla de la agenda y los bloques bajo el texto. Igual en los dos modos. */
   --color-noche: #0b1729;
 
@@ -84,18 +99,33 @@
    operativo; el botón de sol y luna lo cambia (hooks/useTema.js). */
 :root[data-tema='oscuro'] {
     color-scheme: dark;
-    --color-fondo: #0c1626;
-    --color-superficie: #13233a;
-    --color-superficie-tenue: #0f1d31;
-    --color-borde: #243a58;
-    --color-borde-fuerte: #34507a;
+    --color-fondo: #070f1e;
+    --color-superficie: #16294a;
+    --color-superficie-tenue: #10203a;
+    --color-borde: #2d3e5d;
+    --color-borde-fuerte: #3b5478;
     --color-borde-control: #7f94b3;
     --color-texto: #e7eef7;
     --color-texto-suave: #b5c3d6;
     --color-titulo: #dcebf7;
     --color-enlace: #7dbef0;
     --color-foco: #7dbef0;
-    --color-seleccion: #1c3556;
+    --color-seleccion: #1e3660;
+    --color-lateral: #091425;
+    --color-lateral-activo: #2d3645;
+    --color-lateral-activo-texto: #ffffff;
+    /* El azul de las acciones se aclara en modo oscuro para que el blanco siga leyéndose (diseño S18: el botón
+       principal es #0B74C4). */
+    --color-marca-700: #0b74c4;
+    --color-marca-800: #0d63a6;
+    --color-marca-900: #0f5489;
+    --color-banda-1: #0b2548;
+    --color-banda-2: #0b3059;
+    --color-banda-3: #0b4a83;
+    --color-boton-claro: #16294a;
+    --color-boton-claro-texto: #ffffff;
+    --color-boton-claro-hover: #1e3660;
+    --color-boton-claro-borde: #4a6a9e;
 
     --color-error: #fca5a5;
     --color-error-fondo: #3b1a1d;

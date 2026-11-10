@@ -49,16 +49,14 @@ export function formatearFechaCorta(fecha) {
   return `${diaDeLaSemana} ${dia}/${mes}`
 }
 
-// Momento en UTC → '03/11/2026, 17:45' en hora de Perú.
-export function formatearMomento(momento) {
-  return new Date(momento).toLocaleString('es-PE', {
+// Momento en UTC → 'martes, 3 de noviembre de 2026' en hora de Perú (historial de la reserva, diseños AD06 y AD08).
+export function formatearFechaDeMomento(momento) {
+  return new Date(momento).toLocaleDateString('es-PE', {
     timeZone: ZONA,
-    day: '2-digit',
-    month: '2-digit',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
   })
 }
 

@@ -18,27 +18,29 @@ export function AccionesDeFormulario({ formulario, volverA, texto, textoEnviando
   const motivo = bloqueado ?? (faltan.length > 0 ? `Para continuar, complete: ${enumerar(faltan)}.` : null)
 
   return (
-    <div className="flex flex-col gap-3 border-t border-borde pt-5">
-      <p
-        id="motivo-envio"
-        aria-live="polite"
-        className={`flex gap-1.5 text-sm ${resumenDeError ? 'font-medium text-error' : motivo ? 'text-texto-suave' : 'text-exito'}`}
-      >
-        {resumenDeError ? (
-          <>
-            <span aria-hidden="true">⚠</span>
-            {resumenDeError}
-          </>
-        ) : (
-          (motivo ?? '✓ Todo listo para enviar.')
-        )}
-      </p>
-      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <Button destino={volverA}>Cancelar</Button>
-        <Button type="submit" variante="principal" ocupado={enviando} disabled={Boolean(motivo)} aria-describedby="motivo-envio">
-          {!enviando && icono && <Icono nombre={icono} />}
-          {enviando ? textoEnviando : texto}
-        </Button>
+    <div className="border-t border-borde pt-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p
+          id="motivo-envio"
+          aria-live="polite"
+          className={`flex items-center gap-1.5 text-sm ${resumenDeError ? 'font-medium text-error' : motivo ? 'text-texto-suave' : 'text-exito'}`}
+        >
+          {resumenDeError ? (
+            <>
+              <span aria-hidden="true">⚠</span>
+              {resumenDeError}
+            </>
+          ) : (
+            (motivo ?? '✓ Todo listo para enviar.')
+          )}
+        </p>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row">
+          <Button destino={volverA}>Cancelar</Button>
+          <Button type="submit" variante="principal" ocupado={enviando} disabled={Boolean(motivo)} aria-describedby="motivo-envio">
+            {!enviando && <Icono nombre={icono ?? 'aprobada'} />}
+            {enviando ? textoEnviando : texto}
+          </Button>
+        </div>
       </div>
       <ModalConfirmacion
         abierto={bloqueo.state === 'blocked'}

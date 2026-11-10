@@ -55,9 +55,16 @@ export const reglasDeUsuario = crearValidador({
   contrasena_usuario: contrasena,
 })
 
-// Ingreso: solo que estén escritos; si no coinciden, la API responde sin decir cuál falló.
+// Ingreso (RF-09, diseño AC02): el formato del código se revisa antes de enviarlo, para no gastar un viaje a la API
+// por un código incompleto; si el formato está bien y no coincide, la API responde sin decir cuál de los dos falló.
 export const reglasDeIngreso = crearValidador({
-  codigo_usuario: (valor) => requerido(normalizarCodigo(valor), 'Escriba su código.'),
+  codigo_usuario: (valor) => {
+    const normalizado = normalizarCodigo(valor)
+    return (
+      requerido(normalizado, 'Escriba su código.') ??
+      (/^[A-Z0-9]{7}$/.test(normalizado) ? null : 'Escriba un código válido, por ejemplo P00914K.')
+    )
+  },
   contrasena_usuario: (valor) => requerido(valor, 'Escriba su contraseña.'),
 })
 

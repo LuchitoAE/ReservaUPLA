@@ -6,10 +6,10 @@ export function NuevoAmbiente() {
   return (
     <>
       <EncabezadoDePagina
-        titulo="Registrar ambiente"
-        descripcion="Un laboratorio, auditorio o sala que la universidad presta para reservas."
+        titulo="Nuevo ambiente"
+        descripcion="Registre un laboratorio, un auditorio o una sala para que se pueda reservar."
       />
-      <section className="max-w-3xl">
+      <section>
         <FormularioAmbiente />
       </section>
     </>

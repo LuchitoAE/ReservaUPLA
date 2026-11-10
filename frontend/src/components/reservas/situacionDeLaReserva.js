@@ -1,9 +1,16 @@
-// En qué está una reserva, como lo dice la tarjeta de la decisión (diseño AD08 y AD09), con el color del semáforo
-// (RNF-05): pendiente y cruce en ámbar, aprobada en verde, rechazada en rojo y cancelada en gris. «tipo» es el de
-// AlertMessage. Si una pendiente choca con una aprobada, no se puede aprobar (RN-01, RN-08): la API también lo impide.
-//   cruce: la reserva aprobada que ocupa ese horario (ver cruceAprobado), o null. Los textos son cortos: caben en
-//   dos renglones del mensaje de alto fijo (RNF-04).
-export function situacionDeLaReserva(reserva, { esAdministrador = false, cruce = null }) {
+// En qué está una reserva, como lo dice la tarjeta de la decisión (diseños AD06, AD08, AD09, S13 y S14), con el color
+// del semáforo (RNF-05): pendiente libre en verde, cruce en ámbar, aprobada en verde, rechazada en rojo y cancelada
+// en gris. «tipo» es el de AlertMessage. Si una pendiente choca con una aprobada, no se puede aprobar (RN-01, RN-08):
+// la API también lo impide. Los textos son cortos: caben en el alto fijo de la tarjeta (RNF-04).
+//   cruce: la reserva aprobada que ocupa ese horario (ver cruceAprobado), o null.
+
+// '2026-11-11' → '11/11/2026', para nombrar el día del cruce como en el diseño AD09.
+function fechaCorta(fecha) {
+  const [anio, mes, dia] = fecha.split('-')
+  return `${dia}/${mes}/${anio}`
+}
+
+export function situacionDeLaReserva(reserva, { esAdministrador = false, cruce = null } = {}) {
   switch (reserva.estado_reserva) {
     case 'Aprobada':
       return {
@@ -13,23 +20,33 @@ export function situacionDeLaReserva(reserva, { esAdministrador = false, cruce =
         sePuedeAprobar: true,
       }
     case 'Rechazada':
-      return { tipo: 'error', titulo: 'Rechazada', texto: 'Es un estado final: ya no se puede modificar.', sePuedeAprobar: true }
+      return {
+        tipo: 'error',
+        titulo: 'Rechazada',
+        texto: 'Una reserva rechazada no puede modificarse. Si aún necesita el ambiente, registre una nueva solicitud.',
+        sePuedeAprobar: true,
+      }
     case 'Cancelada':
-      return { tipo: 'cancelada', titulo: 'Cancelada', texto: 'Es un estado final: el horario quedó libre.', sePuedeAprobar: true }
+      return {
+        tipo: 'cancelada',
+        titulo: 'Cancelada',
+        texto: 'Su horario quedó libre y la reserva ya no puede reactivarse.',
+        sePuedeAprobar: true,
+      }
     default:
       if (cruce) {
         return {
           tipo: 'aviso',
           titulo: 'Choca con una reserva aprobada',
-          texto: `${cruce.codigo_reserva} ya ocupa de ${cruce.hora_inicio_reserva} a ${cruce.hora_fin_reserva}: no se puede aprobar.`,
+          texto: `${cruce.codigo_reserva} ocupa el ${reserva.nombre_ambiente} el ${fechaCorta(reserva.fecha_reserva)} de ${cruce.hora_inicio_reserva} a ${cruce.hora_fin_reserva}. No se puede aprobar; puede rechazarla.`,
           sePuedeAprobar: false,
         }
       }
       return {
-        tipo: 'aviso',
-        titulo: 'Pendiente de aprobación',
+        tipo: 'exito',
+        titulo: 'El horario sigue libre',
         texto: esAdministrador
-          ? 'Revise los datos y decida si la aprueba o la rechaza.'
+          ? `No se cruza con otra reserva aprobada del ${reserva.nombre_ambiente}.`
           : 'Un administrador debe aprobarla o rechazarla.',
         sePuedeAprobar: true,
       }

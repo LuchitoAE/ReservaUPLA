@@ -5,10 +5,9 @@ import { useAviso } from '../../hooks/useAviso'
 import { useConsulta } from '../../hooks/useConsulta'
 import { useDisponibilidad } from '../../hooks/useDisponibilidad'
 import { useFormulario } from '../../hooks/useFormulario'
-import { useUsuarioActual } from '../../hooks/useUsuarioActual'
 import { horarioCompleto, normalizarReserva, RESERVA, reglasDeReserva } from '../../reglas/reserva'
 import { ahoraEnPeru, formatearFechaLarga } from '../../utils/fechas'
-import { QUE_HACE_EL_ROL, ROLES, TIPOS_AMBIENTE } from '../../utils/formato'
+import { TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { DateInput } from '../ui/DateInput'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
@@ -38,7 +37,6 @@ const OBLIGATORIOS = {
 // horas que la deciden, un paso después de «¿Cuándo?» en el teléfono; si el horario está ocupado no se puede enviar
 // (restricción). La API vuelve a revisar todo al registrar.
 export function FormularioReserva({ alRegistrar }) {
-  const { usuarioActual } = useUsuarioActual()
   const mostrarAviso = useAviso()
   const ambientes = useConsulta(() => listarAmbientes({ estado_ambiente: 'Disponible' }), [])
   const formulario = useFormulario({
@@ -68,20 +66,12 @@ export function FormularioReserva({ alRegistrar }) {
       <div className="flex min-w-0 flex-col gap-5">
         <NotaObligatorios />
 
-        <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre de quien inició sesión.">
-          <div className="rounded-lg border border-borde-fuerte bg-superficie-tenue px-3 py-2.5">
-            <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
-            <p className="text-sm text-texto-suave">
-              {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
-            </p>
-          </div>
-        </GrupoDeCampos>
-
-        <GrupoDeCampos numero="2" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
+        <GrupoDeCampos numero="1" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
           <SelectInput
             {...campo('id_ambiente')}
             etiqueta="Ambiente"
             obligatorio
+            icono="ambientes"
             ayuda={
               elegido
                 ? `${elegido.capacidad_ambiente} personas · ${elegido.ubicacion_ambiente}` +
@@ -93,7 +83,7 @@ export function FormularioReserva({ alRegistrar }) {
           />
         </GrupoDeCampos>
 
-        <GrupoDeCampos numero="3" titulo="¿Cuándo?" descripcion="Entre las 07:00 y las 22:00, desde hoy.">
+        <GrupoDeCampos numero="2" titulo="¿Cuándo?" descripcion="Entre las 07:00 y las 22:00, desde hoy.">
           <div className="grid gap-5 sm:grid-cols-3">
             <DateInput
               {...campo('fecha_reserva')}
@@ -136,7 +126,7 @@ export function FormularioReserva({ alRegistrar }) {
       </aside>
 
       <div className="flex min-w-0 flex-col gap-5 xl:col-start-1 xl:row-start-2">
-        <GrupoDeCampos numero="4" titulo="¿Para qué?" descripcion="Ayuda al administrador a decidir.">
+        <GrupoDeCampos numero="3" titulo="¿Para qué?" descripcion="Ayuda al administrador a decidir.">
           <TextInput
             {...campo('motivo_reserva')}
             multilinea

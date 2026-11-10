@@ -10,8 +10,13 @@ describe('reglas de ingreso', () => {
     })
   })
 
-  it('no revisa el formato al ingresar: si no coincide, la API responde sin decir qué falló', () => {
-    expect(reglasDeIngreso.validarCampo('codigo_usuario', { codigo_usuario: 'abc' })).toBeNull()
+  it('revisa el formato del código antes de enviarlo (AC02)', () => {
+    expect(reglasDeIngreso.validarCampo('codigo_usuario', { codigo_usuario: 'abc' })).toBe(
+      'Escriba un código válido, por ejemplo P00914K.',
+    )
+    for (const codigo of ['P00914K', 'admin01', ' SOLIC01 ']) {
+      expect(reglasDeIngreso.validarCampo('codigo_usuario', { codigo_usuario: codigo })).toBeNull()
+    }
   })
 })
 
