@@ -13,9 +13,11 @@ export function NuevaReserva() {
         titulo="Nueva reserva"
         descripcion="Solicite un ambiente para una fecha y un horario entre las 07:00 y las 22:00."
       />
-      <section className="max-w-3xl">
+      <section>
         {registrada ? (
-          <ConfirmacionReserva reserva={registrada} alSolicitarOtra={() => setRegistrada(null)} />
+          <div className="max-w-3xl">
+            <ConfirmacionReserva reserva={registrada} alSolicitarOtra={() => setRegistrada(null)} />
+          </div>
         ) : (
           <FormularioReserva alRegistrar={setRegistrada} />
         )}
