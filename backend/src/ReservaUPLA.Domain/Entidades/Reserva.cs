@@ -20,6 +20,9 @@ public sealed class Reserva
     private static readonly ReglaDeTexto Regla_Motivo = new(
         "El motivo", Longitud_Minima_Motivo, Longitud_Maxima_Motivo, "Explique para qué necesita el ambiente.");
 
+    // RF-06: cada estado por el que pasó, con la fecha y quién hizo el cambio. Solo la reserva lo escribe.
+    private readonly List<Historial> _historial = [];
+
     private Reserva()
     {
     }
@@ -45,6 +48,8 @@ public sealed class Reserva
     public DateTime Fecha_Registro_Reserva { get; private set; }
 
     public DateTime? Fecha_Actualizacion_Reserva { get; private set; }
+
+    public IReadOnlyList<Historial> Historial_Reserva => _historial;
 
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
     // El solicitante y el ambiente llegan ya buscados; «ahora_en_peru» decide qué es «pasado».
@@ -90,7 +95,7 @@ public sealed class Reserva
 
         errores.LanzarSiHay();
 
-        return new Reserva
+        var reserva = new Reserva
         {
             Id_Reserva = Guid.CreateVersion7(),
             Fecha_Reserva = fecha!.Value,
@@ -102,6 +107,11 @@ public sealed class Reserva
             Id_Ambiente = ambiente!.Id_Ambiente,
             Fecha_Registro_Reserva = ahora_utc,
         };
+
+        // Toda reserva nace Pendiente, registrada por quien la solicita: es la primera entrada de su historial.
+        reserva._historial.Add(Historial.Registrar(reserva.Id_Reserva, Estados_Reserva.Pendiente, reserva.Id_Usuario, ahora_utc));
+
+        return reserva;
     }
 
     // RN-03 y RN-04, y que la reserva no empiece en el pasado. Un error por campo.
@@ -196,5 +206,6 @@ public sealed class Reserva
 
         Estado_Reserva = nuevo_estado;
         Fecha_Actualizacion_Reserva = ahora_utc;
+        _historial.Add(Historial.Registrar(Id_Reserva, nuevo_estado, usuario.Id_Usuario, ahora_utc));
     }
 }
