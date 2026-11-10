@@ -20,6 +20,8 @@
   --color-marca-900: #1f365c;
   --color-acento: #ffcb70;
   --color-acento-texto: #5a3a00;
+  /* Azul noche del panel del ingreso: la rejilla de la agenda y los bloques bajo el texto. Igual en los dos modos. */
+  --color-noche: #0b1729;
 
   --color-fondo: #f3f6fa;
   --color-superficie: #ffffff;
@@ -117,5 +119,105 @@
 
   body {
     @apply bg-fondo font-sans text-texto antialiased;
+  }
+}
+
+/* Panel «Agenda del campus» del ingreso (RNF-06; components/autenticacion/AgendaDelCampus.jsx). Una sola foto se ve a
+   través de una rejilla de bloques: cada bloque pinta la foto del tamaño del panel y la corre según su fila y su
+   columna. Las medidas salen del panel (container-type: size), no de JavaScript. La foto escala con el alto del panel
+   (encuadre de Penpot sobre 900 px de alto, o 300 px en el teléfono) y nunca deja un borde sin cubrir. */
+@utility agenda-rejilla {
+  grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--filas), minmax(0, 1fr));
+  gap: var(--separacion);
+  padding: var(--arriba) var(--margen) var(--margen);
+}
+
+@layer components {
+  .agenda {
+    container-type: size;
+    --margen: 10px;
+    --separacion: 10px;
+    --proporcion-foto: 1.775; /* ancho entre alto de las fotos */
+  }
+
+  .agenda-escritorio {
+    --columnas: 5;
+    --filas: 7;
+    --arriba: 10px;
+    --radio: 14px;
+    --alto-base: 900;
+  }
+
+  .agenda-telefono {
+    --columnas: 4;
+    --filas: 2;
+    --arriba: 120px; /* la franja de la marca va arriba; los bloques, debajo */
+    --radio: 12px;
+    --alto-base: 300;
+  }
+
+  .agenda-bloque,
+  .agenda-elegido {
+    --ancho-bloque: calc((100cqw - 2 * var(--margen) - (var(--columnas) - 1) * var(--separacion)) / var(--columnas));
+    --alto-bloque: calc((100cqh - var(--arriba) - var(--margen) - (var(--filas) - 1) * var(--separacion)) / var(--filas));
+    --x-bloque: calc(var(--margen) + var(--columna) * (var(--ancho-bloque) + var(--separacion)));
+    --y-bloque: calc(var(--arriba) + var(--fila) * (var(--alto-bloque) + var(--separacion)));
+    border-radius: var(--radio);
+  }
+
+  .agenda-bloque {
+    position: relative;
+    overflow: hidden;
+    --alto-foto: max(calc(var(--zoom) * 100cqh), calc(100cqw / var(--proporcion-foto)));
+    --x-foto: max(calc(100cqw - var(--alto-foto) * var(--proporcion-foto)), calc(var(--foto-x) * -100cqh / var(--alto-base)));
+    --y-foto: max(calc(100cqh - var(--alto-foto)), calc(var(--foto-y) * -100cqh / var(--alto-base)));
+    background-image: var(--foto-azul);
+    background-repeat: no-repeat;
+    background-size: auto var(--alto-foto);
+    background-position: calc(var(--x-foto) - var(--x-bloque)) calc(var(--y-foto) - var(--y-bloque));
+  }
+
+  /* Encima, la misma foto a color: solo se ve en los bloques reservados (fundido de 0,6 s; solo cambia la opacidad,
+     WCAG 2.3.1). Bajo el texto, azul noche al 86 %: el texto blanco tiene 12,5:1 o más con cualquier foto. */
+  .agenda-bloque::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--foto-color);
+    background-repeat: no-repeat;
+    background-size: inherit;
+    background-position: inherit;
+    opacity: 0;
+    transition: opacity 600ms ease-in-out;
+  }
+
+  .agenda-bloque[data-reservado]::after {
+    opacity: 1;
+  }
+
+  .agenda-bloque[data-bajo-texto]::after {
+    background: var(--color-noche);
+    opacity: 0.86;
+  }
+
+  /* El bloque que se está eligiendo: borde dorado que pasa de un bloque a otro (0,5 s). */
+  .agenda-elegido {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--ancho-bloque);
+    height: var(--alto-bloque);
+    border: 3px solid var(--color-acento);
+    background-color: color-mix(in srgb, var(--color-acento) 12%, transparent);
+    transform: translate(var(--x-bloque), var(--y-bloque));
+    transition: transform 500ms ease-in-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .agenda-bloque::after,
+    .agenda-elegido {
+      transition: none;
+    }
   }
 }
