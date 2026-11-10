@@ -185,7 +185,16 @@ de punta a punta volvieron a avisar de selectores y textos que el rediseño camb
 parte, no al final. Dividir el diseño en ocho partes mantuvo cada cambio revisable y dejó el historial de git legible.
 
 **Ajustes del alumno (10/11/2026, tarde).** Las tarjetas y los campos se veían planos: se agregaron sombras
-(`shadow-tarjeta`, `shadow-tarjeta-alta` y `shadow-campo`, negras en modo oscuro) a formularios, tablas, paneles,
-indicadores, Mi cuenta, ingreso y errores. Se quitó «Los campos con * son obligatorios.» de los tres formularios
+(`shadow-tarjeta`, `shadow-tarjeta-alta` y `shadow-campo`) a formularios, tablas, paneles, indicadores, Mi cuenta,
+ingreso y errores. En oscuro se probó el blanco: solo blanco apenas separa la tarjeta del fondo, así que se dejó un
+borde de luz interior con halo negro. Se quitó «Los campos con * son obligatorios.» de los tres formularios
 (no está en S03, AD13 ni AD16) y, al hacerlo, la tarjeta «Disponibilidad» quedó alineada con el primer grupo del
 formulario de reserva (0 px de diferencia a 1440). Verificado con 97 Vitest y 81 de 81 de punta a punta.
+
+**Banda de sección, animaciones y filtros (10/11/2026, tarde).** La banda azul pasó del panel al layout y ahora es la
+misma en todas las páginas; las acciones principales van dentro y el título se borra y se escribe al cambiar de
+sección (70 + 120 ms). El contenido entra con un fade de 180 ms, la barra lateral cambia de ancho en 200 ms y el
+ingreso y la salida se desvanecen en 160 ms, todo con respeto por «menos movimiento». La barra superior tiene una
+sombra propia (`shadow-barra`). En Reservas, «Limpiar filtros» es un botón alineado con los campos y el chip «Solo mis
+reservas» quedó como interruptor siempre visible: antes desaparecía al pulsarlo y no había forma de volver, salvo
+cambiar de pestaña. Verificado con oxlint limpio, 97 Vitest, `pnpm build` y 81 de 81 de punta a punta.
