@@ -171,7 +171,7 @@ export function PanelDisponibilidad({ disponibilidad, ambiente, fecha, solicitud
   return (
     <section
       aria-labelledby="titulo-disponibilidad"
-      className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5"
+      className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta"
     >
       <div className="flex items-start gap-3">
         <Icono nombre="pendiente" className="mt-0.5 size-6 text-info" />

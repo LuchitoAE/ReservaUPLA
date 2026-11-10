@@ -10,7 +10,7 @@ const REPARTOS = {
 
 export function GrupoDeCampos({ numero, titulo, descripcion, columnas = 1, children }) {
   return (
-    <fieldset className="min-w-0 rounded-xl border border-borde bg-superficie p-4 sm:p-5">
+    <fieldset className="min-w-0 rounded-xl border border-borde bg-superficie p-4 shadow-tarjeta sm:p-5">
       <legend className="sr-only">{`${numero}. ${titulo}`}</legend>
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-titulo">

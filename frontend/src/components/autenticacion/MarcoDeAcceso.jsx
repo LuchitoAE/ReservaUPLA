@@ -13,7 +13,7 @@ export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, children }) 
       {/* En una columna, la tarjeta empieza debajo del botón de tema (antes lo tapaba en el teléfono). */}
       <main className="relative flex items-center justify-center bg-fondo px-4 pt-20 pb-10 sm:px-8 lg:py-10">
         <BotonTema className="absolute top-4 right-4" />
-        <section className="w-full max-w-md rounded-2xl border border-borde bg-superficie p-6 shadow-sm sm:p-8">
+        <section className="w-full max-w-md rounded-2xl border border-borde bg-superficie p-6 shadow-tarjeta sm:p-8">
           <h1 id="titulo-pagina" tabIndex={-1} className="text-2xl font-bold text-titulo focus:outline-none">
             {titulo}
           </h1>

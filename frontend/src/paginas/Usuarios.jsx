@@ -63,7 +63,7 @@ export function Usuarios() {
       <div className="flex flex-col gap-4">
         {error && <ErrorDeCarga error={error} alReintentar={recargar} />}
         {!cargando && !error && (
-          <div className="rounded-xl border border-borde bg-superficie p-4">
+          <div className="rounded-xl border border-borde bg-superficie p-4 shadow-tarjeta">
             <ChipsDeFiltro etiqueta="Filtrar por rol" opciones={chips} valor={rol} alCambiar={setRol} />
           </div>
         )}

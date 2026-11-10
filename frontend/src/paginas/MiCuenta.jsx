@@ -58,7 +58,7 @@ export function MiCuenta() {
       <EncabezadoDePagina titulo="Mi cuenta" descripcion="Sus datos, su contraseña y las preferencias de este navegador." />
       <div className="flex flex-col gap-6">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-          <section aria-labelledby="titulo-datos" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 sm:p-6 lg:self-start">
+          <section aria-labelledby="titulo-datos" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6 lg:self-start">
             <div className="flex items-center gap-2">
               <Icono nombre="persona" className="size-5 text-foco" />
               <h2 id="titulo-datos" className="text-lg font-semibold text-titulo">
@@ -101,7 +101,7 @@ export function MiCuenta() {
             </AlertMessage>
           </section>
 
-          <section aria-labelledby="titulo-contrasena" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+          <section aria-labelledby="titulo-contrasena" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
             <div className="flex items-center gap-2">
               <Icono nombre="llave" className="size-5 text-foco" />
               <h2 id="titulo-contrasena" className="text-lg font-semibold text-titulo">
@@ -135,7 +135,7 @@ export function MiCuenta() {
           </section>
         </div>
 
-        <section aria-labelledby="titulo-preferencias" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+        <section aria-labelledby="titulo-preferencias" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
           <div className="flex items-center gap-2">
             <Icono nombre="altavoz" className="size-5 text-foco" />
             <h2 id="titulo-preferencias" className="text-lg font-semibold text-titulo">

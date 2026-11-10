@@ -5,7 +5,7 @@ import { Icono } from '../ui/Icono'
 // completa con el chevron del diseño. El ícono es decorativo: el título ya dice qué hay dentro.
 export function Seccion({ id, titulo, descripcion, icono, enlace, children }) {
   return (
-    <section aria-labelledby={`titulo-${id}`} className="flex flex-col gap-3 rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+    <section aria-labelledby={`titulo-${id}`} className="flex flex-col gap-3 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5">
           {icono && <Icono nombre={icono} className="mt-0.5 size-5 text-foco" />}

@@ -7,7 +7,6 @@ import { QUE_HACE_EL_ROL, ROLES } from '../../utils/formato'
 import { ReglasDeContrasena } from '../autenticacion/ReglasDeContrasena'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
-import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { CampoDeContrasena } from '../ui/CampoDeContrasena'
 import { GrupoDeOpciones } from '../ui/GrupoDeOpciones'
 import { TextInput } from '../ui/TextInput'
@@ -49,7 +48,6 @@ export function FormularioUsuario() {
 
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
-      <NotaObligatorios />
       <GrupoDeCampos numero="1" columnas={3} titulo="Datos de la persona" descripcion="Con el código ingresará al sistema.">
         <TextInput
           {...campo('codigo_usuario')}

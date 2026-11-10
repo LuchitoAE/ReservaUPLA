@@ -8,7 +8,6 @@ import { AMBIENTE, normalizarAmbiente, reglasDeAmbiente } from '../../reglas/amb
 import { ESTADOS_AMBIENTE, opcionesDe, TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
-import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
 
@@ -53,7 +52,6 @@ export function FormularioAmbiente() {
 
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
-      <NotaObligatorios />
       <GrupoDeCampos numero="1" columnas={2} titulo="Identificación" descripcion="Cómo se llama y qué clase de ambiente es.">
         <TextInput
           {...campo('nombre_ambiente')}

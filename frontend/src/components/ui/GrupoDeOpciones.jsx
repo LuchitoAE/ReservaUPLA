@@ -26,7 +26,7 @@ export function GrupoDeOpciones({ id, etiqueta, obligatorio, error, valor, onCam
         {opciones.map((opcion) => (
           <label
             key={opcion.valor}
-            className={`flex min-h-11 cursor-pointer gap-2.5 rounded-lg border bg-superficie p-3 transition hover:border-borde-control has-[:checked]:border-foco has-[:checked]:bg-seleccion has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-foco/30 ${error ? 'border-error' : 'border-borde-fuerte'}`}
+            className={`flex min-h-11 cursor-pointer gap-2.5 rounded-lg border bg-superficie p-3 shadow-campo transition hover:border-borde-control has-[:checked]:border-foco has-[:checked]:bg-seleccion has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-foco/30 ${error ? 'border-error' : 'border-borde-fuerte'}`}
           >
             <input
               type="radio"

@@ -17,7 +17,7 @@ export function ErrorDeCarga({ error, alReintentar, titulo, mensaje }) {
 
   if (error?.tipo === 'sin_conexion') {
     return (
-      <div className="rounded-xl border border-borde bg-superficie">
+      <div className="rounded-xl border border-borde bg-superficie shadow-tarjeta">
         <EstadoVacio
           icono="sin-conexion"
           titulo="No se pudo conectar con el servidor."

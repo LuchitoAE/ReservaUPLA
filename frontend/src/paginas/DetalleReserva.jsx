@@ -71,7 +71,7 @@ export function DetalleReserva() {
         />
         <div className="flex flex-col items-start gap-4">
           {noEncontrada ? (
-            <p className="self-stretch rounded-xl border border-borde bg-superficie p-6">
+            <p className="self-stretch rounded-xl border border-borde bg-superficie p-6 shadow-tarjeta">
               Puede que la dirección esté incompleta. Búsquela en el listado por su código.
             </p>
           ) : (
@@ -101,7 +101,7 @@ export function DetalleReserva() {
       />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6">
-          <section aria-labelledby="titulo-datos" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
+          <section aria-labelledby="titulo-datos" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
             <div className="flex items-center gap-2.5">
               <Icono nombre="reservas" className="size-5 text-foco" />
               <h2 id="titulo-datos" className="text-lg font-semibold text-titulo">

@@ -5,7 +5,7 @@ import { Icono } from './Icono'
 // siempre en ese orden y con el mismo aspecto. El borde rojo sale del propio aria-invalid: lo que se ve y lo que
 // anuncia un lector de pantalla no pueden contradecirse.
 const ESTILO_CONTROL =
-  'w-full min-h-11 rounded-lg border border-borde-control bg-superficie px-3 py-2.5 text-texto placeholder:text-texto-suave ' +
+  'w-full min-h-11 rounded-lg border border-borde-control bg-superficie px-3 py-2.5 text-texto shadow-campo placeholder:text-texto-suave ' +
   'focus:border-foco focus:outline-3 focus:outline-foco/30 disabled:cursor-not-allowed disabled:bg-superficie-tenue ' +
   'aria-[invalid=true]:border-error aria-[invalid=true]:focus:outline-error/30'
 

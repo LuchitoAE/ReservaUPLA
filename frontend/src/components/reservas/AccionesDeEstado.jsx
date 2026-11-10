@@ -96,7 +96,7 @@ export function AccionesDeEstado({ reserva, usuarioActual, alCambiar }) {
   const comoEnlace = (estado) => estado === 'Cancelada' && esAdministrador && !esFinal && permitidas.length > 1
 
   return (
-    <section aria-labelledby="titulo-acciones" className="flex flex-col gap-3 rounded-xl border border-borde bg-superficie p-5">
+    <section aria-labelledby="titulo-acciones" className="flex flex-col gap-3 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta">
       <div className="flex items-start gap-2.5">
         <Icono nombre={icono} className="mt-0.5 size-5 text-foco" />
         <div>

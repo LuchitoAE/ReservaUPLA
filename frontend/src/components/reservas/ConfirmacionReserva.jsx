@@ -15,7 +15,7 @@ export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
       >
         <p className="text-sm">Queda pendiente hasta que un administrador la apruebe o la rechace.</p>
       </AlertMessage>
-      <dl className="grid gap-x-6 gap-y-3 rounded-xl bg-superficie p-5 sm:grid-cols-[10rem_1fr]">
+      <dl className="grid gap-x-6 gap-y-3 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:grid-cols-[10rem_1fr]">
         <dt className="text-texto-suave">Código</dt>
         <dd className="font-semibold">{reserva.codigo_reserva}</dd>
         <dt className="text-texto-suave">Ambiente</dt>

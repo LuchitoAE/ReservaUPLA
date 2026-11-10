@@ -11,7 +11,6 @@ import { TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { DateInput } from '../ui/DateInput'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
-import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
 import { TimeInput } from '../ui/TimeInput'
@@ -64,8 +63,6 @@ export function FormularioReserva({ alRegistrar }) {
   return (
     <form noValidate onSubmit={enviar} className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="flex min-w-0 flex-col gap-5">
-        <NotaObligatorios />
-
         <GrupoDeCampos numero="1" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
           <SelectInput
             {...campo('id_ambiente')}
