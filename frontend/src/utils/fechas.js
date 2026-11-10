@@ -35,6 +35,13 @@ export function formatearFechaLarga(fecha) {
   })
 }
 
+// '2026-11-09' → 'lunes 9 de noviembre' (en la tarjeta de disponibilidad, junto al ambiente y sin año)
+export function formatearFechaDelDia(fecha) {
+  return new Date(`${fecha}T12:00:00`)
+    .toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
+    .replace(',', '')
+}
+
 // '2026-11-11' → 'miércoles 11/11' (en los avisos, donde el espacio es corto)
 export function formatearFechaCorta(fecha) {
   const [, mes, dia] = fecha.split('-')

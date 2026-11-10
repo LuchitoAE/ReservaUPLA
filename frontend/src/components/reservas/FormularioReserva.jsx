@@ -33,10 +33,10 @@ const OBLIGATORIOS = {
   motivo_reserva: 'el motivo',
 }
 
-// RF-03 y RF-04: solicitar una reserva. Cuatro grupos que siguen la pregunta que el usuario se hace (quién, dónde,
-// cuándo y para qué): es su modelo mental de una reserva (Norman). La disponibilidad aparece dentro del grupo
-// «¿Cuándo?», junto a las horas que la deciden, y si el horario está ocupado no se puede enviar (restricción).
-// La API vuelve a revisar todo al registrar.
+// RF-03 y RF-04: solicitar una reserva. Los grupos siguen la pregunta que el usuario se hace (quién, dónde, cuándo y
+// para qué): es su modelo mental de una reserva (Norman). La disponibilidad va al costado (diseño S04), junto a las
+// horas que la deciden, un paso después de «¿Cuándo?» en el teléfono; si el horario está ocupado no se puede enviar
+// (restricción). La API vuelve a revisar todo al registrar.
 export function FormularioReserva({ alRegistrar }) {
   const { usuarioActual } = useUsuarioActual()
   const mostrarAviso = useAviso()
@@ -64,81 +64,97 @@ export function FormularioReserva({ alRegistrar }) {
     disponibilidad.estado === 'ocupado' ? 'El horario elegido ya está ocupado: cambie la hora, la fecha o el ambiente.' : null
 
   return (
-    <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
-      <NotaObligatorios />
+    <form noValidate onSubmit={enviar} className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+      <div className="flex min-w-0 flex-col gap-5">
+        <NotaObligatorios />
 
-      <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre de quien inició sesión.">
-        <div className="rounded-lg border border-borde-fuerte bg-superficie-tenue px-3 py-2.5">
-          <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
-          <p className="text-sm text-texto-suave">
-            {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
-          </p>
-        </div>
-      </GrupoDeCampos>
+        <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre de quien inició sesión.">
+          <div className="rounded-lg border border-borde-fuerte bg-superficie-tenue px-3 py-2.5">
+            <p className="font-semibold">{usuarioActual.nombre_completo_usuario}</p>
+            <p className="text-sm text-texto-suave">
+              {ROLES[usuarioActual.rol_usuario]} · {QUE_HACE_EL_ROL[usuarioActual.rol_usuario]}
+            </p>
+          </div>
+        </GrupoDeCampos>
 
-      <GrupoDeCampos numero="2" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
-        <SelectInput
-          {...campo('id_ambiente')}
-          etiqueta="Ambiente"
-          obligatorio
-          ayuda={
-            elegido
-              ? `${elegido.capacidad_ambiente} personas · ${elegido.ubicacion_ambiente}` +
-                (elegido.nombre_responsable_ambiente ? ` · responsable: ${elegido.nombre_responsable_ambiente}` : '')
-              : 'Al elegirlo verá su capacidad y su ubicación.'
+        <GrupoDeCampos numero="2" titulo="¿Qué ambiente necesita?" descripcion="Solo aparecen los ambientes disponibles.">
+          <SelectInput
+            {...campo('id_ambiente')}
+            etiqueta="Ambiente"
+            obligatorio
+            ayuda={
+              elegido
+                ? `${elegido.capacidad_ambiente} personas · ${elegido.ubicacion_ambiente}` +
+                  (elegido.nombre_responsable_ambiente ? ` · responsable: ${elegido.nombre_responsable_ambiente}` : '')
+                : 'Al elegirlo verá su capacidad y su ubicación.'
+            }
+            opciones={opcionesDeAmbiente}
+            textoVacio={ambientes.cargando ? 'Cargando ambientes…' : 'Elija el ambiente'}
+          />
+        </GrupoDeCampos>
+
+        <GrupoDeCampos numero="3" titulo="¿Cuándo?" descripcion="Entre las 07:00 y las 22:00, desde hoy.">
+          <div className="grid gap-5 sm:grid-cols-3">
+            <DateInput
+              {...campo('fecha_reserva')}
+              etiqueta="Fecha"
+              obligatorio
+              minimo={ahoraEnPeru().fecha}
+              ayuda={valores.fecha_reserva ? formatearFechaLarga(valores.fecha_reserva) : 'Elija el día en el calendario.'}
+            />
+            <TimeInput
+              {...campo('hora_inicio_reserva')}
+              etiqueta="Hora de inicio"
+              obligatorio
+              minimo={RESERVA.apertura}
+              maximo={RESERVA.cierre}
+              ayuda="Desde las 07:00."
+            />
+            <TimeInput
+              {...campo('hora_fin_reserva')}
+              etiqueta="Hora de fin"
+              obligatorio
+              minimo={RESERVA.apertura}
+              maximo={RESERVA.cierre}
+              ayuda="Hasta las 22:00."
+            />
+          </div>
+        </GrupoDeCampos>
+      </div>
+
+      <aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+        <PanelDisponibilidad
+          disponibilidad={disponibilidad}
+          ambiente={elegido}
+          fecha={valores.fecha_reserva}
+          solicitud={
+            valores.hora_inicio_reserva && valores.hora_fin_reserva
+              ? { inicio: valores.hora_inicio_reserva, fin: valores.hora_fin_reserva }
+              : null
           }
-          opciones={opcionesDeAmbiente}
-          textoVacio={ambientes.cargando ? 'Cargando ambientes…' : 'Elija el ambiente'}
         />
-      </GrupoDeCampos>
+      </aside>
 
-      <GrupoDeCampos numero="3" titulo="¿Cuándo?" descripcion="Entre las 07:00 y las 22:00, desde hoy.">
-        <DateInput
-          {...campo('fecha_reserva')}
-          etiqueta="Fecha"
-          obligatorio
-          minimo={ahoraEnPeru().fecha}
-          ayuda={valores.fecha_reserva ? formatearFechaLarga(valores.fecha_reserva) : 'Elija el día en el calendario.'}
-        />
-        <div className="grid gap-5 sm:grid-cols-2">
-          <TimeInput
-            {...campo('hora_inicio_reserva')}
-            etiqueta="Hora de inicio"
+      <div className="flex min-w-0 flex-col gap-5 xl:col-start-1 xl:row-start-2">
+        <GrupoDeCampos numero="4" titulo="¿Para qué?" descripcion="Ayuda al administrador a decidir.">
+          <TextInput
+            {...campo('motivo_reserva')}
+            multilinea
+            etiqueta="Motivo"
             obligatorio
-            minimo={RESERVA.apertura}
-            maximo={RESERVA.cierre}
-            ayuda="Desde las 07:00."
+            maximo={RESERVA.motivoMaximo}
+            ayuda="Clase, práctica, reunión, evento…"
           />
-          <TimeInput
-            {...campo('hora_fin_reserva')}
-            etiqueta="Hora de fin"
-            obligatorio
-            minimo={RESERVA.apertura}
-            maximo={RESERVA.cierre}
-            ayuda="Hasta las 22:00."
-          />
-        </div>
-        <PanelDisponibilidad disponibilidad={disponibilidad} />
-      </GrupoDeCampos>
+        </GrupoDeCampos>
 
-      <GrupoDeCampos numero="4" titulo="¿Para qué?" descripcion="Ayuda al administrador a decidir.">
-        <TextInput
-          {...campo('motivo_reserva')}
-          multilinea
-          etiqueta="Motivo"
-          obligatorio
-          maximo={RESERVA.motivoMaximo}
-          ayuda="Clase, práctica, reunión, evento…"
+        <AccionesDeFormulario
+          formulario={formulario}
+          volverA="/"
+          texto="Solicitar reserva"
+          textoEnviando="Solicitando…"
+          bloqueado={bloqueado}
         />
-      </GrupoDeCampos>
-
-      <AccionesDeFormulario
-        formulario={formulario}
-        volverA="/"
-        texto="Solicitar reserva"
-        textoEnviando="Solicitando…"
-        bloqueado={bloqueado}
-      />
+      </div>
     </form>
   )
 }
