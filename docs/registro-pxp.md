@@ -63,3 +63,26 @@ de los nombres en español, que son la parte 2 de esta iteración.
 **Retrospectiva.** Compilar cada commit por separado encontró un error que la rama completa ocultaba. Las pruebas de
 punta a punta detectaron un fallo que no era del código: después de varias ediciones seguidas, reiniciar el servidor
 de desarrollo antes de las pruebas del sistema.
+
+## Iteración 2, parte 2 · Nombres en español (09/11/2026, 21:49 a 22:00)
+
+Ramas `refactor/regla-de-idioma` (primero la regla en `ESTANDARES.md`) y `refactor/nombres-en-espanol`. RNF-11. Sin
+cambios de comportamiento, salvo la ruta del panel, que el SDD fija como `/api/panel/indicadores`.
+
+| Tarea | Resultado |
+|---|---|
+| Línea base | Compilación sin advertencias, 25 pruebas xUnit, 22 Vitest, EF sin cambios pendientes y el documento OpenAPI guardado |
+| Regla de idioma en `ESTANDARES.md` | Todo en español salvo los 9 componentes del caso y lo que impone el marco |
+| Renombres por capa (dominio, aplicación, infraestructura, WebApi, interfaz), un commit cada uno | Cada etapa compila sin advertencias y pasa sus pruebas; EF sigue sin cambios y las 5 migraciones siguen aplicadas; una migración nueva se crea en `Migraciones/` |
+| Pruebas del sistema | OpenAPI idéntico salvo nombres, ruta del panel y su grupo; 37 de 37 de punta a punta; el panel principal carga sus indicadores |
+| ERS, SDD y diagramas | RNF-11 implementado; diagramas con los nombres reales del código |
+
+| Defecto | Se introdujo en | Se encontró en | Corrección |
+|---|---|---|---|
+| El renombre de `DependencyInjection` también cambió `using Microsoft.Extensions.DependencyInjection` | Herramienta (script de renombres) | Compilación | Solo se renombra la declaración de la clase |
+| La ruta nueva del panel iba en un commit y el frontend la usaba recién en el siguiente: el panel quedaba roto entre los dos | Integración | Revisión antes de seguir | El cambio del frontend entró en el mismo commit |
+| El SDD y sus diagramas nombraban clases y métodos que el código no tiene (`DatosDeReserva`, `BuscarPorCodigo`, `CreacionDeCuentasDePrueba`) | Diseño (iteración 0) | Comparación de cada nombre del SDD con el código | Corregidos con los nombres reales |
+
+**Retrospectiva.** Guardar el documento OpenAPI antes del refactor permitió probar que la API no cambió, más allá de
+los nombres. Comparar automáticamente los nombres del SDD con los del código encontró errores de diseño que la lectura
+no había visto.
