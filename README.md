@@ -13,7 +13,7 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RF-03 | Registrar solicitudes de reserva | Nueva reserva |
 | RF-04 | Validar la disponibilidad antes de registrar | Panel «Disponibilidad del ambiente» del formulario; la API la vuelve a revisar |
 | RF-05 | Listar reservas registradas | Reservas (filtros por estado, ambiente y fecha) |
-| RF-06 | Consultar el detalle de una reserva | Clic en el código de una reserva |
+| RF-06 | Consultar el detalle de una reserva, con su historial (quién hizo cada cambio y cuándo) | Clic en el código de una reserva |
 | RF-07 | Cambiar el estado: Pendiente, Aprobada, Rechazada o Cancelada | Botones del detalle, con confirmación |
 | RF-08 | Indicadores básicos en un dashboard | Dashboard (página de inicio) |
 
@@ -27,6 +27,8 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 | RN-06 Una reserva rechazada no se modifica | El estado Rechazada no admite cambios; la API responde 409 |
 
 **Inicio de sesión.** Cada usuario entra con su código (7 letras o dígitos, por ejemplo P00914K) y su contraseña (se guardan solo la sal y el hash PBKDF2). La sesión es una cookie HttpOnly: la API sabe por ella quién solicita y quién aprueba, y comprueba el rol en la base. No hay registro propio: las cuentas las crea el administrador con el código que entrega la universidad.
+
+**Avisos sin saltos.** El resultado de cada acción (registrar, aprobar, rechazar, cancelar) aparece en un aviso flotante abajo a la derecha, con el color del estado: verde, ámbar, rojo o gris, siempre con ícono y nombre. No mueve el contenido, se cierra a los 8 s (no mientras el puntero o el foco están encima) y lo anuncia el lector de pantalla; los errores y los avisos que piden hacer algo no se cierran solos. Los mensajes dentro de una tarjeta y la línea bajo cada campo tienen alto fijo, y el resumen de errores va junto al botón de enviar (RNF-04, RNF-05). Los avisos pueden sonar (RF-14): empieza apagado.
 
 **Pantalla de ingreso.** A la izquierda, el panel «Agenda del campus»: fotos del campus tomadas por el autor, vistas en el azul de la marca a través de una rejilla de bloques de horario; tres bloques muestran la foto a color y uno lleva borde dorado. La foto cambia entre visitas. En el escritorio la agenda se mueve despacio, con un botón para pausarla; queda quieta si el sistema pide reducir el movimiento y se detiene si la pestaña no está a la vista (RNF-06, WCAG 2.2.2). En el teléfono es una franja fija arriba del formulario.
 
@@ -126,7 +128,7 @@ Todo endpoint, salvo los de `/api/autenticacion`, exige sesión: sin ella respon
 | POST | `/api/reservas` | RF-03 registrar reserva | 201, 400, 409 (RN-01) |
 | GET | `/api/reservas/disponibilidad?id_ambiente=&fecha_reserva=&hora_inicio_reserva=&hora_fin_reserva=` | RF-04 disponibilidad | 200, 400, 404 |
 | GET | `/api/reservas?estado_reserva=&id_ambiente=&fecha_reserva=&id_usuario=&id_responsable_ambiente=` | RF-05 listado | 200 |
-| GET | `/api/reservas/{id}` | RF-06 detalle | 200, 404 |
+| GET | `/api/reservas/{id}` | RF-06 detalle con su historial (`historial_reserva`) | 200, 404 |
 | PATCH | `/api/reservas/{id}/estado` | RF-07 cambiar estado | 200, 400, 403 (RN-05), 404, 409 (RN-01, RN-06) |
 | GET | `/api/panel/indicadores` | RF-08 indicadores del panel principal (antes `/api/dashboard/indicadores`) | 200 |
 
@@ -153,7 +155,9 @@ frontend/src/
   components/<módulo>/         Formularios y piezas de usuarios, ambientes, reservas y del panel principal
   components/autenticacion/    Marco del ingreso y panel «Agenda del campus» (sus reglas, con pruebas, en agendaDelCampus.js)
   assets/campus/               Fotos del panel del ingreso, a color y en azul (WebP de 1000 px de alto, sin metadatos)
-  hooks/                       useFormulario, useConsulta, useDisponibilidad, useUsuarioActual, useAgendaViva…
+  avisos/                      Avisos flotantes (patrón Observer): la central, su región y el aviso, con pruebas
+  sonido/                      Sonido de los avisos (patrón Strategy) y su preferencia, con pruebas
+  hooks/                       useFormulario, useConsulta, useDisponibilidad, useAviso, usePreferencias, useAgendaViva…
   reglas/                      Validaciones (las mismas del dominio), con sus pruebas *.test.js (Vitest)
   utils/                       Ayudas sin estado: normalizar texto, preferencias guardadas en el navegador
   paginas/, layouts/           Páginas de la SPA y su estructura común
