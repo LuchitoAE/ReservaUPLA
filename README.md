@@ -38,6 +38,8 @@ Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](E
 
 **Pantalla de ingreso.** A la izquierda, el panel «Agenda del campus»: fotos del campus tomadas por el autor, vistas en el azul de la marca a través de una rejilla de bloques de horario; tres bloques muestran la foto a color y uno lleva borde dorado. La foto cambia entre visitas. En el escritorio la agenda se mueve despacio, con un botón para pausarla; queda quieta si el sistema pide reducir el movimiento y se detiene si la pestaña no está a la vista (RNF-06, WCAG 2.2.2). En el teléfono es una franja fija arriba del formulario.
 
+**Diseño de la interfaz.** La aplicación sigue los 57 diseños del caso, agrupados por rol y estado en `imagenes/`: barra superior con la ruta de navegación, el tema y la sesión; barra lateral con la acción principal y el grupo de administración; panel principal por rol; listados con chips, filtros y estados vacíos; formularios con el error junto a su campo; detalle con la tarjeta de decisión según el rol y el estado de la reserva; y páginas de error (403, 404, 500, sin conexión, carga y sesión). El modo claro u oscuro se elige en la barra superior y se guarda en el navegador.
+
 ## Requisitos
 
 - .NET SDK 10, PostgreSQL 16 o superior (con la extensión `btree_gist`, que viene con PostgreSQL), Node 22 o superior y pnpm.
