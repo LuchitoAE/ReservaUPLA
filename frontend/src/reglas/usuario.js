@@ -44,7 +44,7 @@ const contrasena = (valor) =>
     ? `La contraseña no puede superar los ${USUARIO.contrasenaMaxima} caracteres.`
     : REGLAS_DE_CONTRASENA.every((regla) => regla.cumple(valor))
       ? null
-      : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.')
+      : 'Mínimo 8 caracteres, con mayúscula, minúscula y número.')
 
 // Registro por el administrador: cualquier rol, con una contraseña inicial.
 export const reglasDeUsuario = crearValidador({

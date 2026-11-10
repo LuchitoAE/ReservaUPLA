@@ -3,7 +3,8 @@ import { Cargando } from './Cargando'
 // Tabla reutilizable (componente «TableList» del caso): la usan las reservas, los ambientes y los usuarios.
 // Las columnas se describen una vez: [{ clave, titulo, celda?(fila), alinear? }]. En pantallas medianas y grandes
 // se ve como tabla; en el teléfono, como tarjetas con «título: valor», sin barra de desplazamiento horizontal.
-export function TableList({ titulo, columnas, filas, claveFila, cargando = false, vacio = 'No hay registros.' }) {
+// «filaNueva»: la clave de un registro recién creado; su fila se resalta y lleva la marca «Nuevo» (RNF-04).
+export function TableList({ titulo, columnas, filas, claveFila, filaNueva = null, cargando = false, vacio = 'No hay registros.' }) {
   if (cargando) {
     return <Cargando texto={`Cargando ${titulo.toLowerCase()}…`} />
   }
@@ -12,7 +13,17 @@ export function TableList({ titulo, columnas, filas, claveFila, cargando = false
     return <p className="rounded-xl border border-dashed border-borde-fuerte bg-superficie p-6 text-texto-suave">{vacio}</p>
   }
 
-  const valor = (columna, fila) => (columna.celda ? columna.celda(fila) : fila[columna.clave])
+  const esNueva = (fila) => filaNueva !== null && fila[claveFila] === filaNueva
+  const valor = (columna, fila) => {
+    const contenido = columna.celda ? columna.celda(fila) : fila[columna.clave]
+    return columna === columnas[0] && esNueva(fila) ? (
+      <>
+        {contenido} <MarcaNuevo />
+      </>
+    ) : (
+      contenido
+    )
+  }
 
   return (
     <div className="rounded-xl border border-borde bg-superficie">
@@ -29,7 +40,7 @@ export function TableList({ titulo, columnas, filas, claveFila, cargando = false
         </thead>
         <tbody className="divide-y divide-borde">
           {filas.map((fila) => (
-            <tr key={fila[claveFila]} className="hover:bg-superficie-tenue">
+            <tr key={fila[claveFila]} className={esNueva(fila) ? 'bg-seleccion' : 'hover:bg-superficie-tenue'}>
               {columnas.map((columna) => (
                 <td key={columna.clave} className={`px-4 py-3 align-top ${columna.alinear === 'derecha' ? 'text-right tabular-nums' : ''}`}>
                   {valor(columna, fila)}
@@ -42,7 +53,7 @@ export function TableList({ titulo, columnas, filas, claveFila, cargando = false
 
       <ul className="divide-y divide-borde md:hidden" aria-label={titulo}>
         {filas.map((fila) => (
-          <li key={fila[claveFila]} className="p-4">
+          <li key={fila[claveFila]} className={`p-4 ${esNueva(fila) ? 'bg-seleccion' : ''}`}>
             <dl className="grid grid-cols-[minmax(6rem,auto)_1fr] gap-x-3 gap-y-1.5">
               {columnas.map((columna) => (
                 <div key={columna.clave} className="contents">
@@ -56,4 +67,8 @@ export function TableList({ titulo, columnas, filas, claveFila, cargando = false
       </ul>
     </div>
   )
+}
+
+function MarcaNuevo() {
+  return <span className="ml-1 rounded-full bg-info-fondo px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-info-texto">Nuevo</span>
 }

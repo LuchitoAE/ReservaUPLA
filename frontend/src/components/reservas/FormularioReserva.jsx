@@ -1,5 +1,7 @@
 import { listarAmbientes } from '../../api/ambientesApi'
 import { registrarReserva } from '../../api/reservasApi'
+import { avisoDeReserva } from '../../avisos/avisosDeReserva'
+import { useAviso } from '../../hooks/useAviso'
 import { useConsulta } from '../../hooks/useConsulta'
 import { useDisponibilidad } from '../../hooks/useDisponibilidad'
 import { useFormulario } from '../../hooks/useFormulario'
@@ -8,7 +10,6 @@ import { horarioCompleto, normalizarReserva, RESERVA, reglasDeReserva } from '..
 import { ahoraEnPeru, formatearFechaLarga } from '../../utils/fechas'
 import { QUE_HACE_EL_ROL, ROLES, TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
-import { AlertMessage } from '../ui/AlertMessage'
 import { DateInput } from '../ui/DateInput'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
@@ -38,6 +39,7 @@ const OBLIGATORIOS = {
 // La API vuelve a revisar todo al registrar.
 export function FormularioReserva({ alRegistrar }) {
   const { usuarioActual } = useUsuarioActual()
+  const mostrarAviso = useAviso()
   const ambientes = useConsulta(() => listarAmbientes({ estado_ambiente: 'Disponible' }), [])
   const formulario = useFormulario({
     iniciales: INICIALES,
@@ -45,10 +47,11 @@ export function FormularioReserva({ alRegistrar }) {
     obligatorios: OBLIGATORIOS,
     alEnviar: async (datos) => {
       const respuesta = await registrarReserva(normalizarReserva(datos))
+      mostrarAviso(avisoDeReserva(respuesta.data))
       alRegistrar(respuesta.data)
     },
   })
-  const { valores, campo, enviar, aviso } = formulario
+  const { valores, campo, enviar } = formulario
   const disponibilidad = useDisponibilidad(valores, horarioCompleto(valores))
 
   const lista = ambientes.datos ?? []
@@ -63,7 +66,6 @@ export function FormularioReserva({ alRegistrar }) {
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
-      {aviso && <AlertMessage tipo="error" aviso={aviso} />}
 
       <GrupoDeCampos numero="1" titulo="¿Quién la solicita?" descripcion="La reserva queda a nombre de quien inició sesión.">
         <div className="rounded-lg border border-borde-fuerte bg-superficie-tenue px-3 py-2.5">

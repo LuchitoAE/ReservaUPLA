@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router'
 import { registrarAmbiente } from '../../api/ambientesApi'
 import { listarUsuarios } from '../../api/usuariosApi'
 import { useConsulta } from '../../hooks/useConsulta'
+import { useAviso } from '../../hooks/useAviso'
 import { useFormulario } from '../../hooks/useFormulario'
 import { AMBIENTE, normalizarAmbiente, reglasDeAmbiente } from '../../reglas/ambiente'
 import { ESTADOS_AMBIENTE, opcionesDe, TIPOS_AMBIENTE } from '../../utils/formato'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
-import { AlertMessage } from '../ui/AlertMessage'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { SelectInput } from '../ui/SelectInput'
@@ -32,17 +32,19 @@ const OBLIGATORIOS = {
 // supervisa (agrupación semántica). El estado empieza en «Disponible», el valor más común.
 export function FormularioAmbiente() {
   const navegar = useNavigate()
+  const mostrarAviso = useAviso()
   const responsables = useConsulta(() => listarUsuarios({ rol_usuario: 'ResponsableDeAmbiente', activo_usuario: true }), [])
   const formulario = useFormulario({
     iniciales: INICIALES,
     reglas: reglasDeAmbiente,
     obligatorios: OBLIGATORIOS,
     alEnviar: async (valores) => {
-      const respuesta = await registrarAmbiente(normalizarAmbiente(valores))
-      navegar('/ambientes', { state: { aviso: respuesta.message } })
+      const { data: ambiente } = await registrarAmbiente(normalizarAmbiente(valores))
+      mostrarAviso({ tipo: 'exito', titulo: 'Ambiente registrado', texto: `${ambiente.nombre_ambiente} ya está en la lista, marcado como nuevo.` })
+      navegar('/ambientes', { state: { nuevo: ambiente.id_ambiente } })
     },
   })
-  const { campo, enviar, aviso } = formulario
+  const { campo, enviar } = formulario
 
   const opcionesDeResponsable = (responsables.datos ?? []).map((usuario) => ({
     valor: usuario.id_usuario,
@@ -52,7 +54,6 @@ export function FormularioAmbiente() {
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
-      {aviso && <AlertMessage tipo="error" aviso={aviso} />}
       <GrupoDeCampos numero="1" titulo="Identificación" descripcion="Cómo se llama y qué clase de ambiente es.">
         <TextInput
           {...campo('nombre_ambiente')}

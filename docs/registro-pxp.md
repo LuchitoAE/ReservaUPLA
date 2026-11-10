@@ -86,3 +86,34 @@ cambios de comportamiento, salvo la ruta del panel, que el SDD fija como `/api/p
 **Retrospectiva.** Guardar el documento OpenAPI antes del refactor permitió probar que la API no cambió, más allá de
 los nombres. Comparar automáticamente los nombres del SDD con los del código encontró errores de diseño que la lectura
 no había visto.
+
+## Iteración 3 · Historial, avisos sin saltos, semáforo y sonido (09/11/2026, 22:09 a 22:39)
+
+Ramas `feature/rf-06-historial-de-la-reserva` y `feature/rnf-04-avisos-sin-saltos`. RF-06, RF-14 (sin el interruptor,
+que llega con Mi cuenta en la iteración 4), RNF-04, RNF-05 y RNF-10 (Observer y Strategy).
+
+| Tarea | Resultado |
+|---|---|
+| Pruebas del historial primero (rojo) | 4 del dominio (xUnit): 29 en total |
+| Entidad Historial, tabla historiales y migración CrearHistoriales | Aplicada; cargó el historial de las 3 reservas existentes (el cambio anterior al historial, sin usuario) |
+| Historial en el detalle (línea de tiempo) | Pruebas de los pasos primero; diseño AD08 |
+| Pruebas de la central de avisos, las estrategias de sonido, la preferencia y los avisos de cada estado primero (rojo) | Vitest: 66 en total |
+| Avisos flotantes (Observer) y sonido (Strategy) | Toda la aplicación; el sonido empieza apagado |
+| Tarjeta de la decisión de alto fijo con semáforo y cruce visible; formularios con una línea por campo y resumen junto al botón; error del ingreso bajo «Ingresar»; fila «Nuevo» | Diseños AD08, AD09, AD17, S05 y AC03 |
+| Pruebas del sistema | 44 de 44 de punta a punta (7 nuevas); verificación propia de los avisos, 18 de 18; cada commit compila y pasa sus pruebas solo |
+
+| Defecto | Se introdujo en | Se encontró en | Corrección |
+|---|---|---|---|
+| EF nombró un índice `IX_historiales_id_usuario`, en mayúsculas, distinto de los demás | Código (herramienta) | Revisión de la migración generada | Nombre explícito y migración regenerada |
+| La prueba de aprobar usaba una reserva ya aprobada: el historial de un cambio real no quedaba probado | Pruebas | Revisión del resultado de las pruebas del sistema | Prueba propia: registrar, cancelar y leer el historial |
+| Al llegar otro aviso, el plazo de 8 s de los anteriores volvía a empezar | Código | Revisión del código | La función de cerrar es la misma en cada dibujo |
+| El mensaje de llegada al ingreso («Cerró su sesión») desaparecía al mostrarse un error y movía la tarjeta | Código (v1.0.0) | Revisión del código | El mensaje de llegada se queda |
+| La tarjeta de la decisión medía 180 y 116 px en vez de 112: texto del cruce largo y columna angosta | Diseño | Verificación de los avisos | Texto propio y corto del cruce; columna de 24rem, como AD09 |
+| Las reservas de prueba consumían números de la secuencia: la próxima real habría sido RES-2026-0024 | Pruebas | Revisión de los datos después de probar | La limpieza devuelve la secuencia al último código |
+
+La prueba de `situacionDeLaReserva` se escribió junto con su código, sin verla fallar antes; sus cambios posteriores sí
+siguieron el orden (rojo y verde).
+
+**Retrospectiva.** Revisar qué ejercitó de verdad cada prueba del sistema, y no solo si pasó, mostró una prueba que se
+saltaba lo nuevo. Medir los altos en el navegador encontró lo que la revisión del diseño dejaba pasar: el texto cabe o no
+según el ancho real.

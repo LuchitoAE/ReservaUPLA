@@ -35,6 +35,13 @@ export function formatearFechaLarga(fecha) {
   })
 }
 
+// '2026-11-11' → 'miércoles 11/11' (en los avisos, donde el espacio es corto)
+export function formatearFechaCorta(fecha) {
+  const [, mes, dia] = fecha.split('-')
+  const diaDeLaSemana = new Date(`${fecha}T12:00:00`).toLocaleDateString('es-PE', { weekday: 'long' })
+  return `${diaDeLaSemana} ${dia}/${mes}`
+}
+
 // Momento en UTC → '03/11/2026, 17:45' en hora de Perú.
 export function formatearMomento(momento) {
   return new Date(momento).toLocaleString('es-PE', {

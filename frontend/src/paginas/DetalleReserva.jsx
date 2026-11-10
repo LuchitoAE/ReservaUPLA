@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { useParams } from 'react-router'
 import { obtenerReserva } from '../api/reservasApi'
+import { avisoDeReserva } from '../avisos/avisosDeReserva'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AccionesDeEstado } from '../components/reservas/AccionesDeEstado'
 import { HistorialDeReserva } from '../components/reservas/HistorialDeReserva'
@@ -8,6 +8,7 @@ import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { Cargando } from '../components/ui/Cargando'
 import { InsigniaDeEstado } from '../components/ui/InsigniaDeEstado'
+import { useAviso } from '../hooks/useAviso'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
@@ -17,12 +18,13 @@ import { TIPOS_AMBIENTE } from '../utils/formato'
 const MIGAS = [{ nombre: 'Reservas', ruta: '/reservas' }]
 
 // RF-06: todo sobre una reserva, agrupado por lo que el usuario busca (cuándo, dónde, quién y para qué), y su historial.
-// RF-07: al lado, las acciones de estado que el usuario actual puede hacer.
+// RF-07: al lado, en qué está y las acciones que el usuario actual puede hacer. El resultado de cada cambio sale en un
+// aviso flotante con el color de su estado (RNF-04, RNF-05): nada empuja las tarjetas.
 export function DetalleReserva() {
   const { idReserva } = useParams()
   const { usuarioActual } = useUsuarioActual()
   const { datos: reserva, cargando, error, recargar } = useConsulta(() => obtenerReserva(idReserva), [idReserva])
-  const [avisoDeCambio, setAvisoDeCambio] = useState(null)
+  const mostrarAviso = useAviso()
 
   if (cargando && !reserva) {
     return (
@@ -52,8 +54,7 @@ export function DetalleReserva() {
         descripcion={`${reserva.nombre_ambiente} · ${reserva.hora_inicio_reserva} a ${reserva.hora_fin_reserva}`}
         migas={MIGAS}
       />
-      {avisoDeCambio && <AlertMessage tipo="exito" titulo={avisoDeCambio} className="mb-4" />}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6">
           <section aria-labelledby="titulo-datos" className="rounded-xl border border-borde bg-superficie p-5 sm:p-6">
             <h2 id="titulo-datos" className="mb-4 text-lg font-semibold text-titulo">
@@ -93,7 +94,7 @@ export function DetalleReserva() {
             reserva={reserva}
             usuarioActual={usuarioActual}
             alCambiar={(respuesta) => {
-              setAvisoDeCambio(respuesta.message)
+              mostrarAviso(avisoDeReserva(respuesta.data))
               recargar()
             }}
           />

@@ -3,7 +3,7 @@ import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { TableList } from '../components/ui/TableList'
-import { useAvisoDeNavegacion } from '../hooks/useAvisoDeNavegacion'
+import { useFilaNueva } from '../hooks/useFilaNueva'
 import { useConsulta } from '../hooks/useConsulta'
 import { avisoDeError } from '../utils/avisoDeError'
 import { ROLES } from '../utils/formato'
@@ -18,7 +18,7 @@ const COLUMNAS = [
 
 // Usuarios registrados (RF-01), con acceso al formulario de registro.
 export function Usuarios() {
-  const aviso = useAvisoDeNavegacion()
+  const idNuevo = useFilaNueva()
   const { datos, cargando, error } = useConsulta(() => listarUsuarios(), [])
 
   return (
@@ -33,13 +33,13 @@ export function Usuarios() {
         }
       />
       <div className="flex flex-col gap-4">
-        {aviso && <AlertMessage tipo="exito" titulo={aviso} />}
         {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
         <TableList
           titulo="Usuarios"
           columnas={COLUMNAS}
           filas={datos ?? []}
           claveFila="id_usuario"
+          filaNueva={idNuevo}
           cargando={cargando}
           vacio="Todavía no hay usuarios registrados."
         />

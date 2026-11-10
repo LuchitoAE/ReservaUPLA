@@ -44,12 +44,15 @@ export function GrupoDeOpciones({ id, etiqueta, obligatorio, error, valor, onCam
           </label>
         ))}
       </div>
-      {error && (
-        <p id={idError} className="flex gap-1.5 text-sm font-medium text-error">
-          <span aria-hidden="true">⚠</span>
-          {error}
-        </p>
-      )}
+      {/* La línea del error ocupa su lugar aunque esté vacía (RNF-04): el error no empuja lo que sigue. */}
+      <div className="min-h-5 text-sm">
+        {error && (
+          <p id={idError} className="flex gap-1.5 font-medium text-error">
+            <span aria-hidden="true">⚠</span>
+            {error}
+          </p>
+        )}
+      </div>
     </fieldset>
   )
 }
