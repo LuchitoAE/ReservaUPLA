@@ -8,7 +8,6 @@ export function NuevoUsuario() {
       <EncabezadoDePagina
         titulo="Registrar usuario"
         descripcion="Quien solicita reservas, quien las aprueba o quien está a cargo de un ambiente."
-        migas={[{ nombre: 'Usuarios', ruta: '/usuarios' }]}
       />
       <section className="max-w-3xl">
         <FormularioUsuario />

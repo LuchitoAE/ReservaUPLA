@@ -31,7 +31,6 @@ export function PanelDelResponsable({ usuario, indicadores }) {
     <>
       <EncabezadoDePagina
         titulo="Panel principal"
-        conMigas={false}
         descripcion={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, semana: resumenDeEstaSemana })}
         acciones={
           <Button destino="/reservas" variante="principal">

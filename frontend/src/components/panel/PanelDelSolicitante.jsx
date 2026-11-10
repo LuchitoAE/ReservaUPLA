@@ -29,7 +29,6 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
     <>
       <EncabezadoDePagina
         titulo="Panel principal"
-        conMigas={false}
         descripcion={resumenDelPanel({ rol: usuario.rol_usuario, nombre: usuario.nombre_completo_usuario, pendientes: indicadores.datos?.reservas_pendientes })}
         acciones={
           <Button destino="/reservas" variante="principal">
