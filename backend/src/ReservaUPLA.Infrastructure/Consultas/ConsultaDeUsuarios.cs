@@ -2,16 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 namespace ReservaUPLA.Infrastructure.Consultas;
 
 // Lista de usuarios para la interfaz, con filtros opcionales por rol y por estado. Solo lectura (AsNoTracking).
 internal sealed class ConsultaDeUsuarios : IConsultaDeUsuarios
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ConsultaDeUsuarios(ReservaUPLADbContext contexto)
+    public ConsultaDeUsuarios(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }

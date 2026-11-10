@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Entidades;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 namespace ReservaUPLA.Infrastructure.Consultas;
 
@@ -10,9 +10,9 @@ namespace ReservaUPLA.Infrastructure.Consultas;
 // SQL y traen solo las columnas que el DTO necesita (proyección), sin cargar entidades completas.
 internal sealed class ConsultaDeReservas : IConsultaDeReservas
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ConsultaDeReservas(ReservaUPLADbContext contexto)
+    public ConsultaDeReservas(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }

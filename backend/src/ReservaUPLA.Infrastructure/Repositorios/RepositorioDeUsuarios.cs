@@ -3,17 +3,17 @@ using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Entidades;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Domain.Excepciones;
-using ReservaUPLA.Infrastructure.Persistence;
-using ReservaUPLA.Infrastructure.Persistence.Configurations;
+using ReservaUPLA.Infrastructure.Persistencia;
+using ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
-namespace ReservaUPLA.Infrastructure.Repositories;
+namespace ReservaUPLA.Infrastructure.Repositorios;
 
 // Implementación con Entity Framework Core y PostgreSQL del contrato de usuarios.
-internal sealed class UsuarioRepository : IRepositorioDeUsuarios
+internal sealed class RepositorioDeUsuarios : IRepositorioDeUsuarios
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public UsuarioRepository(ReservaUPLADbContext contexto)
+    public RepositorioDeUsuarios(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }
@@ -51,12 +51,12 @@ internal sealed class UsuarioRepository : IRepositorioDeUsuarios
         {
             await _contexto.SaveChangesAsync(cancelacion);
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuration.Indice_Codigo))
+        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuracion.Indice_Codigo))
         {
             // Dos registros con el mismo código al mismo tiempo: el segundo lo detiene el índice único.
             throw new DatosNoValidosExcepcion(nameof(Usuario.Codigo_Usuario), "Este código ya existe.");
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuration.Indice_Correo))
+        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Usuario_Configuracion.Indice_Correo))
         {
             // Lo mismo con el correo.
             throw new DatosNoValidosExcepcion(nameof(Usuario.Correo_Usuario), "Ya existe un usuario con este correo.");

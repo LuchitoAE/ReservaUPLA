@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace ReservaUPLA.Infrastructure.Persistence;
+namespace ReservaUPLA.Infrastructure.Persistencia;
 
 // Reconoce las restricciones de la base que también son reglas de negocio, para responder con su mensaje
 // en lugar de un error 500. Los códigos son los de PostgreSQL (SQLSTATE).

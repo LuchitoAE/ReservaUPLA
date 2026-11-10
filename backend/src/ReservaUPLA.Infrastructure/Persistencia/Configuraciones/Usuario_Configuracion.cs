@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReservaUPLA.Domain.Comun;
 using ReservaUPLA.Domain.Entidades;
 
-namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
+namespace ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
 // Mapeo de la entidad Usuario a la tabla usuarios (modelo de datos del caso: Id, NombreCompleto, Correo, Rol, Activo),
 // más el código con el que se ingresa (RN-14) y la sal y el hash de la contraseña.
-internal sealed class Usuario_Configuration : IEntityTypeConfiguration<Usuario>
+internal sealed class Usuario_Configuracion : IEntityTypeConfiguration<Usuario>
 {
     public const string Indice_Codigo = "ux_usuarios_codigo_usuario";
     public const string Indice_Correo = "ux_usuarios_correo_usuario";

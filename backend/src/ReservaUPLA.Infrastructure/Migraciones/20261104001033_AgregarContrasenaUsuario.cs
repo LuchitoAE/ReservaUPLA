@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ReservaUPLA.Infrastructure.Migrations
+namespace ReservaUPLA.Infrastructure.Migraciones
 {
     /// <inheritdoc />
     public partial class AgregarContrasenaUsuario : Migration

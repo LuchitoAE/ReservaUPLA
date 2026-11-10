@@ -2,16 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 namespace ReservaUPLA.Infrastructure.Consultas;
 
 // Lista de ambientes para la interfaz, con el nombre de su responsable (unión con usuarios). Solo lectura.
 internal sealed class ConsultaDeAmbientes : IConsultaDeAmbientes
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ConsultaDeAmbientes(ReservaUPLADbContext contexto)
+    public ConsultaDeAmbientes(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }

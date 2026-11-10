@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 #nullable disable
 
-namespace ReservaUPLA.Infrastructure.Migrations
+namespace ReservaUPLA.Infrastructure.Migraciones
 {
-    [DbContext(typeof(ReservaUPLADbContext))]
-    partial class ReservaUPLADbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ContextoDeReservaUPLA))]
+    [Migration("20261103220810_CrearReservas")]
+    partial class CrearReservas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,22 +170,11 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("activo_usuario");
 
-                    b.Property<string>("Codigo_Usuario")
-                        .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("character varying(7)")
-                        .HasColumnName("codigo_usuario");
-
                     b.Property<string>("Correo_Usuario")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("correo_usuario");
-
-                    b.Property<byte[]>("Hash_Contrasena_Usuario")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("hash_contrasena_usuario");
 
                     b.Property<string>("Nombre_Completo_Usuario")
                         .IsRequired()
@@ -196,17 +188,8 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("rol_usuario");
 
-                    b.Property<byte[]>("Sal_Contrasena_Usuario")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("sal_contrasena_usuario");
-
                     b.HasKey("Id_Usuario")
                         .HasName("pk_usuarios");
-
-                    b.HasIndex("Codigo_Usuario")
-                        .IsUnique()
-                        .HasDatabaseName("ux_usuarios_codigo_usuario");
 
                     b.HasIndex("Correo_Usuario")
                         .IsUnique()

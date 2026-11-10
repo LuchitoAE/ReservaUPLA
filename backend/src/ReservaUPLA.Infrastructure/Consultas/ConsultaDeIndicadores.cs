@@ -2,16 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 namespace ReservaUPLA.Infrastructure.Consultas;
 
 // Calcula los indicadores en PostgreSQL (GROUP BY), sin traer las reservas a memoria: dos consultas pequeñas.
 internal sealed class ConsultaDeIndicadores : IConsultaDeIndicadores
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ConsultaDeIndicadores(ReservaUPLADbContext contexto)
+    public ConsultaDeIndicadores(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }

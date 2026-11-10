@@ -19,7 +19,7 @@ var cadena_conexion = builder.Configuration.GetConnectionString("ReservaUPLA")
 
 // Punto de composición: aquí se eligen las implementaciones concretas de cada contrato.
 builder.Services.AgregarAplicacion();
-builder.Services.AddInfrastructure(cadena_conexion);
+builder.Services.AgregarInfraestructura(cadena_conexion);
 
 // La API responde solo JSON: sin el formateador de texto, Swagger no ofrece text/plain.
 builder.Services.AddControllers(opciones => opciones.OutputFormatters.RemoveType<StringOutputFormatter>())

@@ -2,13 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReservaUPLA.Domain.Entidades;
 
-namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
+namespace ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
 // Mapeo de la entidad Reserva a la tabla reservas (modelo del caso: Id, Fecha, HoraInicio, HoraFin, Motivo, Estado,
 // UsuarioId, AmbienteId), más el código legible y las fechas de registro y de último cambio.
 // La base repite las reglas que no dependen de otras filas (RN-03 y RN-04) con restricciones CHECK; RN-01, que
 // compara filas, la garantiza la restricción de exclusión de la migración CrearReservas.
-internal sealed class Reserva_Configuration : IEntityTypeConfiguration<Reserva>
+internal sealed class Reserva_Configuracion : IEntityTypeConfiguration<Reserva>
 {
     public const string Restriccion_Sin_Cruce = "ex_reservas_aprobadas_sin_cruce";
 

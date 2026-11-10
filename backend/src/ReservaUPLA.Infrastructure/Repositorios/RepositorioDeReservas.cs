@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Entidades;
 using ReservaUPLA.Domain.Excepciones;
-using ReservaUPLA.Infrastructure.Persistence;
-using ReservaUPLA.Infrastructure.Persistence.Configurations;
+using ReservaUPLA.Infrastructure.Persistencia;
+using ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
-namespace ReservaUPLA.Infrastructure.Repositories;
+namespace ReservaUPLA.Infrastructure.Repositorios;
 
 // Implementación con Entity Framework Core y PostgreSQL del contrato de reservas.
-internal sealed class ReservaRepository : IRepositorioDeReservas
+internal sealed class RepositorioDeReservas : IRepositorioDeReservas
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ReservaRepository(ReservaUPLADbContext contexto)
+    public RepositorioDeReservas(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }
@@ -36,7 +36,7 @@ internal sealed class ReservaRepository : IRepositorioDeReservas
     public async Task<int> ObtenerSiguienteNumeroAsync(CancellationToken cancelacion = default)
     {
         var numeros = await _contexto.Database
-            .SqlQueryRaw<long>($"SELECT nextval('{ReservaUPLADbContext.Secuencia_Numero_Reserva}') AS \"Value\"")
+            .SqlQueryRaw<long>($"SELECT nextval('{ContextoDeReservaUPLA.Secuencia_Numero_Reserva}') AS \"Value\"")
             .ToListAsync(cancelacion);
 
         return (int)numeros[0];
@@ -55,7 +55,7 @@ internal sealed class ReservaRepository : IRepositorioDeReservas
         {
             await _contexto.SaveChangesAsync(cancelacion);
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsExclusionViolada(error, Reserva_Configuration.Restriccion_Sin_Cruce))
+        catch (DbUpdateException error) when (ErroresDePostgres.EsExclusionViolada(error, Reserva_Configuracion.Restriccion_Sin_Cruce))
         {
             // Dos aprobaciones del mismo horario al mismo tiempo: la base detiene la segunda (RN-01).
             throw new ConflictoDeNegocioExcepcion(

@@ -2,17 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Entidades;
 using ReservaUPLA.Domain.Excepciones;
-using ReservaUPLA.Infrastructure.Persistence;
-using ReservaUPLA.Infrastructure.Persistence.Configurations;
+using ReservaUPLA.Infrastructure.Persistencia;
+using ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
-namespace ReservaUPLA.Infrastructure.Repositories;
+namespace ReservaUPLA.Infrastructure.Repositorios;
 
 // Implementación con Entity Framework Core y PostgreSQL del contrato de ambientes.
-internal sealed class AmbienteRepository : IRepositorioDeAmbientes
+internal sealed class RepositorioDeAmbientes : IRepositorioDeAmbientes
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public AmbienteRepository(ReservaUPLADbContext contexto)
+    public RepositorioDeAmbientes(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }
@@ -37,7 +37,7 @@ internal sealed class AmbienteRepository : IRepositorioDeAmbientes
         {
             await _contexto.SaveChangesAsync(cancelacion);
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Ambiente_Configuration.Indice_Nombre))
+        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Ambiente_Configuracion.Indice_Nombre))
         {
             throw new DatosNoValidosExcepcion(nameof(Ambiente.Nombre_Ambiente), "Ya existe un ambiente con este nombre.");
         }

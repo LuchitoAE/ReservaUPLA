@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 #nullable disable
 
-namespace ReservaUPLA.Infrastructure.Migrations
+namespace ReservaUPLA.Infrastructure.Migraciones
 {
-    [DbContext(typeof(ReservaUPLADbContext))]
-    [Migration("20261104001033_AgregarContrasenaUsuario")]
-    partial class AgregarContrasenaUsuario
+    [DbContext(typeof(ContextoDeReservaUPLA))]
+    partial class ContextoDeReservaUPLAModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,6 +167,12 @@ namespace ReservaUPLA.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("activo_usuario");
 
+                    b.Property<string>("Codigo_Usuario")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("codigo_usuario");
+
                     b.Property<string>("Correo_Usuario")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -200,6 +203,10 @@ namespace ReservaUPLA.Infrastructure.Migrations
 
                     b.HasKey("Id_Usuario")
                         .HasName("pk_usuarios");
+
+                    b.HasIndex("Codigo_Usuario")
+                        .IsUnique()
+                        .HasDatabaseName("ux_usuarios_codigo_usuario");
 
                     b.HasIndex("Correo_Usuario")
                         .IsUnique()

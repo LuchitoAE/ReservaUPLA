@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReservaUPLA.Domain.Entidades;
 
-namespace ReservaUPLA.Infrastructure.Persistence.Configurations;
+namespace ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 
 // Mapeo de la entidad Ambiente a la tabla ambientes (modelo del caso: Id, Nombre, Tipo, Capacidad, Ubicacion,
 // Estado), más el responsable del ambiente.
-internal sealed class Ambiente_Configuration : IEntityTypeConfiguration<Ambiente>
+internal sealed class Ambiente_Configuracion : IEntityTypeConfiguration<Ambiente>
 {
     public const string Indice_Nombre = "ux_ambientes_nombre_ambiente";
 

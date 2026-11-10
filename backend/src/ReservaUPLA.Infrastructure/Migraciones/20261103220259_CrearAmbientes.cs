@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ReservaUPLA.Infrastructure.Migrations
+namespace ReservaUPLA.Infrastructure.Migraciones
 {
     /// <inheritdoc />
     public partial class CrearAmbientes : Migration

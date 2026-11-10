@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 #nullable disable
 
-namespace ReservaUPLA.Infrastructure.Migrations
+namespace ReservaUPLA.Infrastructure.Migraciones
 {
-    [DbContext(typeof(ReservaUPLADbContext))]
+    [DbContext(typeof(ContextoDeReservaUPLA))]
     [Migration("20261103215721_CrearUsuarios")]
     partial class CrearUsuarios
     {
