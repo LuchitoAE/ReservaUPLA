@@ -51,6 +51,12 @@ public sealed class RegistrarReservaCasoDeUso
         reserva.AsignarCodigo(await _repositorio_de_reservas.ObtenerSiguienteNumeroAsync(cancelacion));
         await _repositorio_de_reservas.AgregarAsync(reserva, cancelacion);
 
-        return DetalleDeReserva.DesdeEntidades(reserva, solicitante!, ambiente!);
+        // Recién registrada, su historial tiene una sola entrada: Pendiente, por quien la solicitó.
+        var historial = reserva.Historial_Reserva
+            .Select(entrada => new DatosDeHistorial(entrada.Estado_Historial, entrada.Fecha_Historial, entrada.Id_Usuario,
+                solicitante!.Nombre_Completo_Usuario))
+            .ToList();
+
+        return DetalleDeReserva.DesdeEntidades(reserva, solicitante!, ambiente!, historial);
     }
 }
