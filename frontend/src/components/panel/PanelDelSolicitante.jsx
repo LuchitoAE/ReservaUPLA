@@ -3,6 +3,7 @@ import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
 import { ahoraEnPeru } from '../../utils/fechas'
 import { Button } from '../ui/Button'
+import { EstadoVacio } from '../ui/EstadoVacio'
 import { Icono } from '../ui/Icono'
 import { BandaDeBienvenida } from './BandaDeBienvenida'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
@@ -48,8 +49,25 @@ export function PanelDelSolicitante({ usuario, indicadores }) {
           >
             {proximas.cargando && !proximas.datos ? (
               <p className="text-texto-suave">Cargando…</p>
+            ) : (proximas.datos ?? []).length === 0 ? (
+              // Todavía no registró ninguna o ya pasaron todas: el texto lo distingue (diseño S02).
+              <EstadoVacio
+                icono="reservas"
+                titulo={indicadores.datos?.total_reservas ? 'No tiene reservas próximas' : 'Aún no tiene reservas'}
+                texto={
+                  indicadores.datos?.total_reservas
+                    ? 'Sus reservas ya pasaron. Registre una nueva para volver a verla aquí.'
+                    : 'Solicite un laboratorio, un auditorio o una sala. Aquí verá su estado: pendiente, aprobada o rechazada.'
+                }
+                accion={
+                  <Button destino="/reservas/nueva" variante="principal">
+                    <Icono nombre="nueva" />
+                    Nueva reserva
+                  </Button>
+                }
+              />
             ) : (
-              <ListaDeReservas reservas={proximasPrimero(proximas.datos ?? [], 5, ahoraEnPeru())} vacio="No tiene reservas próximas." />
+              <ListaDeReservas reservas={proximasPrimero(proximas.datos, 5, ahoraEnPeru())} vacio="No tiene reservas próximas." />
             )}
           </Seccion>
           <div className="flex flex-col gap-6">

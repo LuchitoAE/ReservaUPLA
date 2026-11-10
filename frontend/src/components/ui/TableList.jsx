@@ -1,16 +1,33 @@
+import { Link, useNavigate } from 'react-router'
 import { Cargando } from './Cargando'
+import { EstadoVacio } from './EstadoVacio'
+import { Icono } from './Icono'
 
 // Tabla reutilizable (componente «TableList» del caso): la usan las reservas, los ambientes y los usuarios.
 // Las columnas se describen una vez: [{ clave, titulo, celda?(fila), alinear? }]. En pantallas medianas y grandes
 // se ve como tabla; en el teléfono, como tarjetas con «título: valor», sin barra de desplazamiento horizontal.
 // «filaNueva»: la clave de un registro recién creado; su fila se resalta y lleva la marca «Nuevo» (RNF-04).
-export function TableList({ titulo, columnas, filas, claveFila, filaNueva = null, cargando = false, vacio = 'No hay registros.' }) {
+// «accion»: { texto, destino(fila), describir?(fila) }; añade la columna «Ver ›» y, además, toda la fila abre el
+// detalle (el enlace queda para el teclado y para quien lee con lector de pantalla).
+// «notaPie»: la línea que explica la tabla, al pie de la tarjeta (diseños S09, AD12 y AD15).
+export function TableList({
+  titulo,
+  columnas,
+  filas,
+  claveFila,
+  filaNueva = null,
+  cargando = false,
+  vacio = 'No hay registros.',
+  textoVacio,
+  iconoVacio = 'info',
+  accionVacio = null,
+  accion = null,
+  notaPie,
+}) {
+  const navegar = useNavigate()
+
   if (cargando) {
     return <Cargando texto={`Cargando ${titulo.toLowerCase()}…`} />
-  }
-
-  if (filas.length === 0) {
-    return <p className="rounded-xl border border-dashed border-borde-fuerte bg-superficie p-6 text-texto-suave">{vacio}</p>
   }
 
   const esNueva = (fila) => filaNueva !== null && fila[claveFila] === filaNueva
@@ -25,27 +42,85 @@ export function TableList({ titulo, columnas, filas, claveFila, filaNueva = null
     )
   }
 
+  const encabezado = (
+    <thead className="border-b border-borde bg-superficie-tenue text-xs tracking-wide text-texto-suave uppercase">
+      <tr>
+        {columnas.map((columna) => (
+          <th
+            key={columna.clave}
+            scope="col"
+            className={`px-4 py-3 font-semibold ${columna.ancho ?? ''} ${columna.alinear === 'derecha' ? 'text-right' : ''}`}
+          >
+            {columna.titulo}
+          </th>
+        ))}
+        {accion && (
+          <th scope="col" className="px-4 py-3 text-right font-semibold">
+            <span className="sr-only">Acciones</span>
+          </th>
+        )}
+      </tr>
+    </thead>
+  )
+
+  if (filas.length === 0) {
+    return (
+      <div className="rounded-xl border border-borde bg-superficie">
+        <table aria-hidden="true" className="hidden w-full text-left text-sm md:table">
+          {encabezado}
+        </table>
+        <EstadoVacio icono={iconoVacio} titulo={vacio} texto={textoVacio} accion={accionVacio} />
+      </div>
+    )
+  }
+
+  // Toda la fila abre el detalle, salvo que la persona esté seleccionando texto o pulsando un control propio de la fila.
+  const alPulsarFila = (evento, fila) => {
+    if (!accion) {
+      return
+    }
+    if (evento.target.closest('a, button, input, select, textarea, label')) {
+      return
+    }
+    if (window.getSelection()?.toString()) {
+      return
+    }
+    navegar(accion.destino(fila))
+  }
+
+  const enlaceDeAccion = (fila) => (
+    <Link
+      to={accion.destino(fila)}
+      className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 font-semibold whitespace-nowrap text-enlace underline-offset-2 hover:underline focus-visible:outline-3 focus-visible:outline-foco"
+    >
+      {accion.texto}
+      <Icono nombre="siguiente" className="size-4" />
+      <span className="sr-only">{accion.describir ? ` ${accion.describir(fila)}` : ' este registro'}</span>
+    </Link>
+  )
+
   return (
     <div className="rounded-xl border border-borde bg-superficie">
-      <table className="hidden w-full text-left md:table">
+      <table className="hidden w-full text-left text-sm md:table">
         <caption className="sr-only">{titulo}</caption>
-        <thead className="border-b border-borde bg-superficie-tenue text-sm text-texto-suave">
-          <tr>
-            {columnas.map((columna) => (
-              <th key={columna.clave} scope="col" className={`px-4 py-3 font-semibold ${columna.alinear === 'derecha' ? 'text-right' : ''}`}>
-                {columna.titulo}
-              </th>
-            ))}
-          </tr>
-        </thead>
+        {encabezado}
         <tbody className="divide-y divide-borde">
           {filas.map((fila) => (
-            <tr key={fila[claveFila]} className={esNueva(fila) ? 'bg-seleccion' : 'hover:bg-superficie-tenue'}>
+            <tr
+              key={fila[claveFila]}
+              onClick={(evento) => alPulsarFila(evento, fila)}
+              className={`${esNueva(fila) ? 'bg-seleccion' : 'hover:bg-superficie-tenue'} ${accion ? 'cursor-pointer' : ''}`}
+            >
               {columnas.map((columna) => (
                 <td key={columna.clave} className={`px-4 py-3 align-top ${columna.alinear === 'derecha' ? 'text-right tabular-nums' : ''}`}>
                   {valor(columna, fila)}
                 </td>
               ))}
+              {accion && (
+                <td className="px-4 py-3 text-right align-top">
+                  {enlaceDeAccion(fila)}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -62,9 +137,16 @@ export function TableList({ titulo, columnas, filas, claveFila, filaNueva = null
                 </div>
               ))}
             </dl>
+            {accion && (
+              <div className="mt-2 flex justify-end">
+                {enlaceDeAccion(fila)}
+              </div>
+            )}
           </li>
         ))}
       </ul>
+
+      {notaPie && <p className="border-t border-borde px-4 py-3 text-sm text-texto-suave">{notaPie}</p>}
     </div>
   )
 }

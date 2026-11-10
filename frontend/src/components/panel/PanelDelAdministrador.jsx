@@ -2,6 +2,7 @@ import { listarReservas } from '../../api/reservasApi'
 import { useConsulta } from '../../hooks/useConsulta'
 import { ahoraEnPeru } from '../../utils/fechas'
 import { Button } from '../ui/Button'
+import { EstadoVacio } from '../ui/EstadoVacio'
 import { Icono } from '../ui/Icono'
 import { BandaDeBienvenida } from './BandaDeBienvenida'
 import { IndicadoresDelPanel } from './IndicadoresDelPanel'
@@ -40,9 +41,20 @@ export function PanelDelAdministrador({ usuario, indicadores }) {
           >
             {pendientes.cargando && !pendientes.datos ? (
               <p className="text-texto-suave">Cargando…</p>
+            ) : (pendientes.datos ?? []).length === 0 ? (
+              <EstadoVacio
+                icono="aprobada"
+                titulo="Todo al día"
+                texto="No hay reservas pendientes. Cuando alguien solicite un ambiente, aparecerá aquí."
+                accion={
+                  <Button destino="/reservas" variante="secundario">
+                    Ver todas las reservas
+                  </Button>
+                }
+              />
             ) : (
               <ListaDeReservas
-                reservas={proximasPrimero(pendientes.datos ?? [], 5, ahoraEnPeru())}
+                reservas={proximasPrimero(pendientes.datos, 5, ahoraEnPeru())}
                 vacio="No hay reservas esperando su aprobación."
                 accion="Revisar"
                 conSolicitante
