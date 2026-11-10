@@ -7,17 +7,18 @@ using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
-namespace ReservaUPLA.WebApi.Controllers;
+namespace ReservaUPLA.WebApi.Controladores;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch: de los errores se encarga
 // ManejadorDeErrores. Solo el administrador registra usuarios de cualquier rol y ve la lista (tiene correos).
 [ApiController]
+[Controller]
 [Route("api/usuarios")]
 [Authorize(Roles = Sesion.Administrador)]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
-public sealed class UsuariosController : ControllerBase
+public sealed class UsuariosControlador : ControllerBase
 {
     // RF-01: registrar un usuario.
     [HttpPost]

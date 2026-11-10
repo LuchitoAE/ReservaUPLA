@@ -1,4 +1,4 @@
-import { obtenerIndicadores } from '../api/dashboardApi'
+import { obtenerIndicadores } from '../api/panelApi'
 import { UsoDeAmbientes } from '../components/dashboard/UsoDeAmbientes'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AlertMessage } from '../components/ui/AlertMessage'

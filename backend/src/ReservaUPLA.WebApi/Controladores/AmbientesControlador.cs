@@ -7,14 +7,15 @@ using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
-namespace ReservaUPLA.WebApi.Controllers;
+namespace ReservaUPLA.WebApi.Controladores;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch.
 [ApiController]
+[Controller]
 [Route("api/ambientes")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
-public sealed class AmbientesController : ControllerBase
+public sealed class AmbientesControlador : ControllerBase
 {
     // RF-02: registrar un ambiente universitario. Solo el administrador.
     [HttpPost]

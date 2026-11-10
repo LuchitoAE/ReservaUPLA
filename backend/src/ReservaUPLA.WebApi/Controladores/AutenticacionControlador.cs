@@ -8,14 +8,15 @@ using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
-namespace ReservaUPLA.WebApi.Controllers;
+namespace ReservaUPLA.WebApi.Controladores;
 
 // Inicio y cierre de sesión (RF-09, RF-10). Son los únicos endpoints que se usan sin sesión. No hay registro propio:
 // las cuentas las crea el administrador con el código que entrega la universidad (RN-07).
 [ApiController]
+[Controller]
 [Route("api/autenticacion")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
-public sealed class AutenticacionController : ControllerBase
+public sealed class AutenticacionControlador : ControllerBase
 {
     [HttpPost("ingreso")]
     [AllowAnonymous]

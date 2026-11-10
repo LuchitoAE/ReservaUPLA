@@ -9,16 +9,17 @@ using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
 
-namespace ReservaUPLA.WebApi.Controllers;
+namespace ReservaUPLA.WebApi.Controladores;
 
 // Traduce HTTP a casos de uso y consultas. Sin reglas de negocio ni try/catch: de los errores se encarga
 // ManejadorDeErrores (400 datos, 401 sin sesión, 403 rol, 404 no existe, 409 choca con otra reserva o con el estado).
 // El solicitante y quien cambia el estado son siempre el usuario de la sesión.
 [ApiController]
+[Controller]
 [Route("api/reservas")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
-public sealed class ReservasController : ControllerBase
+public sealed class ReservasControlador : ControllerBase
 {
     // RF-03: registrar una solicitud de reserva. Nace Pendiente; Location apunta a su detalle.
     [HttpPost]
