@@ -1,6 +1,6 @@
-using ReservaUPLA.Application.UseCases.Usuarios.CuentasIniciales;
-using ReservaUPLA.Application.UseCases.Usuarios.RegistrarUsuario;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Application.CasosDeUso.Usuarios.CuentasIniciales;
+using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Pruebas.Dobles;
 
 namespace ReservaUPLA.Pruebas.CasosDeUso;
@@ -9,16 +9,16 @@ namespace ReservaUPLA.Pruebas.CasosDeUso;
 public sealed class CuentasInicialesPruebas
 {
     private readonly RepositorioDeUsuariosEnMemoria _repositorio = new();
-    private readonly HasherDeContrasenasFalso _hasher = new();
+    private readonly ProtectorDeContrasenasFalso _protector_de_contrasenas = new();
 
     private static readonly CuentaInicial Admin =
         new("ADMIN01", "Administrador UPLA", "admin@upla.edu.pe", Roles_Usuario.Administrador, "Admin2026");
 
-    private CrearPrimerAdministradorUseCase PrimerAdministrador() =>
-        new(_repositorio, new RegistrarUsuarioUseCase(_repositorio, _hasher));
+    private CrearPrimerAdministradorCasoDeUso PrimerAdministrador() =>
+        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas));
 
-    private CrearCuentasDePruebaUseCase CuentasDePrueba() =>
-        new(_repositorio, new RegistrarUsuarioUseCase(_repositorio, _hasher));
+    private CrearCuentasDePruebaCasoDeUso CuentasDePrueba() =>
+        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas));
 
     [Fact]
     public async Task Crea_el_primer_administrador_si_no_hay_ninguno()

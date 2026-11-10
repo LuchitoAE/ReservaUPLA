@@ -1,5 +1,5 @@
-using ReservaUPLA.Domain.Common;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Comun;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Pruebas.Dominio;
 
@@ -39,7 +39,7 @@ public sealed class CodigoDeUsuarioPruebas
     [Fact]
     public void Crear_lanza_el_error_en_el_campo_del_codigo()
     {
-        var error = Assert.Throws<DatosNoValidosException>(() => CodigoDeUsuario.Crear("abc"));
+        var error = Assert.Throws<DatosNoValidosExcepcion>(() => CodigoDeUsuario.Crear("abc"));
 
         Assert.True(error.Errores.ContainsKey("Codigo_Usuario"));
     }

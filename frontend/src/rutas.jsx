@@ -3,7 +3,7 @@ import { SoloParaRoles } from './components/navegacion/SoloParaRoles'
 import { LayoutPrincipal } from './layouts/LayoutPrincipal'
 import { RaizDeLaApp } from './layouts/RaizDeLaApp'
 import { Ambientes } from './paginas/Ambientes'
-import { Dashboard } from './paginas/Dashboard'
+import { PanelPrincipal } from './paginas/PanelPrincipal'
 import { DetalleReserva } from './paginas/DetalleReserva'
 import { NuevaReserva } from './paginas/NuevaReserva'
 import { NuevoAmbiente } from './paginas/NuevoAmbiente'
@@ -30,7 +30,7 @@ export const rutas = createBrowserRouter([
         element: <LayoutPrincipal />,
         errorElement: <PaginaDeError />,
         children: [
-          { index: true, element: <Dashboard /> },
+          { index: true, element: <PanelPrincipal /> },
           { path: 'reservas', element: <Reservas /> },
           { path: 'reservas/nueva', element: <NuevaReserva /> },
           { path: 'reservas/:idReserva', element: <DetalleReserva /> },

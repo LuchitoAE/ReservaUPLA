@@ -6,6 +6,7 @@ using Microsoft.OpenApi;
 using ReservaUPLA.Application;
 using ReservaUPLA.Infrastructure;
 using ReservaUPLA.WebApi.Arranque;
+using ReservaUPLA.WebApi.Controladores;
 using ReservaUPLA.WebApi.Json;
 using ReservaUPLA.WebApi.Middleware;
 using ReservaUPLA.WebApi.Seguridad;
@@ -18,11 +19,16 @@ var cadena_conexion = builder.Configuration.GetConnectionString("ReservaUPLA")
     ?? throw new InvalidOperationException("Falta la cadena de conexión 'ReservaUPLA' en los user-secrets.");
 
 // Punto de composición: aquí se eligen las implementaciones concretas de cada contrato.
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(cadena_conexion);
+builder.Services.AgregarAplicacion();
+builder.Services.AgregarInfraestructura(cadena_conexion);
 
-// La API responde solo JSON: sin el formateador de texto, Swagger no ofrece text/plain.
-builder.Services.AddControllers(opciones => opciones.OutputFormatters.RemoveType<StringOutputFormatter>())
+// La API responde solo JSON: sin el formateador de texto, Swagger no ofrece text/plain. Los controladores se llaman
+// «…Controlador» (ESTANDARES.md): la convención les quita el sufijo para que Swagger los agrupe como Reservas, Usuarios…
+builder.Services.AddControllers(opciones =>
+    {
+        opciones.OutputFormatters.RemoveType<StringOutputFormatter>();
+        opciones.Conventions.Add(new ConvencionDeNombresDeControladores());
+    })
     .AddJsonOptions(opciones => ConfigurarJson(opciones.JsonSerializerOptions))
     .ConfigureApiBehaviorOptions(opciones =>
     {

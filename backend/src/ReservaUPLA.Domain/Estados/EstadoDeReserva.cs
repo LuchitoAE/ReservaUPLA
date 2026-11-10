@@ -1,6 +1,6 @@
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
-using ReservaUPLA.Domain.Exceptions;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
+using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.Domain.Estados;
 
@@ -21,17 +21,17 @@ public abstract class EstadoDeReserva
     {
         if (!Siguientes.Contains(destino))
         {
-            throw new ConflictoDeNegocioException(MotivoDeNoPermitir(destino));
+            throw new ConflictoDeNegocioExcepcion(MotivoDeNoPermitir(destino));
         }
 
         if (destino is Estados_Reserva.Aprobada or Estados_Reserva.Rechazada && !usuario.EsAdministrador())
         {
-            throw new AccionNoPermitidaException("Solo un administrador puede aprobar o rechazar reservas.");
+            throw new AccionNoPermitidaExcepcion("Solo un administrador puede aprobar o rechazar reservas.");
         }
 
         if (destino == Estados_Reserva.Cancelada && !usuario.EsAdministrador() && usuario.Id_Usuario != reserva.Id_Usuario)
         {
-            throw new AccionNoPermitidaException("Solo quien solicitó la reserva o un administrador puede cancelarla.");
+            throw new AccionNoPermitidaExcepcion("Solo quien solicitó la reserva o un administrador puede cancelarla.");
         }
     }
 

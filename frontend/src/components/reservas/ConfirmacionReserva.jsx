@@ -1,7 +1,7 @@
 import { formatearFechaLarga } from '../../utils/fechas'
 import { AlertMessage } from '../ui/AlertMessage'
 import { Button } from '../ui/Button'
-import { EstadoBadge } from '../ui/EstadoBadge'
+import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 
 // Lo que ve el solicitante al registrar: el código para seguir su solicitud y que queda pendiente de aprobación.
 export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
@@ -23,7 +23,7 @@ export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
         </dd>
         <dt className="text-texto-suave">Estado</dt>
         <dd>
-          <EstadoBadge estado={reserva.estado_reserva} />
+          <InsigniaDeEstado estado={reserva.estado_reserva} />
         </dd>
       </dl>
       <div className="flex flex-col gap-3 sm:flex-row">

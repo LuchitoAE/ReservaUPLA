@@ -2,7 +2,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router'
 import { MarcoDeAcceso } from '../components/autenticacion/MarcoDeAcceso'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
-import { PasswordInput } from '../components/ui/PasswordInput'
+import { CampoDeContrasena } from '../components/ui/CampoDeContrasena'
 import { TextInput } from '../components/ui/TextInput'
 import { useFormulario } from '../hooks/useFormulario'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
@@ -44,7 +44,7 @@ export function PaginaIngreso() {
           maxLength={20}
           ayuda="Su código de la UPLA, por ejemplo P00914K."
         />
-        <PasswordInput {...campo('contrasena_usuario')} etiqueta="Contraseña" />
+        <CampoDeContrasena {...campo('contrasena_usuario')} etiqueta="Contraseña" />
         <div className="flex flex-col gap-2">
           <Button type="submit" variante="principal" ocupado={enviando} disabled={faltan.length > 0} aria-describedby="motivo-ingreso">
             {enviando ? 'Ingresando…' : 'Ingresar'}

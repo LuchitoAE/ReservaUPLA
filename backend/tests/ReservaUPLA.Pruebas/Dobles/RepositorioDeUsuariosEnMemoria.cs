@@ -1,11 +1,11 @@
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Pruebas.Dobles;
 
 // Repositorio de usuarios en memoria: permite probar los casos de uso sin base de datos.
-internal sealed class RepositorioDeUsuariosEnMemoria : IUsuarioRepository
+internal sealed class RepositorioDeUsuariosEnMemoria : IRepositorioDeUsuarios
 {
     public List<Usuario> Usuarios { get; } = [];
 

@@ -8,8 +8,8 @@ import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
 import { AlertMessage } from '../ui/AlertMessage'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
-import { PasswordInput } from '../ui/PasswordInput'
-import { RadioInput } from '../ui/RadioInput'
+import { CampoDeContrasena } from '../ui/CampoDeContrasena'
+import { GrupoDeOpciones } from '../ui/GrupoDeOpciones'
 import { TextInput } from '../ui/TextInput'
 
 const INICIALES = { codigo_usuario: '', nombre_completo_usuario: '', correo_usuario: '', rol_usuario: '', contrasena_usuario: '' }
@@ -74,10 +74,10 @@ export function FormularioUsuario() {
         />
       </GrupoDeCampos>
       <GrupoDeCampos numero="2" titulo="Rol en el sistema" descripcion="Decide qué podrá hacer con las reservas.">
-        <RadioInput {...campo('rol_usuario')} etiqueta="Rol" obligatorio opciones={OPCIONES_DE_ROL} />
+        <GrupoDeOpciones {...campo('rol_usuario')} etiqueta="Rol" obligatorio opciones={OPCIONES_DE_ROL} />
       </GrupoDeCampos>
       <GrupoDeCampos numero="3" titulo="Contraseña inicial" descripcion="Entréguela a la persona: con ella y su código ingresará.">
-        <PasswordInput {...campo('contrasena_usuario')} etiqueta="Contraseña inicial" obligatorio autoComplete="new-password" />
+        <CampoDeContrasena {...campo('contrasena_usuario')} etiqueta="Contraseña inicial" obligatorio autoComplete="new-password" />
         <ReglasDeContrasena valor={valores.contrasena_usuario} />
       </GrupoDeCampos>
       <AccionesDeFormulario formulario={formulario} volverA="/usuarios" texto="Registrar usuario" textoEnviando="Registrando…" />

@@ -92,5 +92,5 @@ Content-Type: application/json
   "id_usuario": "{{id_administrador}}"
 }
 
-### RF-08 Indicadores del dashboard
-GET {{api}}/dashboard/indicadores
+### RF-08 Indicadores del panel principal
+GET {{api}}/panel/indicadores

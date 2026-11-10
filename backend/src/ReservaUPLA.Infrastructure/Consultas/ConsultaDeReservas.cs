@@ -1,23 +1,23 @@
 using Microsoft.EntityFrameworkCore;
-using ReservaUPLA.Application.DTOs;
+using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Domain.Entities;
-using ReservaUPLA.Infrastructure.Persistence;
+using ReservaUPLA.Domain.Entidades;
+using ReservaUPLA.Infrastructure.Persistencia;
 
 namespace ReservaUPLA.Infrastructure.Consultas;
 
 // Consultas de solo lectura para el módulo de salida. Unen reservas con usuarios y ambientes en una sola consulta
-// SQL y traen solo las columnas que el DTO necesita (proyección), sin cargar entidades completas.
+// SQL y traen solo las columnas que los datos de salida necesitan (proyección), sin cargar entidades completas.
 internal sealed class ConsultaDeReservas : IConsultaDeReservas
 {
-    private readonly ReservaUPLADbContext _contexto;
+    private readonly ContextoDeReservaUPLA _contexto;
 
-    public ConsultaDeReservas(ReservaUPLADbContext contexto)
+    public ConsultaDeReservas(ContextoDeReservaUPLA contexto)
     {
         _contexto = contexto;
     }
 
-    public async Task<IReadOnlyList<ReservaResumenDto>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default)
+    public async Task<IReadOnlyList<ResumenDeReserva>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default)
     {
         var reservas = Filtrar(_contexto.Reservas.AsNoTracking(), filtro);
 
@@ -27,7 +27,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
                 join ambiente in _contexto.Ambientes on reserva.Id_Ambiente equals ambiente.Id_Ambiente
                 join usuario in _contexto.Usuarios on reserva.Id_Usuario equals usuario.Id_Usuario
                 orderby reserva.Fecha_Reserva descending, reserva.Hora_Inicio_Reserva, ambiente.Nombre_Ambiente
-                select new ReservaResumenDto(
+                select new ResumenDeReserva(
                     reserva.Id_Reserva,
                     reserva.Codigo_Reserva,
                     reserva.Fecha_Reserva,
@@ -41,7 +41,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
             .ToListAsync(cancelacion);
     }
 
-    public async Task<ReservaDetalleDto?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default)
+    public async Task<DetalleDeReserva?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default)
     {
         var fila = await (
                 from reserva in _contexto.Reservas.AsNoTracking()
@@ -52,7 +52,7 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
             .FirstOrDefaultAsync(cancelacion);
 
         // Los estados siguientes los decide el estado actual (patrón State): se calculan aquí, no en SQL.
-        return fila is null ? null : ReservaDetalleDto.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente);
+        return fila is null ? null : DetalleDeReserva.DesdeEntidades(fila.reserva, fila.usuario, fila.ambiente);
     }
 
     private IQueryable<Reserva> Filtrar(IQueryable<Reserva> reservas, FiltroDeReservas filtro)
