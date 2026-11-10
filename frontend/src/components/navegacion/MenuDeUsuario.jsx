@@ -1,19 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useUsuarioActual } from '../../hooks/useUsuarioActual'
-import { ROLES } from '../../utils/formato'
+import { inicialesDe, ROLES } from '../../utils/formato'
 import { Icono } from '../ui/Icono'
-
-// Iniciales del nombre para el avatar del chip (diseños AD01, S01, R01 y T2): «Luis Aquino Espinoza» → «LA».
-function iniciales(nombreCompleto) {
-  return nombreCompleto
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((parte) => parte[0])
-    .join('')
-    .toUpperCase()
-}
 
 // Chip de la sesión en la barra superior: quién entró, con qué rol y desde dónde se cambia de cuenta. El menú se
 // abre con el chip y se cierra al elegir, al pulsar fuera o con Escape (control del usuario, Shneiderman).
@@ -67,7 +56,7 @@ export function MenuDeUsuario() {
           aria-hidden="true"
           className="flex size-9 items-center justify-center rounded-full bg-acento text-sm font-bold text-acento-texto"
         >
-          {iniciales(usuarioActual.nombre_completo_usuario)}
+          {inicialesDe(usuarioActual.nombre_completo_usuario)}
         </span>
         <span className="hidden text-left leading-tight sm:block">
           <span className="block text-sm font-semibold text-texto">{usuarioActual.nombre_completo_usuario}</span>

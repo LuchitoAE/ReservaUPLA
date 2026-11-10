@@ -1,4 +1,5 @@
 import { Button } from './Button'
+import { Icono } from './Icono'
 import { ModalConfirmacion } from './ModalConfirmacion'
 
 // «A, B y C»
@@ -12,7 +13,7 @@ function enumerar(nombres) {
 // descartarlos (reversión fácil, Shneiderman). En el teléfono el botón principal queda arriba, al alcance del pulgar.
 // Si el envío falló, la misma línea lo dice en rojo, junto al botón (RNF-04): el error no aparece arriba ni empuja el
 // formulario, y el foco ya está en el primer campo por corregir.
-export function AccionesDeFormulario({ formulario, volverA, texto, textoEnviando, bloqueado }) {
+export function AccionesDeFormulario({ formulario, volverA, texto, textoEnviando, bloqueado, icono }) {
   const { faltan, enviando, bloqueo, resumenDeError } = formulario
   const motivo = bloqueado ?? (faltan.length > 0 ? `Para continuar, complete: ${enumerar(faltan)}.` : null)
 
@@ -35,6 +36,7 @@ export function AccionesDeFormulario({ formulario, volverA, texto, textoEnviando
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button destino={volverA}>Cancelar</Button>
         <Button type="submit" variante="principal" ocupado={enviando} disabled={Boolean(motivo)} aria-describedby="motivo-envio">
+          {!enviando && icono && <Icono nombre={icono} />}
           {enviando ? textoEnviando : texto}
         </Button>
       </div>
