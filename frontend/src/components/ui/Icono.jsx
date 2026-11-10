@@ -17,6 +17,8 @@ const TRAZOS = {
   cerrar: 'M6 6l12 12M18 6 6 18',
   error: 'M12 7.5v5M12 16h.01M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
   info: 'M12 11v5M12 8h.01M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+  anterior: 'M15 18l-6-6 6-6',
+  siguiente: 'M9 18l6-6-6-6',
   pausa: 'M9 6v12M15 6v12',
   reproducir: 'M8 5.5v13l10-6.5z',
 }
