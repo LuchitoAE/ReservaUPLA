@@ -2,7 +2,7 @@
 // una lista desplegable, que esconde las alternativas. Cada opción es una tarjeta entera que se puede pulsar
 // (significante claro y área grande) y la elegida se marca con borde, fondo y el círculo del radio.
 // «onSalir» avisa cuando el foco deja el grupo completo, no al pasar de una opción a otra.
-export function RadioInput({ id, etiqueta, obligatorio, error, valor, onCambiar, onSalir, opciones }) {
+export function GrupoDeOpciones({ id, etiqueta, obligatorio, error, valor, onCambiar, onSalir, opciones }) {
   const idError = error ? `${id}-error` : undefined
 
   function salir(evento) {

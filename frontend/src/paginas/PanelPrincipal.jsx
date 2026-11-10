@@ -1,5 +1,5 @@
 import { obtenerIndicadores } from '../api/panelApi'
-import { UsoDeAmbientes } from '../components/dashboard/UsoDeAmbientes'
+import { UsoDeAmbientes } from '../components/panel/UsoDeAmbientes'
 import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
@@ -21,7 +21,7 @@ const POR_ESTADO = [
 ]
 
 // RF-08: dashboard con los indicadores básicos de reservas y el uso de cada ambiente.
-export function Dashboard() {
+export function PanelPrincipal() {
   const { usuarioActual } = useUsuarioActual()
   const bienvenida = useAvisoDeNavegacion()
   const { datos: indicadores, cargando, error } = useConsulta(() => obtenerIndicadores(), [])

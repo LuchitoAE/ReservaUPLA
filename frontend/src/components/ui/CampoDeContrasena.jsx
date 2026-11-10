@@ -3,7 +3,7 @@ import { CampoBase } from './CampoBase'
 
 // Campo de contraseña. Oculta lo que se escribe, con un botón «Mostrar» para revisarla (control del usuario y
 // prevención de errores) y un aviso si Bloq Mayús está activado (feedback antes de que falle el ingreso).
-export function PasswordInput({ id, etiqueta, obligatorio, ayuda, error, valor, onCambiar, onSalir, autoComplete = 'current-password', ...resto }) {
+export function CampoDeContrasena({ id, etiqueta, obligatorio, ayuda, error, valor, onCambiar, onSalir, autoComplete = 'current-password', ...resto }) {
   const [visible, setVisible] = useState(false)
   const [mayusculas, setMayusculas] = useState(false)
 

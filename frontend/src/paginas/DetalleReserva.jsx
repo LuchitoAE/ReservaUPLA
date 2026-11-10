@@ -6,7 +6,7 @@ import { AccionesDeEstado } from '../components/reservas/AccionesDeEstado'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { Cargando } from '../components/ui/Cargando'
-import { EstadoBadge } from '../components/ui/EstadoBadge'
+import { InsigniaDeEstado } from '../components/ui/InsigniaDeEstado'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
@@ -59,7 +59,7 @@ export function DetalleReserva() {
           </h2>
           <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-[10rem_1fr]">
             <Dato nombre="Estado">
-              <EstadoBadge estado={reserva.estado_reserva} />
+              <InsigniaDeEstado estado={reserva.estado_reserva} />
             </Dato>
             <Dato nombre="Fecha">
               <span className="inline-block first-letter:uppercase">{formatearFechaLarga(reserva.fecha_reserva)}</span>

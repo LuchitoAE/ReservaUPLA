@@ -8,7 +8,7 @@ const ESTILOS = {
   Cancelada: 'bg-cancelada-fondo text-cancelada-texto',
 }
 
-export function EstadoBadge({ estado }) {
+export function InsigniaDeEstado({ estado }) {
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-semibold whitespace-nowrap ${ESTILOS[estado]}`}>
       <Icono nombre={estado.toLowerCase()} className="size-4" />

@@ -1,5 +1,5 @@
 import { AlertMessage } from '../ui/AlertMessage'
-import { EstadoBadge } from '../ui/EstadoBadge'
+import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 
 // Muestra, mientras se llena el formulario, si el horario está libre (RF-04) y qué reservas tiene ese ambiente ese
 // día: el solicitante elige otro horario sin adivinar (prevención de errores) y ve el resultado de cada cambio al
@@ -30,7 +30,7 @@ export function PanelDisponibilidad({ disponibilidad }) {
                   {reserva.hora_inicio_reserva} a {reserva.hora_fin_reserva}
                 </span>
                 <span className="text-texto-suave">{reserva.codigo_reserva}</span>
-                <EstadoBadge estado={reserva.estado_reserva} />
+                <InsigniaDeEstado estado={reserva.estado_reserva} />
               </li>
             ))}
           </ul>

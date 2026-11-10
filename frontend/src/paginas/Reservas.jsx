@@ -5,7 +5,7 @@ import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { FiltrosDeReservas } from '../components/reservas/FiltrosDeReservas'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
-import { EstadoBadge } from '../components/ui/EstadoBadge'
+import { InsigniaDeEstado } from '../components/ui/InsigniaDeEstado'
 import { TableList } from '../components/ui/TableList'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
@@ -34,7 +34,7 @@ const COLUMNAS = [
   },
   { clave: 'nombre_ambiente', titulo: 'Ambiente' },
   { clave: 'nombre_completo_usuario', titulo: 'Solicitante' },
-  { clave: 'estado_reserva', titulo: 'Estado', celda: (reserva) => <EstadoBadge estado={reserva.estado_reserva} /> },
+  { clave: 'estado_reserva', titulo: 'Estado', celda: (reserva) => <InsigniaDeEstado estado={reserva.estado_reserva} /> },
 ]
 
 // Qué parte de las reservas ve primero cada rol. El administrador, todas.
