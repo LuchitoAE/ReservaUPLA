@@ -50,9 +50,13 @@ public sealed class ReservasControlador : ControllerBase
         [FromQuery] Guid? id_ambiente = null,
         [FromQuery] DateOnly? fecha_reserva = null,
         [FromQuery] Guid? id_usuario = null,
-        [FromQuery] Guid? id_responsable_ambiente = null)
+        [FromQuery] Guid? id_responsable_ambiente = null,
+        [FromQuery] DateOnly? fecha_desde = null,
+        [FromQuery] DateOnly? fecha_hasta = null,
+        [FromQuery] string? texto = null)
     {
-        var filtro = new FiltroDeReservas(estado_reserva, id_ambiente, fecha_reserva, id_usuario, id_responsable_ambiente);
+        var filtro = new FiltroDeReservas(
+            estado_reserva, id_ambiente, fecha_reserva, id_usuario, id_responsable_ambiente, fecha_desde, fecha_hasta, texto);
         var reservas = await consulta.ListarAsync(filtro, cancelacion);
 
         return RespuestaApi.Exito(reservas, reservas.Count == 1 ? "1 reserva." : $"{reservas.Count} reservas.");
