@@ -10,13 +10,18 @@ import { avisoDeError } from '../utils/avisoDeError'
 //                 botón de enviar queda deshabilitado (restricción, Norman): no se puede cometer el error.
 //   automaticos:  campos que llena el sistema (el solicitante): no cuentan como cambios del usuario.
 //   alEnviar(valores): la llamada a la API; si lanza un ErrorDeApi, sus errores se muestran.
+//   textoDeFallo: cómo empieza el resumen cuando el envío falla («No se registró»); null, sin prefijo (el ingreso).
+// Si el envío falla, «resumenDeError» lo dice en una línea para mostrarla junto al botón de enviar (RNF-04): cuántos
+// campos corregir (se actualiza mientras se corrigen) o, si la API rechazó sin señalar un campo, su mensaje.
 // Si el usuario intenta salir con datos escritos y sin guardar, «bloqueo» lo detiene para preguntarle (reversión
 // fácil y prevención de errores, Shneiderman): AccionesDeFormulario muestra la confirmación.
-export function useFormulario({ iniciales, reglas, obligatorios = {}, automaticos = [], alEnviar }) {
+export function useFormulario({ iniciales, reglas, obligatorios = {}, automaticos = [], alEnviar, textoDeFallo = 'No se registró' }) {
   const [valores, setValores] = useState(iniciales)
   const [errores, setErrores] = useState({})
   const [enviando, setEnviando] = useState(false)
   const [aviso, setAviso] = useState(null)
+  // null, 'campos' (hay campos por corregir) o { mensaje } (la API lo rechazó sin señalar un campo).
+  const [fallo, setFallo] = useState(null)
 
   const faltan = Object.entries(obligatorios)
     .filter(([nombre]) => String(valores[nombre] ?? '').trim() === '')
@@ -50,6 +55,9 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
   function cambiar(campo, valor) {
     const nuevos = { ...valores, [campo]: valor }
     setValores(nuevos)
+    if (fallo?.mensaje) {
+      setFallo(null)
+    }
     revisar(nuevos)
   }
 
@@ -72,19 +80,23 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
     const encontrados = reglas.validarTodo(valores)
     if (Object.keys(encontrados).length > 0) {
       mostrarErrores(encontrados)
+      setFallo('campos')
       return
     }
 
     setErrores({})
+    setFallo(null)
     setEnviando(true)
     guardando.current = true
     try {
       await alEnviar(valores)
     } catch (error) {
       guardando.current = false
-      if (Object.keys(error.errores ?? {}).length > 0) {
+      const conCampos = Object.keys(error.errores ?? {}).length > 0
+      if (conCampos) {
         mostrarErrores(error.errores)
       }
+      setFallo(conCampos ? 'campos' : { mensaje: avisoDeError(error).mensaje })
       setAviso(avisoDeError(error))
     } finally {
       setEnviando(false)
@@ -102,5 +114,17 @@ export function useFormulario({ iniciales, reglas, obligatorios = {}, automatico
     }
   }
 
-  return { valores, errores, enviando, aviso, faltan, modificado, bloqueo, campo, cambiar, enviar }
+  const cantidadDeErrores = Object.keys(errores).length
+  const detalleDelFallo = !fallo
+    ? null
+    : cantidadDeErrores > 0
+      ? `corrija ${cantidadDeErrores === 1 ? 'el campo marcado' : `los ${cantidadDeErrores} campos marcados`}.`
+      : (fallo.mensaje ?? null)
+  const resumenDeError = !detalleDelFallo
+    ? null
+    : textoDeFallo
+      ? `${textoDeFallo}: ${detalleDelFallo}`
+      : detalleDelFallo.charAt(0).toUpperCase() + detalleDelFallo.slice(1)
+
+  return { valores, errores, enviando, aviso, resumenDeError, faltan, modificado, bloqueo, campo, cambiar, enviar }
 }

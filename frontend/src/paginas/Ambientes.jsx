@@ -3,7 +3,7 @@ import { EncabezadoDePagina } from '../components/navegacion/EncabezadoDePagina'
 import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { TableList } from '../components/ui/TableList'
-import { useAvisoDeNavegacion } from '../hooks/useAvisoDeNavegacion'
+import { useFilaNueva } from '../hooks/useFilaNueva'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
@@ -20,7 +20,7 @@ const COLUMNAS = [
 
 // Ambientes registrados (RF-02). Solo el administrador ve el acceso al formulario de registro.
 export function Ambientes() {
-  const aviso = useAvisoDeNavegacion()
+  const idNuevo = useFilaNueva()
   const { usuarioActual } = useUsuarioActual()
   const esAdministrador = usuarioActual.rol_usuario === 'Administrador'
   const { datos, cargando, error } = useConsulta(() => listarAmbientes(), [])
@@ -39,13 +39,13 @@ export function Ambientes() {
         }
       />
       <div className="flex flex-col gap-4">
-        {aviso && <AlertMessage tipo="exito" titulo={aviso} />}
         {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
         <TableList
           titulo="Ambientes"
           columnas={COLUMNAS}
           filas={datos ?? []}
           claveFila="id_ambiente"
+          filaNueva={idNuevo}
           cargando={cargando}
           vacio="Todavía no hay ambientes registrados."
         />

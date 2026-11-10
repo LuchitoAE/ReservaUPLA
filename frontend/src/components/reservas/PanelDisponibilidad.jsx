@@ -4,7 +4,16 @@ import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 // Muestra, mientras se llena el formulario, si el horario está libre (RF-04) y qué reservas tiene ese ambiente ese
 // día: el solicitante elige otro horario sin adivinar (prevención de errores) y ve el resultado de cada cambio al
 // instante (feedback informativo). Va junto a las horas que lo deciden (Norman: relación visible). Se anuncia sin
-// interrumpir.
+// interrumpir. El mensaje ocupa siempre el mismo alto (RNF-04: 128 px), con el semáforo (RNF-05): libre en verde,
+// ocupado en ámbar; antes de consultar, un mensaje informativo ocupa ese espacio.
+const APARIENCIA = {
+  espera: { tipo: 'info', titulo: 'Elija el ambiente, la fecha y las horas', texto: 'Aquí verá si el horario está libre.' },
+  consultando: { tipo: 'info', titulo: 'Revisando la disponibilidad…', texto: 'Un momento.' },
+  libre: { tipo: 'exito', titulo: 'Horario libre' },
+  ocupado: { tipo: 'aviso', titulo: 'Horario ocupado' },
+  error: { tipo: 'error', titulo: 'No se pudo revisar la disponibilidad' },
+}
+
 export function PanelDisponibilidad({ disponibilidad }) {
   const { estado, mensaje, reservasDelDia } = disponibilidad
 
@@ -14,11 +23,9 @@ export function PanelDisponibilidad({ disponibilidad }) {
         Disponibilidad del ambiente
       </h3>
       <div aria-live="polite">
-        {estado === 'espera' && <p className="text-texto-suave">Elija el ambiente, la fecha y las horas: aquí verá si el horario está libre.</p>}
-        {estado === 'consultando' && <p className="text-texto-suave">Revisando la disponibilidad…</p>}
-        {estado === 'libre' && <AlertMessage tipo="exito" titulo="Horario libre.">{mensaje}</AlertMessage>}
-        {estado === 'ocupado' && <AlertMessage tipo="aviso" titulo="Horario ocupado.">{mensaje}</AlertMessage>}
-        {estado === 'error' && <AlertMessage tipo="aviso" titulo="No se pudo revisar la disponibilidad.">{mensaje}</AlertMessage>}
+        <AlertMessage tipo={APARIENCIA[estado].tipo} titulo={APARIENCIA[estado].titulo} anunciar={false} className="min-h-32">
+          {mensaje ?? APARIENCIA[estado].texto}
+        </AlertMessage>
       </div>
       {reservasDelDia.length > 0 && (
         <div>

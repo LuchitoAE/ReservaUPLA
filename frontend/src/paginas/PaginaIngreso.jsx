@@ -9,7 +9,9 @@ import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { reglasDeIngreso } from '../reglas/usuario'
 
 // Pantalla de ingreso (RF-09). Código antes que contraseña (modelo mental, Norman); «Ingresar» se habilita cuando
-// los dos están escritos (restricción); si no coinciden, un solo mensaje que no dice cuál falló. No hay registro
+// los dos están escritos (restricción); si no coinciden, un solo mensaje que no dice cuál falló, en la línea bajo
+// «Ingresar» (RNF-04, diseño AC03): la tarjeta va centrada y, si creciera, movería los campos. El mensaje con el que
+// se llega (sesión cerrada o terminada) va arriba y no desaparece al escribir. No hay registro
 // propio: el código lo entrega la universidad y la cuenta la crea el administrador (RN-07).
 export function PaginaIngreso() {
   const { usuarioActual, iniciarSesion } = useUsuarioActual()
@@ -19,12 +21,13 @@ export function PaginaIngreso() {
     iniciales: { codigo_usuario: '', contrasena_usuario: '' },
     reglas: reglasDeIngreso,
     obligatorios: { codigo_usuario: 'el código', contrasena_usuario: 'la contraseña' },
+    textoDeFallo: null,
     alEnviar: async (valores) => {
       await iniciarSesion(valores)
       navegar(state?.desde ?? '/', { replace: true })
     },
   })
-  const { campo, enviar, aviso, faltan, enviando } = formulario
+  const { campo, enviar, resumenDeError, faltan, enviando } = formulario
 
   if (usuarioActual) {
     return <Navigate to={state?.desde ?? '/'} replace />
@@ -33,8 +36,7 @@ export function PaginaIngreso() {
   return (
     <MarcoDeAcceso titulo="Iniciar sesión" tituloPestana="Ingresar" descripcion="Ingrese con su código y su contraseña.">
       <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
-        {state?.aviso && !aviso && <AlertMessage tipo="info" titulo={state.aviso} />}
-        {aviso && <AlertMessage tipo="error" aviso={aviso} />}
+        {state?.aviso && <AlertMessage tipo="info" titulo={state.aviso} />}
         <TextInput
           {...campo('codigo_usuario')}
           etiqueta="Código"
@@ -49,8 +51,21 @@ export function PaginaIngreso() {
           <Button type="submit" variante="principal" ocupado={enviando} disabled={faltan.length > 0} aria-describedby="motivo-ingreso">
             {enviando ? 'Ingresando…' : 'Ingresar'}
           </Button>
-          <p id="motivo-ingreso" aria-live="polite" className="text-center text-sm text-texto-suave">
-            {faltan.length > 0 ? `Escriba ${faltan.join(' y ')} para ingresar.` : 'Listo para ingresar.'}
+          <p
+            id="motivo-ingreso"
+            aria-live="polite"
+            className={`min-h-10 text-center text-sm ${resumenDeError ? 'font-medium text-error' : 'text-texto-suave'}`}
+          >
+            {resumenDeError ? (
+              <>
+                <span aria-hidden="true">⚠ </span>
+                {resumenDeError}
+              </>
+            ) : faltan.length > 0 ? (
+              `Escriba ${faltan.join(' y ')} para ingresar.`
+            ) : (
+              'Listo para ingresar.'
+            )}
           </p>
         </div>
       </form>

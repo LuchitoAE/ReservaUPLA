@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router'
 import { registrarUsuario } from '../../api/usuariosApi'
+import { useAviso } from '../../hooks/useAviso'
 import { useFormulario } from '../../hooks/useFormulario'
 import { normalizarUsuario, reglasDeUsuario, USUARIO } from '../../reglas/usuario'
 import { QUE_HACE_EL_ROL, ROLES } from '../../utils/formato'
 import { ReglasDeContrasena } from '../autenticacion/ReglasDeContrasena'
 import { AccionesDeFormulario } from '../ui/AccionesDeFormulario'
-import { AlertMessage } from '../ui/AlertMessage'
 import { GrupoDeCampos } from '../ui/GrupoDeCampos'
 import { NotaObligatorios } from '../ui/NotaObligatorios'
 import { CampoDeContrasena } from '../ui/CampoDeContrasena'
@@ -28,21 +28,28 @@ const OPCIONES_DE_ROL = Object.entries(ROLES).map(([valor, etiqueta]) => ({ valo
 // ayuda bajo el campo y no dentro de él: un texto de ejemplo dentro del campo parece un dato ya escrito.
 export function FormularioUsuario() {
   const navegar = useNavigate()
+  const mostrarAviso = useAviso()
   const formulario = useFormulario({
     iniciales: INICIALES,
     reglas: reglasDeUsuario,
     obligatorios: OBLIGATORIOS,
     alEnviar: async (valores) => {
-      const respuesta = await registrarUsuario(normalizarUsuario(valores))
-      navegar('/usuarios', { state: { aviso: respuesta.message } })
+      const { data: usuario } = await registrarUsuario(normalizarUsuario(valores))
+      // Lleva una instrucción: no se cierra solo hasta que el administrador lo cierre (diseño AD17).
+      mostrarAviso({
+        tipo: 'exito',
+        titulo: 'Usuario registrado',
+        texto: `Entregue a ${usuario.nombre_completo_usuario} su código ${usuario.codigo_usuario} y su contraseña inicial: con ellos ingresa al sistema.`,
+        persistente: true,
+      })
+      navegar('/usuarios', { state: { nuevo: usuario.id_usuario } })
     },
   })
-  const { valores, campo, enviar, aviso } = formulario
+  const { valores, campo, enviar } = formulario
 
   return (
     <form noValidate onSubmit={enviar} className="flex flex-col gap-5">
       <NotaObligatorios />
-      {aviso && <AlertMessage tipo="error" aviso={aviso} />}
       <GrupoDeCampos numero="1" titulo="Datos de la persona" descripcion="Con el código ingresará al sistema.">
         <TextInput
           {...campo('codigo_usuario')}

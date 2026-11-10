@@ -5,7 +5,6 @@ import { AlertMessage } from '../components/ui/AlertMessage'
 import { Button } from '../components/ui/Button'
 import { Cargando } from '../components/ui/Cargando'
 import { CardIndicador } from '../components/ui/CardIndicador'
-import { useAvisoDeNavegacion } from '../hooks/useAvisoDeNavegacion'
 import { useConsulta } from '../hooks/useConsulta'
 import { useUsuarioActual } from '../hooks/useUsuarioActual'
 import { avisoDeError } from '../utils/avisoDeError'
@@ -23,7 +22,6 @@ const POR_ESTADO = [
 // RF-08: dashboard con los indicadores básicos de reservas y el uso de cada ambiente.
 export function PanelPrincipal() {
   const { usuarioActual } = useUsuarioActual()
-  const bienvenida = useAvisoDeNavegacion()
   const { datos: indicadores, cargando, error } = useConsulta(() => obtenerIndicadores(), [])
 
   const masUtilizados = indicadores?.ambientes_mas_utilizados ?? []
@@ -45,7 +43,6 @@ export function PanelPrincipal() {
           </Button>
         }
       />
-      {bienvenida && <AlertMessage tipo="exito" titulo={bienvenida} className="mb-4" />}
       {error && <AlertMessage tipo="error" aviso={avisoDeError(error)} />}
       {cargando && !indicadores && <Cargando texto="Cargando indicadores…" />}
       {indicadores && (
