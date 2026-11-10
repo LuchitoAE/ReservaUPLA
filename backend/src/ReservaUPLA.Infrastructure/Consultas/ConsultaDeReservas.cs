@@ -94,6 +94,28 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
             reservas = reservas.Where(r => r.Id_Usuario == id_usuario);
         }
 
+        if (filtro.Fecha_Desde is { } desde)
+        {
+            reservas = reservas.Where(r => r.Fecha_Reserva >= desde);
+        }
+
+        if (filtro.Fecha_Hasta is { } hasta)
+        {
+            reservas = reservas.Where(r => r.Fecha_Reserva <= hasta);
+        }
+
+        // Búsqueda (RF-05): parte del código o del nombre del solicitante, sin distinguir mayúsculas (ILIKE). Los % y _
+        // que escriba la persona se buscan tal cual: se escapan para que no funcionen como comodines.
+        var texto = filtro.Texto?.Trim();
+        if (!string.IsNullOrEmpty(texto))
+        {
+            var patron = $"%{EscaparComodines(texto[..Math.Min(texto.Length, FiltroDeReservas.Longitud_Maxima_Texto)])}%";
+            var solicitantes = _contexto.Usuarios
+                .Where(u => EF.Functions.ILike(u.Nombre_Completo_Usuario, patron, Escape))
+                .Select(u => u.Id_Usuario);
+            reservas = reservas.Where(r => EF.Functions.ILike(r.Codigo_Reserva, patron, Escape) || solicitantes.Contains(r.Id_Usuario));
+        }
+
         if (filtro.Id_Responsable_Ambiente is { } id_responsable)
         {
             var ambientes_a_cargo = _contexto.Ambientes
@@ -104,4 +126,9 @@ internal sealed class ConsultaDeReservas : IConsultaDeReservas
 
         return reservas;
     }
+
+    private const string Escape = "\\";
+
+    private static string EscaparComodines(string texto) =>
+        texto.Replace(Escape, Escape + Escape).Replace("%", Escape + "%").Replace("_", Escape + "_");
 }

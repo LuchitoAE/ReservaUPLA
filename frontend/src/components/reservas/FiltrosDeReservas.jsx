@@ -1,18 +1,51 @@
+import { useEffect, useState } from 'react'
 import { ESTADOS_RESERVA, opcionesDe } from '../../utils/formato'
 import { Button } from '../ui/Button'
 import { DateInput } from '../ui/DateInput'
 import { SelectInput } from '../ui/SelectInput'
+import { TextInput } from '../ui/TextInput'
 
-// Filtros del listado (RF-05). Cada cambio se aplica al momento; «Quitar filtros» vuelve a la lista completa.
+const ESPERA_MS = 350
+
+// Filtros del listado (RF-05): buscar por código o solicitante, estado, ambiente y un rango de fechas. Cada cambio se
+// aplica al momento; la búsqueda espera a que la persona deje de escribir. «Quitar filtros» vuelve a la lista completa.
 // «alcance» depende del rol del usuario actual: el solicitante ve primero sus reservas y el responsable, las de sus
 // ambientes; el administrador ve todas.
 export function FiltrosDeReservas({ filtros, ambientes, alcance, alCambiar, alQuitar }) {
   const opcionesDeAmbiente = ambientes.map((ambiente) => ({ valor: ambiente.id_ambiente, etiqueta: ambiente.nombre_ambiente }))
-  const hayFiltros = filtros.estado_reserva || filtros.id_ambiente || filtros.fecha_reserva
+  const hayFiltros = Object.values(filtros).some(Boolean)
+  const [texto, setTexto] = useState(filtros.texto)
+  const [textoAplicado, setTextoAplicado] = useState(filtros.texto)
+
+  // Si el filtro cambia desde afuera (Quitar filtros, «atrás»), el buscador lo muestra. Si cambió porque se aplicó lo
+  // que la persona escribe, se deja tal cual (con su espacio final, si sigue escribiendo).
+  if (filtros.texto !== textoAplicado) {
+    setTextoAplicado(filtros.texto)
+    if (filtros.texto !== texto.trim()) {
+      setTexto(filtros.texto)
+    }
+  }
+
+  useEffect(() => {
+    if (texto.trim() === filtros.texto) {
+      return undefined
+    }
+    const temporizador = setTimeout(() => alCambiar('texto', texto.trim()), ESPERA_MS)
+    return () => clearTimeout(temporizador)
+  }, [texto, filtros.texto, alCambiar])
 
   return (
     <section aria-label="Filtros" className="flex flex-col gap-4 rounded-xl border border-borde bg-superficie p-4">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <TextInput
+        id="filtro-texto"
+        etiqueta="Buscar"
+        type="search"
+        valor={texto}
+        onCambiar={setTexto}
+        maxLength={100}
+        ayuda="Por código (RES-2026-0001) o por el nombre de quien la solicitó."
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <SelectInput
           id="filtro-estado"
           etiqueta="Estado"
@@ -32,10 +65,18 @@ export function FiltrosDeReservas({ filtros, ambientes, alcance, alCambiar, alQu
           onCambiar={(valor) => alCambiar('id_ambiente', valor)}
         />
         <DateInput
-          id="filtro-fecha"
-          etiqueta="Fecha"
-          valor={filtros.fecha_reserva}
-          onCambiar={(valor) => alCambiar('fecha_reserva', valor)}
+          id="filtro-desde"
+          etiqueta="Desde"
+          valor={filtros.fecha_desde}
+          maximo={filtros.fecha_hasta || undefined}
+          onCambiar={(valor) => alCambiar('fecha_desde', valor)}
+        />
+        <DateInput
+          id="filtro-hasta"
+          etiqueta="Hasta"
+          valor={filtros.fecha_hasta}
+          minimo={filtros.fecha_desde || undefined}
+          onCambiar={(valor) => alCambiar('fecha_hasta', valor)}
         />
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
