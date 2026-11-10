@@ -137,6 +137,7 @@ Ramas `feature/rf-11-mi-cuenta` (merge `838ad00`), `feature/rf-05-busqueda-en-re
 | Defecto | Se introdujo en | Se encontró en | Corrección |
 |---|---|---|---|
 | El error que devolvía la API se borraba al pasar el foco a otro campo: al enviar con Enter se veía un instante y desaparecía | Código (iteración 1) | Prueba de Mi cuenta | `revisarErrores` guarda el valor que tenía el campo cuando la API lo rechazó y mantiene el mensaje hasta que ese campo cambia; con pruebas |
+| El contenido quedaba topado a 1152 px: en 1920 sobraban 248 px por lado y en 2560, 568; los indicadores no aprovechaban el ancho y «Reservas por ambiente» desbordaba la tarjeta en 1024 y 1440 | Maqueta (iteración 4) | Revisión visual del alumno, 10/11 | Se quitó el tope; el contenido usa todo el ancho con 28 px de margen. Indicadores en una fila desde `2xl`; rejilla proporcional en «Reservas por ambiente», con la cifra sola y el detalle para el lector de pantalla; filtros del listado en una fila desde `xl`. Sin desborde de 390 a 2560 px |
 
 Los comandos de zsh mal escritos durante las pruebas no son defecto del producto: el error estaba en la orden, no en el
 sistema, y no se anotan como tales.
