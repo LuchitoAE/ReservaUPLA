@@ -9,7 +9,7 @@ export function consultarDisponibilidad({ id_ambiente, fecha_reserva, hora_inici
   return pedir(conFiltros('/reservas/disponibilidad', { id_ambiente, fecha_reserva, hora_inicio_reserva, hora_fin_reserva }))
 }
 
-// filtros: { estado_reserva, id_ambiente, fecha_reserva, id_usuario, id_responsable_ambiente }
+// filtros: { estado_reserva, id_ambiente, fecha_reserva, fecha_desde, fecha_hasta, texto, id_usuario, id_responsable_ambiente }
 export function listarReservas(filtros = {}) {
   return pedir(conFiltros('/reservas', filtros))
 }

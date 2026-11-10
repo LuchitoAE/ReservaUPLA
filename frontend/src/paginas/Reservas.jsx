@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { listarAmbientes } from '../api/ambientesApi'
 import { listarReservas } from '../api/reservasApi'
@@ -46,7 +47,8 @@ const ALCANCES = {
   },
 }
 
-// RF-05: reservas registradas, con filtros por estado, ambiente y fecha. Los filtros viven en la dirección
+// RF-05: reservas registradas, con búsqueda por código o solicitante y filtros por estado, ambiente y rango de fechas.
+// Los filtros viven en la dirección
 // (?estado_reserva=Pendiente): se pueden compartir, y «atrás» vuelve al filtro anterior.
 export function Reservas() {
   const [parametros, setParametros] = useSearchParams()
@@ -56,7 +58,9 @@ export function Reservas() {
   const filtros = {
     estado_reserva: parametros.get('estado_reserva') ?? '',
     id_ambiente: parametros.get('id_ambiente') ?? '',
-    fecha_reserva: parametros.get('fecha_reserva') ?? '',
+    fecha_desde: parametros.get('fecha_desde') ?? '',
+    fecha_hasta: parametros.get('fecha_hasta') ?? '',
+    texto: parametros.get('texto') ?? '',
   }
   const alcance = usuarioActual ? ALCANCES[usuarioActual.rol_usuario] : null
   const soloLoMio = Boolean(alcance) && parametros.get('todas') !== '1'
@@ -65,15 +69,21 @@ export function Reservas() {
   const consulta = { ...filtros, ...filtroDeAlcance }
   const reservas = useConsulta(() => listarReservas(consulta), [JSON.stringify(consulta)])
 
-  function cambiarParametro(nombre, valor) {
-    const nuevos = new URLSearchParams(parametros)
-    if (valor) {
-      nuevos.set(nombre, valor)
-    } else {
-      nuevos.delete(nombre)
-    }
-    setParametros(nuevos)
-  }
+  // La búsqueda la cambia un temporizador: la función es la misma en cada dibujo y lee la dirección del momento.
+  const cambiarParametro = useCallback(
+    (nombre, valor) => {
+      setParametros((anteriores) => {
+        const nuevos = new URLSearchParams(anteriores)
+        if (valor) {
+          nuevos.set(nombre, valor)
+        } else {
+          nuevos.delete(nombre)
+        }
+        return nuevos
+      })
+    },
+    [setParametros],
+  )
 
   const cantidad = reservas.datos?.length ?? 0
 
