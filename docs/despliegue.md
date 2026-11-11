@@ -1,7 +1,7 @@
 # Despliegue de ReservaUPLA
 
 La versión publicada usa tres servicios gratuitos: **Vercel** sirve la SPA, **Render** ejecuta la API de .NET en un
-contenedor y **Supabase** aloja la base PostgreSQL. El navegador ve un solo origen (`https://reservaupla.vercel.app`):
+contenedor y **Supabase** aloja la base PostgreSQL. El navegador ve un solo origen (`https://reserva-upla.vercel.app`):
 Vercel reenvía `/api/*` a Render, así la cookie de sesión sigue siendo de primera parte y no hace falta CORS.
 
 ```
@@ -49,15 +49,18 @@ La cuenta de prueba por rol (`CuentasDePrueba`) solo se crea en `Development`; e
 
 ## 3. Vercel (SPA)
 
-- Proyecto `reservaupla`, repositorio `LuchitoAE/ReservaUPLA`, rama de producción `develop`, directorio raíz
-  `frontend`, framework Vite (`pnpm build` → `dist`).
+- Proyecto `reserva-upla`, repositorio `LuchitoAE/ReservaUPLA`, rama de producción `main`, directorio raíz
+  `frontend`, framework Vite (`pnpm install` y `pnpm build` → `dist`). URL: `https://reserva-upla.vercel.app`.
 - `frontend/vercel.json` reenvía `/api/:ruta*` a la API de Render y manda el resto a `index.html` (rutas del SPA).
+- El proyecto estaba creado desde el panel; se configuró por API (`rootDirectory: frontend`, framework `vite`) y se
+  desplegó a producción desde `main`.
 
 ## 4. Comprobaciones
 
 ```bash
-curl -i https://reservaupla-api-c3bz.onrender.com/api/ambientes        # 401 sin sesión
-curl -s https://<sitio>.vercel.app/ | head                              # SPA
+curl -i https://reservaupla-api-c3bz.onrender.com/api/ambientes   # 401 sin sesión
+curl -s https://reserva-upla.vercel.app/ | head                    # SPA
+curl -s -o /dev/null -w "%{http_code}\n" https://reserva-upla.vercel.app/api/ambientes   # 401 a través del proxy
 ```
 
 El plan gratuito de Render suspende la API tras unos minutos sin uso: la primera petición puede tardar cerca de un

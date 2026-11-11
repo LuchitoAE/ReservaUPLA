@@ -4,6 +4,14 @@ Caso práctico de Construcción de Software (UPLA). Aplicación web para registr
 
 Estándares del proyecto (nombres, carpetas, commits y ramas): [ESTANDARES.md](ESTANDARES.md).
 
+## Sistema publicado
+
+- Aplicación: **https://reserva-upla.vercel.app** (SPA en Vercel; `/api` se reenvía a la API).
+- API: **https://reservaupla-api-c3bz.onrender.com** (Render, contenedor Docker; plan gratuito, se suspende por inactividad).
+- Base de datos: **Supabase** (PostgreSQL 17), con RLS activo y el rol `reservaupla`.
+- Administrador inicial: `ADMIN01`. La contraseña se define en las variables de Render y conviene cambiarla al entrar.
+- Pasos, variables y comprobaciones: [docs/despliegue.md](docs/despliegue.md).
+
 ## Qué hace
 
 | Código | Requisito | Dónde |
