@@ -206,3 +206,9 @@ se marcó más el borde de luz blanco de tarjetas y campos. El menú de usuario 
 Penpot. La barra lateral usa el logo nuevo de ReservaUPLA, sin repetir el nombre en texto, y al contraerse muestra solo
 su icono; el ingreso conserva el logo UPLA hasta el rediseño del login. Verificado con oxlint limpio, 97 Vitest,
 `pnpm build` y 81 de 81 de punta a punta.
+
+**Penpot (10/11/2026, noche).** Se sincronizó el archivo de diseño con el sistema, sin tocar el login: logo nuevo
+en 48 barras laterales, 39 encabezados convertidos en banda, 19 acciones dentro de la banda, fuego al 8 % en 57
+tableros y una página «08 Cambios del sistema» con las animaciones, las sombras y el fuego. Se guardaron dos versiones
+(antes y después) y la validación del archivo no reporta errores. El menú AD02 ya estaba correcto y sirvió de fuente
+para los iconos del sistema.
