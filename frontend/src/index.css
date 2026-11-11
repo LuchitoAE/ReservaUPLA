@@ -168,35 +168,35 @@
 }
 
 
-/* Login a pantalla completa: la foto manda y el formulario es vidrio oscuro. Los tokens se redefinen solo dentro del
-   login para que los campos y los avisos se lean sobre la foto, sin depender del tema global. */
-.login-oscuro {
-  color-scheme: dark;
-  --color-marca-700: #0b74c4;
-  --color-marca-800: #0d63a6;
-  --color-marca-900: #0f5489;
-  --color-superficie: rgb(11 23 41 / 0.55);
-  --color-superficie-tenue: rgb(255 255 255 / 0.08);
-  --color-borde: rgb(255 255 255 / 0.18);
-  --color-borde-fuerte: rgb(255 255 255 / 0.28);
-  --color-borde-control: rgb(255 255 255 / 0.45);
-  --color-texto: #e7eef7;
-  --color-texto-suave: #b5c3d6;
-  --color-titulo: #ffffff;
-  --color-enlace: #9fd0f5;
-  --color-foco: #ffcb70;
-  --color-seleccion: rgb(255 255 255 / 0.12);
-  --color-error: #fca5a5;
-  --color-error-fondo: rgb(127 29 29 / 0.35);
-  --color-error-texto: #fecaca;
-  --color-info: #9fd0f5;
-  --color-info-fondo: rgb(0 99 168 / 0.28);
-  --color-info-texto: #dcebf7;
-  --color-aviso: #fcd34d;
-  --color-aviso-fondo: rgb(120 53 15 / 0.35);
-  --color-aviso-texto: #fde68a;
-  --color-deshabilitado: #2f3a4c;
-  --color-deshabilitado-texto: #a8b7ca;
+/* Login a pantalla completa: la foto manda y el formulario es un vidrio claro. Los tokens se redefinen solo dentro
+   del login para que los campos y los avisos se lean sobre la foto y el formulario quede siempre en modo claro. */
+.login-claro {
+  color-scheme: light;
+  --color-marca-700: #0063a8;
+  --color-marca-800: #004f87;
+  --color-marca-900: #1f365c;
+  --color-superficie: #ffffff;
+  --color-superficie-tenue: #f7f9fc;
+  --color-borde: #dde4ee;
+  --color-borde-fuerte: #c4cfde;
+  --color-borde-control: #5f6f86;
+  --color-texto: #14213a;
+  --color-texto-suave: #4a5a72;
+  --color-titulo: #1f365c;
+  --color-enlace: #0063a8;
+  --color-foco: #0063a8;
+  --color-seleccion: #e6f0f9;
+  --color-error: #b91c1c;
+  --color-error-fondo: #fef2f2;
+  --color-error-texto: #7f1d1d;
+  --color-info: #0063a8;
+  --color-info-fondo: #e6f0f9;
+  --color-info-texto: #1f365c;
+  --color-aviso: #b45309;
+  --color-aviso-fondo: #fffbeb;
+  --color-aviso-texto: #78350f;
+  --color-deshabilitado: #e6ebf3;
+  --color-deshabilitado-texto: #6b7a91;
 }
 
 /* Desenfoque alrededor del formulario: el fondo se ve nítido en la zona del formulario y se difumina fuera de ella. */
