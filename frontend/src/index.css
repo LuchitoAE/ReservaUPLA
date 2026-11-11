@@ -199,26 +199,13 @@
   --color-deshabilitado-texto: #6b7a91;
 }
 
-/* Desenfoque alrededor del formulario: el fondo se ve nítido en la zona del formulario y se difumina fuera de ella. */
-.desenfoque-foco {
-  --foco-x: 81%;
-  --foco-y: 58%;
-  --foco-rx: 430px;
-  --foco-ry: 480px;
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-  background: rgb(7 15 30 / 0.18);
-  mask-image: radial-gradient(ellipse var(--foco-rx) var(--foco-ry) at var(--foco-x) var(--foco-y), transparent 0%, transparent 58%, #000 82%);
-  -webkit-mask-image: radial-gradient(ellipse var(--foco-rx) var(--foco-ry) at var(--foco-x) var(--foco-y), transparent 0%, transparent 58%, #000 82%);
-}
-
-@media (max-width: 1023px) {
-  .desenfoque-foco {
-    --foco-x: 50%;
-    --foco-y: 58%;
-    --foco-rx: 82vw;
-    --foco-ry: 56vh;
-  }
+/* Halos del ingreso: la foto queda nítida y solo se difumina detrás de la marca y alrededor del formulario. El propio
+   filtro de desenfoque suaviza el borde del halo para que no se vea un recorte. */
+.halo-de-ingreso {
+  backdrop-filter: blur(14px) saturate(0.95);
+  -webkit-backdrop-filter: blur(14px) saturate(0.95);
+  filter: blur(16px);
+  background: rgb(7 15 30 / 0.1);
 }
 
 @keyframes aparecer-login {

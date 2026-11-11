@@ -229,3 +229,9 @@ registra el renombrado del modelo). En el frontend se eliminó toda la cadena mu
 `agendaDelCampus`, `useAgendaViva`, `useFotoDeLaVisita`, `usePestanaVisible` y sus estilos), se dividieron los
 componentes grandes, se extrajeron hooks y constantes y se quitaron las tres supresiones de oxlint. Verificado con 51 xUnit,
 119 Vitest, `dotnet build -warnaserror`, `pnpm build` y 81 de 81 de punta a punta.
+
+**Ajuste del login (11/11/2026).** El alumno revisó el ingreso y el desenfoque estaba invertido: la foto salía
+desenfocada en toda la pantalla y solo se veía nítida alrededor del formulario. Se quitó la capa `desenfoque-foco`
+(pantalla completa con máscara radial) y se pusieron dos halos `halo-de-ingreso` con `backdrop-filter` y `filter:
+blur`, uno detrás de la marca (logo y frase) y otro alrededor del formulario; la foto queda nítida. Se verificó con
+capturas a 1440×900 y 390×844, oxlint, 119 Vitest y `pnpm build`; ERS y SDD se regeneraron con la descripción nueva.
