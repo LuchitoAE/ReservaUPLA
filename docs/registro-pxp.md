@@ -198,3 +198,11 @@ ingreso y la salida se desvanecen en 160 ms, todo con respeto por «menos movimi
 sombra propia (`shadow-barra`). En Reservas, «Limpiar filtros» es un botón alineado con los campos y el chip «Solo mis
 reservas» quedó como interruptor siempre visible: antes desaparecía al pulsarlo y no había forma de volver, salvo
 cambiar de pestaña. Verificado con oxlint limpio, 97 Vitest, `pnpm build` y 81 de 81 de punta a punta.
+
+**Animación del tema, menú AD02 y logo (10/11/2026, noche).** El cambio de tema se funde en 200 ms mediante una
+clase temporal en `<html>`, sin animar imágenes ni el fuego. La llama de fondo pasó a todas las secciones. En oscuro
+se marcó más el borde de luz blanco de tarjetas y campos. El menú de usuario sigue AD02: nombre y código · correo,
+«Mi cuenta», «Cambiar contraseña» (con foco en el campo actual) y «Cerrar sesión» en rojo; los iconos se extrajeron de
+Penpot. La barra lateral usa el logo nuevo de ReservaUPLA, sin repetir el nombre en texto, y al contraerse muestra solo
+su icono; el ingreso conserva el logo UPLA hasta el rediseño del login. Verificado con oxlint limpio, 97 Vitest,
+`pnpm build` y 81 de 81 de punta a punta.

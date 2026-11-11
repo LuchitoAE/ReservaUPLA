@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useLocation } from 'react-router'
 import { cambiarContrasena } from '../api/cuentaApi'
 import { ReglasDeContrasena } from '../components/autenticacion/ReglasDeContrasena'
 import { AccionesDeFormulario } from '../components/ui/AccionesDeFormulario'
@@ -24,6 +26,7 @@ const OBLIGATORIOS = {
 // guardar la contraseña, la sesión sigue abierta y el formulario vuelve a empezar.
 export function MiCuenta() {
   const { usuarioActual } = useUsuarioActual()
+  const { hash } = useLocation()
   const mostrarAviso = useAviso()
   const { sonidoEncendido, cambiarSonido } = usePreferencias()
   const formulario = useFormulario({
@@ -42,6 +45,18 @@ export function MiCuenta() {
     },
   })
   const { valores, campo, enviar } = formulario
+
+  // «Cambiar contraseña» del menú de usuario llega con #contrasena: baja a la tarjeta y deja el foco en el primer campo.
+  useEffect(() => {
+    if (hash !== '#contrasena') {
+      return
+    }
+    const seccion = document.getElementById('contrasena')
+    const campoActual = document.getElementById('contrasena_actual')
+    const reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    seccion?.scrollIntoView({ behavior: reducir ? 'auto' : 'smooth', block: 'center' })
+    campoActual?.focus({ preventScroll: true })
+  }, [hash])
 
   function alternarSonido(encendido) {
     cambiarSonido(encendido)
@@ -99,7 +114,7 @@ export function MiCuenta() {
             </AlertMessage>
           </section>
 
-          <section aria-labelledby="titulo-contrasena" className="rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
+          <section id="contrasena" aria-labelledby="titulo-contrasena" className="scroll-mt-24 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:p-6">
             <div className="flex items-center gap-2">
               <Icono nombre="llave" className="size-5 text-foco" />
               <h2 id="titulo-contrasena" className="text-lg font-semibold text-titulo">

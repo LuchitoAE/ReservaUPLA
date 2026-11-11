@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { guardarPreferencia, leerPreferencia } from '../utils/almacenamientoLocal'
 
 const CLAVE = 'reservaupla.tema'
@@ -13,6 +13,7 @@ function temaInicial() {
 // él decide cómo ver la aplicación.
 export function useTema() {
   const [tema, setTema] = useState(temaInicial)
+  const temporizadorDeTema = useRef(null)
 
   useEffect(() => {
     document.documentElement.dataset.tema = tema
@@ -29,9 +30,21 @@ export function useTema() {
     return () => consulta.removeEventListener('change', alCambiarSistema)
   }, [])
 
+  useEffect(() => () => clearTimeout(temporizadorDeTema.current), [])
+
   function alternar() {
     const nuevo = tema === 'oscuro' ? 'claro' : 'oscuro'
     guardarPreferencia(CLAVE, nuevo)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTema(nuevo)
+      return
+    }
+    // Fundido de colores: la clase queda durante el cambio y se retira al terminar la transición.
+    document.documentElement.classList.add('cambiando-tema')
+    clearTimeout(temporizadorDeTema.current)
+    temporizadorDeTema.current = setTimeout(() => {
+      document.documentElement.classList.remove('cambiando-tema')
+    }, 220)
     setTema(nuevo)
   }
 
