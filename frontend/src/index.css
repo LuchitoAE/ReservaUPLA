@@ -161,13 +161,23 @@
     --color-deshabilitado: #1d2f47;
     --color-deshabilitado-texto: #93a4ba;
     /* En oscuro se prueba un borde de luz blanco sobre el halo negro: el blanco solo no separa la tarjeta del fondo. */
-    --shadow-tarjeta: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(255 255 255 / 0.05), 0 10px 20px -4px rgb(0 0 0 / 0.55);
-    --shadow-campo: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 1px 2px rgb(0 0 0 / 0.45);
-    --shadow-tarjeta-alta: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 2px 4px rgb(255 255 255 / 0.06), 0 16px 30px -6px rgb(0 0 0 / 0.6);
+    --shadow-tarjeta: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(255 255 255 / 0.08), 0 10px 20px -4px rgb(0 0 0 / 0.55);
+    --shadow-campo: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(0 0 0 / 0.45);
+    --shadow-tarjeta-alta: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 2px 4px rgb(255 255 255 / 0.08), 0 16px 30px -6px rgb(0 0 0 / 0.6);
     --shadow-barra: 0 2px 4px rgb(0 0 0 / 0.4), 0 8px 20px -8px rgb(0 0 0 / 0.7);
 }
 
-/* Animaciones de la interfaz (opción A): cortas, discretas y con respeto por «menos movimiento». */
+/* Cambio de tema: los colores se funden en 200 ms; las imágenes y el fuego de fondo no se tocan. */
+.cambiando-tema *,
+.cambiando-tema *::before,
+.cambiando-tema *::after {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+}
+
 @keyframes aparecer-pagina {
   from {
     opacity: 0;
@@ -209,7 +219,10 @@
     animation: none;
   }
 
-  .titulo-saliendo {
+  .titulo-saliendo,
+  .cambiando-tema *,
+  .cambiando-tema *::before,
+  .cambiando-tema *::after {
     transition: none;
   }
 }

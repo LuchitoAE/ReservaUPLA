@@ -41,6 +41,7 @@ export function MenuDeUsuario() {
 
   const rol = ROLES[usuarioActual.rol_usuario]
   const opcion = 'flex min-h-11 items-center gap-3 rounded-lg px-3 font-semibold text-texto transition hover:bg-superficie-tenue focus-visible:outline-3 focus-visible:outline-foco'
+  const opcionPeligro = 'flex min-h-11 items-center gap-3 rounded-lg px-3 font-semibold text-error transition hover:bg-error-fondo focus-visible:outline-3 focus-visible:outline-foco'
 
   return (
     <div ref={contenedor} className="relative">
@@ -68,18 +69,26 @@ export function MenuDeUsuario() {
       {abierto && (
         <div
           id={idMenu}
-          className="absolute right-0 z-40 mt-2 flex w-64 flex-col gap-1 rounded-xl border border-borde bg-superficie p-2 shadow-lg"
+          className="absolute right-0 z-40 mt-2 flex w-72 flex-col gap-1 rounded-xl border border-borde bg-superficie p-2 shadow-lg"
         >
-          <p className="px-3 py-2 text-sm text-texto-suave">
+          <div className="px-3 py-2 text-sm text-texto-suave">
             <strong className="block text-texto">{usuarioActual.nombre_completo_usuario}</strong>
-            {rol}
-          </p>
+            <span className="block break-words">
+              {usuarioActual.codigo_usuario} · {usuarioActual.correo_usuario}
+            </span>
+          </div>
+          <div className="my-1 border-t border-borde" />
           <Link to="/mi-cuenta" onClick={() => setAbierto(false)} className={opcion}>
-            <Icono nombre="usuarios" />
+            <Icono nombre="cuenta" />
             Mi cuenta
           </Link>
-          <button type="button" onClick={cerrarSesion} className={opcion}>
-            <Icono nombre="cerrar" />
+          <Link to="/mi-cuenta#contrasena" onClick={() => setAbierto(false)} className={opcion}>
+            <Icono nombre="llave" />
+            Cambiar contraseña
+          </Link>
+          <div className="my-1 border-t border-borde" />
+          <button type="button" onClick={cerrarSesion} className={opcionPeligro}>
+            <Icono nombre="salir" />
             Cerrar sesión
           </button>
         </div>

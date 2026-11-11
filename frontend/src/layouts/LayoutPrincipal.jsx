@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, Navigate, Outlet, useLocation } from 'react-router'
-import logoUpla from '../assets/logo-upla-blanco.png'
+import logoReserva from '../assets/logo-reserva-upla-blanco.png'
 import fuego from '../assets/fuego1.png'
 import { BandaDeSeccion } from '../components/navegacion/BandaDeSeccion'
 import { bandaDeRuta } from '../components/navegacion/bandaDeRuta'
@@ -94,15 +94,19 @@ export function LayoutPrincipal() {
                 <Link
                   to="/"
                   onClick={cerrarMenu}
+                  aria-label="ReservaUPLA"
                   className={`flex min-w-0 items-center gap-2 rounded-lg focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-acento lg:flex-col lg:gap-3 ${contraido ? 'lg:items-center' : 'lg:items-start'}`}
                 >
+                  {/* El logo ya trae el nombre; el texto suelto «ReservaUPLA» ya no se repite. */}
                   <img
-                    src={logoUpla}
-                    alt="Universidad Peruana Los Andes"
-                    className={`h-8 w-auto shrink-0 transition-all duration-200 motion-reduce:transition-none ${contraido ? 'lg:h-auto lg:w-full' : 'lg:h-9'}`}
+                    src={logoReserva}
+                    alt=""
+                    className={`h-8 w-auto shrink-0 transition-opacity duration-200 motion-reduce:transition-none ${contraido ? 'lg:hidden' : 'lg:h-9'}`}
                   />
-                  <span className={`hidden min-w-0 transition-[max-height,opacity] duration-150 motion-reduce:transition-none sm:block ${contraido ? 'lg:max-h-0 lg:overflow-hidden lg:opacity-0' : 'lg:max-h-20 lg:opacity-100'}`}>
-                    <span className="block truncate text-base font-bold lg:text-xl">ReservaUPLA</span>
+                  <span className={`hidden overflow-hidden ${contraido ? 'lg:flex lg:size-11 lg:items-center' : ''}`}>
+                    <img src={logoReserva} alt="" className="h-11 w-auto max-w-none" />
+                  </span>
+                  <span className={`hidden min-w-0 transition-[max-height,opacity] duration-150 motion-reduce:transition-none sm:block ${contraido ? 'lg:hidden' : ''}`}>
                     <span className="hidden text-sm text-marca-100 lg:block">Reservas de ambientes</span>
                   </span>
                 </Link>
@@ -131,16 +135,14 @@ export function LayoutPrincipal() {
           <div className="flex min-h-screen min-w-0 flex-col">
             <BarraSuperior />
             <main id="contenido" tabIndex={-1} className="relative isolate flex-1 overflow-hidden px-4 py-8 pb-24 focus:outline-none sm:px-7 lg:pb-8">
-              {/* Fondo del panel (prueba): la llama de la UPLA grande, corrida a la izquierda y muy transparente para que
-                  se mezcle con el fondo. Es decorativa: no dice nada que el texto no diga. */}
-              {pathname === '/' && (
-                <img
-                  src={fuego}
-                  alt=""
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-1/2 -left-24 -z-10 h-[130%] w-auto max-w-none -translate-y-1/2 opacity-[0.08] select-none"
-                />
-              )}
+              {/* Fondo de todas las secciones: la llama de la UPLA grande, corrida a la izquierda y muy transparente
+                  para que se mezcle con el fondo. Es decorativa: no dice nada que el texto no diga. */}
+              <img
+                src={fuego}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 -left-24 -z-10 h-[130%] w-auto max-w-none -translate-y-1/2 opacity-[0.08] select-none"
+              />
               <BandaDeSeccion {...banda} accionEnTelefono={pathname !== '/reservas'} />
               <div key={pathname} className="animar-pagina">
                 <Outlet />
