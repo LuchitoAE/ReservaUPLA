@@ -212,3 +212,9 @@ en 48 barras laterales, 39 encabezados convertidos en banda, 20 acciones dentro 
 tableros y una página «08 Cambios del sistema» con las animaciones, las sombras y el fuego. Se guardaron tres versiones
 y la validación del archivo no reporta errores. El menú AD02 ya estaba correcto y sirvió de fuente
 para los iconos del sistema.
+
+**Login a pantalla completa (10/11/2026, noche).** Se rehízo `MarcoDeAcceso`: una sola foto del campus cubre el fondo,
+el logo de ReservaUPLA va grande y la frase elegida debajo; el formulario queda a la derecha en vidrio oscuro, con
+desenfoque radial alrededor y sin tarjeta blanca. Se quitó la rotación de fotos y «Pausar animación». Los campos y
+avisos usan tokens locales (`.login-oscuro`) para leerse sobre la foto. Se actualizó la prueba del botón deshabilitado
+y se verificó con 97 Vitest, `pnpm build` y 81 de 81 de punta a punta.
