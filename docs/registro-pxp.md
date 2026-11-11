@@ -218,3 +218,13 @@ el logo de ReservaUPLA va grande y la frase elegida debajo; el formulario queda 
 desenfoque radial alrededor y sin tarjeta blanca. Se quitó la rotación de fotos y «Pausar animación». Los campos y
 avisos usan tokens locales (`.login-claro`) para leerse sobre la foto. Se actualizó la prueba del botón deshabilitado
 y se verificó con 97 Vitest, `pnpm build` y 81 de 81 de punta a punta.
+
+**Refactor Clean Code (11/11/2026).** Se alineó todo el backend con C#: propiedades y constantes en PascalCase,
+parámetros y locales en camelCase, columnas y JSON en snake_case mediante `HasColumnName` y
+`JsonNamingPolicy.SnakeCaseLower`. Se incorporaron `DatosDeSolicitud`, `DatosDeCambioDeEstado`, un único
+`MomentoActual`/`IReloj`, el objeto de valor `Agenda`, la copia defensiva del historial, la separación de
+`ValidarHorarioPermitido`/`ValidarNoEnElPasado` y el año del código desde Perú. El patrón State ahora tiene
+`Aprobar`, `Rechazar` y `Cancelar`. La migración `RefactorNombresSinCambioDeEsquema` no cambia el esquema (solo
+registra el renombrado del modelo). En el frontend se eliminó `AgendaDelCampus`, se dividieron los componentes
+grandes, se extrajeron hooks y constantes y se quitaron las tres supresiones de oxlint. Verificado con 51 xUnit,
+134 Vitest, `dotnet build -warnaserror`, `pnpm build` y 81 de 81 de punta a punta.
