@@ -25,24 +25,24 @@ export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, saliendo = f
           <div className="relative inline-block">
             <div
               aria-hidden="true"
-              className="halo-de-ingreso absolute -inset-x-6 -inset-y-5 -z-10 rounded-[2.5rem]"
+              className="halo-de-ingreso absolute -inset-x-10 -inset-y-8 -z-10 rounded-[2.5rem]"
             />
             <img
               src={logoReserva}
               alt="ReservaUPLA"
-              className="h-10 w-auto drop-shadow-lg sm:h-16 lg:h-20"
+              className="h-11 w-auto drop-shadow-lg sm:h-20 lg:h-24"
             />
-            <p className="mt-4 max-w-md text-base font-medium text-marca-100 sm:text-lg">
+            <p className="mt-4 max-w-md text-lg font-medium text-marca-100 sm:text-xl">
               Reserva laboratorios, auditorios y salas de la UPLA en un solo lugar.
             </p>
           </div>
         </header>
 
-        <main className="flex flex-1 items-center justify-center py-8 lg:justify-end">
-          <div className="relative w-full max-w-md">
+        <main className="flex flex-1 items-center justify-center py-8 lg:justify-end lg:pr-16">
+          <div className="relative w-full max-w-lg">
             <div
               aria-hidden="true"
-              className="halo-de-ingreso absolute -inset-6 -z-10 rounded-[2.5rem]"
+              className="halo-de-ingreso absolute -inset-20 -z-10 rounded-[2.5rem]"
             />
             <section className="animar-formulario relative w-full rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
               <h1 id="titulo-pagina" tabIndex={-1} className="text-2xl font-bold text-titulo focus:outline-none">
