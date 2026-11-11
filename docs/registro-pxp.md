@@ -208,7 +208,7 @@ su icono; el ingreso conserva el logo UPLA hasta el rediseño del login. Verific
 `pnpm build` y 81 de 81 de punta a punta.
 
 **Penpot (10/11/2026, noche).** Se sincronizó el archivo de diseño con el sistema, sin tocar el login: logo nuevo
-en 48 barras laterales, 39 encabezados convertidos en banda, 19 acciones dentro de la banda, fuego al 8 % en 57
-tableros y una página «08 Cambios del sistema» con las animaciones, las sombras y el fuego. Se guardaron dos versiones
-(antes y después) y la validación del archivo no reporta errores. El menú AD02 ya estaba correcto y sirvió de fuente
+en 48 barras laterales, 39 encabezados convertidos en banda, 20 acciones dentro de la banda, fuego al 8 % en 54
+tableros y una página «08 Cambios del sistema» con las animaciones, las sombras y el fuego. Se guardaron tres versiones
+y la validación del archivo no reporta errores. El menú AD02 ya estaba correcto y sirvió de fuente
 para los iconos del sistema.
