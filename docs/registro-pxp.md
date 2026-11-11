@@ -237,3 +237,10 @@ máscara radial que desvanece el borde, uno detrás de la marca (logo y frase) y
 queda nítida. El formulario quedó en `max-w-[30rem]` (480 px), movido 96 px a la izquierda (`lg:pr-24`); el logo y la frase de la marca
 crecieron un poco. Se verificó con
 capturas a 1440×900 y 390×844, oxlint, 119 Vitest y `pnpm build`; ERS y SDD se regeneraron con la descripción nueva.
+
+**Publicación (11/11/2026).** El sistema quedó en línea con tres servicios gratuitos: la SPA en Vercel
+(`https://reserva-upla.vercel.app`), la API .NET en Render con el `Dockerfile` del repositorio
+(`https://reservaupla-api-c3bz.onrender.com`) y PostgreSQL 17 en Supabase (rol `reservaupla`, 7 migraciones,
+`btree_gist` y RLS activo). Vercel reenvía `/api/*` a Render, así que la cookie de sesión es de primera parte. Se
+probó el ingreso con `ADMIN01` desde el navegador y el panel con datos reales; también 401 sin sesión. `main` quedó
+en `v1.1.0` (`0ff7079`) y `develop` al día. ERS (45 hojas) y SDD (29 hojas, con vista de despliegue) regenerados.
