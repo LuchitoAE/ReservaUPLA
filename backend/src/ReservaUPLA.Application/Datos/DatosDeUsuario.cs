@@ -5,18 +5,18 @@ namespace ReservaUPLA.Application.Datos;
 
 // Datos de un usuario que salen hacia la API: los mismos de la entidad, sin su comportamiento ni su contraseña.
 public sealed record DatosDeUsuario(
-    Guid Id_Usuario,
-    string Codigo_Usuario,
-    string Nombre_Completo_Usuario,
-    string Correo_Usuario,
-    Roles_Usuario Rol_Usuario,
-    bool Activo_Usuario)
+    Guid IdUsuario,
+    string CodigoUsuario,
+    string NombreCompletoUsuario,
+    string CorreoUsuario,
+    RolUsuario RolUsuario,
+    bool ActivoUsuario)
 {
     public static DatosDeUsuario DesdeEntidad(Usuario usuario) => new(
-        usuario.Id_Usuario,
-        usuario.Codigo_Usuario,
-        usuario.Nombre_Completo_Usuario,
-        usuario.Correo_Usuario,
-        usuario.Rol_Usuario,
-        usuario.Activo_Usuario);
+        usuario.IdUsuario,
+        usuario.CodigoUsuario,
+        usuario.NombreCompletoUsuario,
+        usuario.CorreoUsuario,
+        usuario.RolUsuario,
+        usuario.ActivoUsuario);
 }

@@ -6,7 +6,7 @@ namespace ReservaUPLA.WebApi.Json;
 
 // Las horas viajan como «HH:mm» (09:30), igual que las muestra un <input type="time">. Al leer también se acepta
 // «HH:mm:ss». Sin este convertidor, .NET escribe «09:30:00» y rechaza «09:30» con un mensaje en inglés.
-internal sealed class Convertidor_Hora : JsonConverter<TimeOnly>
+internal sealed class ConvertidorHora : JsonConverter<TimeOnly>
 {
     private static readonly string[] Formatos = ["HH:mm", "HH:mm:ss"];
 

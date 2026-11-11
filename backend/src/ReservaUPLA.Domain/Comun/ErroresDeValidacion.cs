@@ -22,11 +22,11 @@ public sealed class ErroresDeValidacion
     }
 
     // Valida un texto ya normalizado con su regla y devuelve el mismo texto, para asignarlo si todo está bien.
-    public string ValidarTexto(string campo, string texto, ReglaDeTexto regla, bool exigir_contenido_util = true)
+    public string ValidarTexto(string campo, string texto, ReglaDeTexto regla, bool exigirContenidoUtil = true)
     {
         if (texto.Length == 0)
         {
-            Agregar(campo, regla.Mensaje_Obligatorio);
+            Agregar(campo, regla.MensajeObligatorio);
         }
         else if (texto.Length < regla.Minimo)
         {
@@ -36,7 +36,7 @@ public sealed class ErroresDeValidacion
         {
             Agregar(campo, $"{regla.Nombre} no puede superar los {regla.Maximo} caracteres (tiene {texto.Length}).");
         }
-        else if (exigir_contenido_util && !Texto.TieneContenidoUtil(texto))
+        else if (exigirContenidoUtil && !Texto.TieneContenidoUtil(texto))
         {
             Agregar(campo, $"{regla.Nombre} debe escribirse con palabras, no con caracteres repetidos.");
         }

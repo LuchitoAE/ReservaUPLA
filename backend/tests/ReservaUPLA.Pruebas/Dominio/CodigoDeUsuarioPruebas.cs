@@ -41,6 +41,6 @@ public sealed class CodigoDeUsuarioPruebas
     {
         var error = Assert.Throws<DatosNoValidosExcepcion>(() => CodigoDeUsuario.Crear("abc"));
 
-        Assert.True(error.Errores.ContainsKey("Codigo_Usuario"));
+        Assert.True(error.Errores.ContainsKey("CodigoUsuario"));
     }
 }

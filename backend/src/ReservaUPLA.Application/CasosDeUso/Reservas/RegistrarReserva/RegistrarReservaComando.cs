@@ -4,8 +4,8 @@ namespace ReservaUPLA.Application.CasosDeUso.Reservas.RegistrarReserva;
 // de la sesión, no un dato que se pueda escribir). Admiten null a propósito: si falta alguno, el dominio responde con
 // su mensaje en español, junto a su campo.
 public sealed record RegistrarReservaComando(
-    Guid? Id_Ambiente,
-    DateOnly? Fecha_Reserva,
-    TimeOnly? Hora_Inicio_Reserva,
-    TimeOnly? Hora_Fin_Reserva,
-    string? Motivo_Reserva);
+    Guid? IdAmbiente,
+    DateOnly? FechaReserva,
+    TimeOnly? HoraInicioReserva,
+    TimeOnly? HoraFinReserva,
+    string? MotivoReserva);

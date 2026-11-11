@@ -17,17 +17,17 @@ internal sealed class RepositorioDeReservas : IRepositorioDeReservas
         _contexto = contexto;
     }
 
-    public async Task<Reserva?> ObtenerPorIdAsync(Guid id_reserva, CancellationToken cancelacion = default)
+    public async Task<Reserva?> ObtenerPorIdAsync(Guid idReserva, CancellationToken cancelacion = default)
     {
-        return await _contexto.Reservas.FirstOrDefaultAsync(r => r.Id_Reserva == id_reserva, cancelacion);
+        return await _contexto.Reservas.FirstOrDefaultAsync(r => r.IdReserva == idReserva, cancelacion);
     }
 
     public async Task<IReadOnlyList<Reserva>> ListarDelAmbienteEnLaFechaAsync(
-        Guid id_ambiente, DateOnly fecha_reserva, CancellationToken cancelacion = default)
+        Guid idAmbiente, DateOnly fechaReserva, CancellationToken cancelacion = default)
     {
         return await _contexto.Reservas
             .AsNoTracking()
-            .Where(r => r.Id_Ambiente == id_ambiente && r.Fecha_Reserva == fecha_reserva)
+            .Where(r => r.IdAmbiente == idAmbiente && r.FechaReserva == fechaReserva)
             .ToListAsync(cancelacion);
     }
 
@@ -36,7 +36,7 @@ internal sealed class RepositorioDeReservas : IRepositorioDeReservas
     public async Task<int> ObtenerSiguienteNumeroAsync(CancellationToken cancelacion = default)
     {
         var numeros = await _contexto.Database
-            .SqlQueryRaw<long>($"SELECT nextval('{ContextoDeReservaUPLA.Secuencia_Numero_Reserva}') AS \"Value\"")
+            .SqlQueryRaw<long>($"SELECT nextval('{ContextoDeReservaUPLA.SecuenciaNumeroReserva}') AS \"Value\"")
             .ToListAsync(cancelacion);
 
         return (int)numeros[0];
@@ -55,7 +55,8 @@ internal sealed class RepositorioDeReservas : IRepositorioDeReservas
         {
             await _contexto.SaveChangesAsync(cancelacion);
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsExclusionViolada(error, Reserva_Configuracion.Restriccion_Sin_Cruce))
+        catch (DbUpdateException error) when (
+            ErroresDePostgres.EsExclusionViolada(error, ReservaConfiguracion.RestriccionSinCruce))
         {
             // Dos aprobaciones del mismo horario al mismo tiempo: la base detiene la segunda (RN-01).
             throw new ConflictoDeNegocioExcepcion(

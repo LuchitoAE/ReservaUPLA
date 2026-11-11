@@ -8,5 +8,5 @@ public interface IConsultaDeReservas
 {
     Task<IReadOnlyList<ResumenDeReserva>> ListarAsync(FiltroDeReservas filtro, CancellationToken cancelacion = default);
 
-    Task<DetalleDeReserva?> ObtenerDetalleAsync(Guid id_reserva, CancellationToken cancelacion = default);
+    Task<DetalleDeReserva?> ObtenerDetalleAsync(Guid idReserva, CancellationToken cancelacion = default);
 }

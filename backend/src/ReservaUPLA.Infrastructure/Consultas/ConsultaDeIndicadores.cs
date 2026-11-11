@@ -17,57 +17,58 @@ internal sealed class ConsultaDeIndicadores : IConsultaDeIndicadores
         _contexto = contexto;
     }
 
-    public async Task<DatosDeIndicadores> ObtenerAsync(AlcanceDeIndicadores alcance, CancellationToken cancelacion = default)
+    public async Task<DatosDeIndicadores> ObtenerAsync(
+        AlcanceDeIndicadores alcance, CancellationToken cancelacion = default)
     {
         var reservas = _contexto.Reservas.AsNoTracking();
         var ambientes = _contexto.Ambientes.AsNoTracking();
-        if (alcance.Id_Solicitante is { } id_solicitante)
+        if (alcance.IdSolicitante is { } idSolicitante)
         {
-            reservas = reservas.Where(r => r.Id_Usuario == id_solicitante);
+            reservas = reservas.Where(r => r.IdUsuario == idSolicitante);
         }
 
-        if (alcance.Id_Responsable_Ambiente is { } id_responsable)
+        if (alcance.IdResponsableAmbiente is { } idResponsable)
         {
-            ambientes = ambientes.Where(a => a.Id_Responsable_Ambiente == id_responsable);
-            var a_cargo = ambientes.Select(a => a.Id_Ambiente);
-            reservas = reservas.Where(r => a_cargo.Contains(r.Id_Ambiente));
+            ambientes = ambientes.Where(a => a.IdResponsableAmbiente == idResponsable);
+            var aCargo = ambientes.Select(a => a.IdAmbiente);
+            reservas = reservas.Where(r => aCargo.Contains(r.IdAmbiente));
         }
 
         // Cantidad de reservas por estado: SELECT estado_reserva, count(*) ... GROUP BY estado_reserva.
-        var por_estado = await reservas
-            .GroupBy(r => r.Estado_Reserva)
+        var porEstado = await reservas
+            .GroupBy(r => r.EstadoReserva)
             .Select(grupo => new { Estado = grupo.Key, Cantidad = grupo.Count() })
             .ToDictionaryAsync(fila => fila.Estado, fila => fila.Cantidad, cancelacion);
 
-        int Contar(Estados_Reserva estado) => por_estado.GetValueOrDefault(estado);
+        int Contar(EstadoReserva estado) => porEstado.GetValueOrDefault(estado);
 
         // Los ambientes del alcance, también los que aún no tienen reservas, de más a menos reservado.
-        var por_ambiente = (await ambientes
+        var porAmbiente = (await ambientes
                 .Select(ambiente => new
                 {
-                    ambiente.Id_Ambiente,
-                    ambiente.Nombre_Ambiente,
-                    Total = reservas.Count(r => r.Id_Ambiente == ambiente.Id_Ambiente),
+                    ambiente.IdAmbiente,
+                    ambiente.NombreAmbiente,
+                    Total = reservas.Count(r => r.IdAmbiente == ambiente.IdAmbiente),
                     Aprobadas = reservas.Count(r =>
-                        r.Id_Ambiente == ambiente.Id_Ambiente && r.Estado_Reserva == Estados_Reserva.Aprobada),
+                        r.IdAmbiente == ambiente.IdAmbiente && r.EstadoReserva == EstadoReserva.Aprobada),
                 })
                 .OrderByDescending(uso => uso.Total)
-                .ThenBy(uso => uso.Nombre_Ambiente)
+                .ThenBy(uso => uso.NombreAmbiente)
                 .ToListAsync(cancelacion))
-            .Select(uso => new DatosDeUsoDeAmbiente(uso.Id_Ambiente, uso.Nombre_Ambiente, uso.Total, uso.Aprobadas))
+            .Select(uso => new DatosDeUsoDeAmbiente(uso.IdAmbiente, uso.NombreAmbiente, uso.Total, uso.Aprobadas))
             .ToList();
 
         // «Ambiente con mayor número de reservas» (caso, sección 10). Si hay empate, van todos los empatados.
-        var maximo = por_ambiente.Count == 0 ? 0 : por_ambiente.Max(uso => uso.Total_Reservas);
-        var mas_utilizados = maximo == 0 ? [] : por_ambiente.Where(uso => uso.Total_Reservas == maximo).ToList();
+        var maximo = porAmbiente.Count == 0 ? 0 : porAmbiente.Max(uso => uso.TotalReservas);
+        var masUtilizados = maximo == 0 ? [] : porAmbiente.Where(uso => uso.TotalReservas == maximo).ToList();
 
         return new DatosDeIndicadores(
-            por_estado.Values.Sum(),
-            Contar(Estados_Reserva.Pendiente),
-            Contar(Estados_Reserva.Aprobada),
-            Contar(Estados_Reserva.Rechazada),
-            Contar(Estados_Reserva.Cancelada),
-            mas_utilizados,
-            por_ambiente);
+            porEstado.Values.Sum(),
+            Contar(EstadoReserva.Pendiente),
+            Contar(EstadoReserva.Aprobada),
+            Contar(EstadoReserva.Rechazada),
+            Contar(EstadoReserva.Cancelada),
+            masUtilizados,
+            porAmbiente);
     }
 }

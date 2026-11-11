@@ -9,12 +9,12 @@ namespace ReservaUPLA.Infrastructure.Servicios;
 internal sealed class ProtectorPbkdf2 : IProtectorDeContrasenas
 {
     private const int Iteraciones = 600_000;
-    private const int Bytes_Sal = 16;
-    private const int Bytes_Hash = 32;
+    private const int BytesSal = 16;
+    private const int BytesHash = 32;
 
     public ContrasenaCifrada Cifrar(string contrasena)
     {
-        var sal = RandomNumberGenerator.GetBytes(Bytes_Sal);
+        var sal = RandomNumberGenerator.GetBytes(BytesSal);
 
         return new ContrasenaCifrada(sal, Derivar(contrasena, sal));
     }
@@ -23,5 +23,5 @@ internal sealed class ProtectorPbkdf2 : IProtectorDeContrasenas
         guardada.Sal.Length > 0 && CryptographicOperations.FixedTimeEquals(Derivar(contrasena, guardada.Sal), guardada.Hash);
 
     private static byte[] Derivar(string contrasena, byte[] sal) =>
-        Rfc2898DeriveBytes.Pbkdf2(contrasena, sal, Iteraciones, HashAlgorithmName.SHA256, Bytes_Hash);
+        Rfc2898DeriveBytes.Pbkdf2(contrasena, sal, Iteraciones, HashAlgorithmName.SHA256, BytesHash);
 }

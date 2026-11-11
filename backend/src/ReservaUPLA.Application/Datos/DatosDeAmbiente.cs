@@ -4,11 +4,11 @@ namespace ReservaUPLA.Application.Datos;
 
 // Datos de un ambiente que salen hacia la API. Lleva el nombre del responsable para mostrarlo sin otra consulta.
 public sealed record DatosDeAmbiente(
-    Guid Id_Ambiente,
-    string Nombre_Ambiente,
-    Tipos_Ambiente Tipo_Ambiente,
-    int Capacidad_Ambiente,
-    string Ubicacion_Ambiente,
-    Estados_Ambiente Estado_Ambiente,
-    Guid? Id_Responsable_Ambiente,
-    string? Nombre_Responsable_Ambiente);
+    Guid IdAmbiente,
+    string NombreAmbiente,
+    TipoAmbiente TipoAmbiente,
+    int CapacidadAmbiente,
+    string UbicacionAmbiente,
+    EstadoAmbiente EstadoAmbiente,
+    Guid? IdResponsableAmbiente,
+    string? NombreResponsableAmbiente);

@@ -5,7 +5,7 @@ namespace ReservaUPLA.Application.Datos;
 // Una entrada del historial de una reserva (RF-06), como la muestra la interfaz: el estado, cuándo y quién hizo el
 // cambio. Sin usuario solo en los cambios anteriores al historial, cargados por la migración.
 public sealed record DatosDeHistorial(
-    Estados_Reserva Estado_Historial,
-    DateTime Fecha_Historial,
-    Guid? Id_Usuario,
-    string? Nombre_Completo_Usuario);
+    EstadoReserva EstadoHistorial,
+    DateTime FechaHistorial,
+    Guid? IdUsuario,
+    string? NombreCompletoUsuario);

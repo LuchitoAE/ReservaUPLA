@@ -16,6 +16,6 @@ public sealed class DatosNoValidosExcepcion : Exception
     {
     }
 
-    // Clave: nombre de la propiedad de la entidad (Correo_Usuario). Valor: los mensajes de ese campo.
+    // Clave: nombre de la propiedad de la entidad (CorreoUsuario). Valor: los mensajes de ese campo.
     public IReadOnlyDictionary<string, string[]> Errores { get; }
 }

@@ -8,8 +8,8 @@ namespace ReservaUPLA.Application.Interfaces;
 public interface IConsultaDeUsuarios
 {
     // El usuario de la sesión, si sigue existiendo y está activo.
-    Task<DatosDeUsuario?> ObtenerActivoAsync(Guid id_usuario, CancellationToken cancelacion = default);
+    Task<DatosDeUsuario?> ObtenerActivoAsync(Guid idUsuario, CancellationToken cancelacion = default);
 
     Task<IReadOnlyList<DatosDeUsuario>> ListarAsync(
-        Roles_Usuario? rol_usuario, bool? activo_usuario, CancellationToken cancelacion = default);
+        RolUsuario? rolUsuario, bool? activoUsuario, CancellationToken cancelacion = default);
 }

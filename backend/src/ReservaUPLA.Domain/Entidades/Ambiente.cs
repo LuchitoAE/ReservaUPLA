@@ -7,83 +7,78 @@ namespace ReservaUPLA.Domain.Entidades;
 // del ambiente (opcional), que es quien consulta su uso (actor «Responsable de ambiente»).
 public sealed class Ambiente
 {
-    public const int Longitud_Minima_Nombre = 3;
-    public const int Longitud_Maxima_Nombre = 100;
-    public const int Longitud_Minima_Ubicacion = 3;
-    public const int Longitud_Maxima_Ubicacion = 100;
-    public const int Capacidad_Minima = 1;
-    public const int Capacidad_Maxima = 1000;
+    public const int LongitudMinimaNombre = 3;
+    public const int LongitudMaximaNombre = 100;
+    public const int LongitudMinimaUbicacion = 3;
+    public const int LongitudMaximaUbicacion = 100;
+    public const int CapacidadMinima = 1;
+    public const int CapacidadMaxima = 1000;
 
-    private static readonly ReglaDeTexto Regla_Nombre = new(
-        "El nombre", Longitud_Minima_Nombre, Longitud_Maxima_Nombre, "Escriba el nombre del ambiente, por ejemplo «Laboratorio de cómputo 1».");
+    private static readonly ReglaDeTexto ReglaNombre = new(
+        "El nombre", LongitudMinimaNombre, LongitudMaximaNombre, "Escriba el nombre del ambiente, por ejemplo «Laboratorio de cómputo 1».");
 
-    private static readonly ReglaDeTexto Regla_Ubicacion = new(
-        "La ubicación", Longitud_Minima_Ubicacion, Longitud_Maxima_Ubicacion, "Indique dónde está: pabellón, piso o aula.");
+    private static readonly ReglaDeTexto ReglaUbicacion = new(
+        "La ubicación", LongitudMinimaUbicacion, LongitudMaximaUbicacion, "Indique dónde está: pabellón, piso o aula.");
 
     private Ambiente()
     {
     }
 
-    public Guid Id_Ambiente { get; private set; }
+    public Guid IdAmbiente { get; private set; }
 
-    public string Nombre_Ambiente { get; private set; } = string.Empty;
+    public string NombreAmbiente { get; private set; } = string.Empty;
 
-    public Tipos_Ambiente Tipo_Ambiente { get; private set; }
+    public TipoAmbiente TipoAmbiente { get; private set; }
 
-    public int Capacidad_Ambiente { get; private set; }
+    public int CapacidadAmbiente { get; private set; }
 
-    public string Ubicacion_Ambiente { get; private set; } = string.Empty;
+    public string UbicacionAmbiente { get; private set; } = string.Empty;
 
-    public Estados_Ambiente Estado_Ambiente { get; private set; }
+    public EstadoAmbiente EstadoAmbiente { get; private set; }
 
-    public Guid? Id_Responsable_Ambiente { get; private set; }
+    public Guid? IdResponsableAmbiente { get; private set; }
 
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
     // El responsable llega ya buscado: la entidad comprueba que exista, esté activo y tenga el rol que corresponde.
-    public static Ambiente Registrar(
-        string? nombre,
-        Tipos_Ambiente tipo,
-        int? capacidad,
-        string? ubicacion,
-        Estados_Ambiente estado,
-        bool responsable_indicado,
-        Usuario? responsable,
-        bool nombre_ya_registrado)
+    public static Ambiente Registrar(DatosDeRegistroDeAmbiente datos)
     {
         var errores = new ErroresDeValidacion();
 
-        var nombre_normalizado = errores.ValidarTexto(nameof(Nombre_Ambiente), Texto.NormalizarLinea(nombre), Regla_Nombre);
-        if (!errores.TieneErrorEn(nameof(Nombre_Ambiente)) && nombre_ya_registrado)
+        var nombreNormalizado = errores.ValidarTexto(
+            nameof(NombreAmbiente), Texto.NormalizarLinea(datos.Nombre), ReglaNombre);
+        if (!errores.TieneErrorEn(nameof(NombreAmbiente)) && datos.NombreYaRegistrado)
         {
-            errores.Agregar(nameof(Nombre_Ambiente), "Ya existe un ambiente con este nombre.");
+            errores.Agregar(nameof(NombreAmbiente), "Ya existe un ambiente con este nombre.");
         }
 
-        errores.ValidarOpcion(nameof(Tipo_Ambiente), tipo,
+        errores.ValidarOpcion(nameof(TipoAmbiente), datos.Tipo,
             "Elija el tipo: laboratorio de cómputo, auditorio, sala de reuniones o laboratorio especializado.");
 
-        if (capacidad is null)
+        if (datos.Capacidad is null)
         {
-            errores.Agregar(nameof(Capacidad_Ambiente), "Indique cuántas personas caben en el ambiente.");
+            errores.Agregar(nameof(CapacidadAmbiente), "Indique cuántas personas caben en el ambiente.");
         }
-        else if (capacidad < Capacidad_Minima || capacidad > Capacidad_Maxima)
+        else if (datos.Capacidad < CapacidadMinima || datos.Capacidad > CapacidadMaxima)
         {
-            errores.Agregar(nameof(Capacidad_Ambiente), $"La capacidad debe estar entre {Capacidad_Minima} y {Capacidad_Maxima} personas.");
+            errores.Agregar(nameof(CapacidadAmbiente),
+                $"La capacidad debe estar entre {CapacidadMinima} y {CapacidadMaxima} personas.");
         }
 
-        var ubicacion_normalizada = errores.ValidarTexto(
-            nameof(Ubicacion_Ambiente), Texto.NormalizarLinea(ubicacion), Regla_Ubicacion, exigir_contenido_util: false);
+        var ubicacionNormalizada = errores.ValidarTexto(
+            nameof(UbicacionAmbiente), Texto.NormalizarLinea(datos.Ubicacion), ReglaUbicacion, exigirContenidoUtil: false);
 
-        errores.ValidarOpcion(nameof(Estado_Ambiente), estado, "Elija el estado: disponible, en mantenimiento o inactivo.");
+        errores.ValidarOpcion(nameof(EstadoAmbiente), datos.Estado,
+            "Elija el estado: disponible, en mantenimiento o inactivo.");
 
-        if (responsable_indicado)
+        if (datos.ResponsableIndicado)
         {
-            if (responsable is null || !responsable.Activo_Usuario)
+            if (datos.Responsable is null || !datos.Responsable.ActivoUsuario)
             {
-                errores.Agregar(nameof(Id_Responsable_Ambiente), "Elija un responsable registrado y activo.");
+                errores.Agregar(nameof(IdResponsableAmbiente), "Elija un responsable registrado y activo.");
             }
-            else if (responsable.Rol_Usuario != Roles_Usuario.ResponsableDeAmbiente)
+            else if (datos.Responsable.RolUsuario != RolUsuario.ResponsableDeAmbiente)
             {
-                errores.Agregar(nameof(Id_Responsable_Ambiente), "El responsable debe tener el rol «Responsable de ambiente».");
+                errores.Agregar(nameof(IdResponsableAmbiente), "El responsable debe tener el rol «Responsable de ambiente».");
             }
         }
 
@@ -91,24 +86,24 @@ public sealed class Ambiente
 
         return new Ambiente
         {
-            Id_Ambiente = Guid.CreateVersion7(),
-            Nombre_Ambiente = nombre_normalizado,
-            Tipo_Ambiente = tipo,
-            Capacidad_Ambiente = capacidad!.Value,
-            Ubicacion_Ambiente = ubicacion_normalizada,
-            Estado_Ambiente = estado,
-            Id_Responsable_Ambiente = responsable?.Id_Usuario,
+            IdAmbiente = Guid.CreateVersion7(),
+            NombreAmbiente = nombreNormalizado,
+            TipoAmbiente = datos.Tipo,
+            CapacidadAmbiente = datos.Capacidad!.Value,
+            UbicacionAmbiente = ubicacionNormalizada,
+            EstadoAmbiente = datos.Estado,
+            IdResponsableAmbiente = datos.Responsable?.IdUsuario,
         };
     }
 
     // Solo un ambiente disponible recibe reservas: uno en mantenimiento o inactivo, no.
-    public bool AdmiteReservas() => Estado_Ambiente == Estados_Ambiente.Disponible;
+    public bool AdmiteReservas() => EstadoAmbiente == Enumeraciones.EstadoAmbiente.Disponible;
 
     // El estado dicho como en una frase: «está en mantenimiento».
-    public string DescribirEstado() => Estado_Ambiente switch
+    public string DescribirEstado() => EstadoAmbiente switch
     {
-        Estados_Ambiente.Disponible => "disponible",
-        Estados_Ambiente.EnMantenimiento => "en mantenimiento",
+        Enumeraciones.EstadoAmbiente.Disponible => "disponible",
+        Enumeraciones.EstadoAmbiente.EnMantenimiento => "en mantenimiento",
         _ => "inactivo",
     };
 }

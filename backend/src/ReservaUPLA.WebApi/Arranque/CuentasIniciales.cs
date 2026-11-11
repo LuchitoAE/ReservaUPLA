@@ -1,4 +1,5 @@
 using ReservaUPLA.Application.CasosDeUso.Usuarios.CuentasIniciales;
+using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.Domain.Excepciones;
 
 namespace ReservaUPLA.WebApi.Arranque;
@@ -15,17 +16,18 @@ public static class CuentasIniciales
         var servicios = alcance.ServiceProvider;
         var registro = servicios.GetRequiredService<ILoggerFactory>().CreateLogger("ReservaUPLA.Arranque");
 
-        var primer_administrador = aplicacion.Configuration.GetSection("PrimerAdministrador").Get<CuentaInicial>();
+        var primerAdministrador = LeerCuenta(aplicacion.Configuration.GetSection("PrimerAdministrador"));
         await IntentarAsync(registro, "el primer administrador", async () =>
         {
-            var resultado = await servicios.GetRequiredService<CrearPrimerAdministradorCasoDeUso>().EjecutarAsync(primer_administrador);
+            var resultado = await servicios.GetRequiredService<CrearPrimerAdministradorCasoDeUso>()
+                .EjecutarAsync(primerAdministrador);
             if (resultado == ResultadoDeCuentaInicial.YaExistia)
             {
                 registro.LogInformation("Primer administrador: ya hay un administrador activo; no se crea otro.");
                 return;
             }
 
-            Informar(registro, "Primer administrador", primer_administrador?.Codigo_Usuario, resultado);
+            Informar(registro, "Primer administrador", primerAdministrador?.CodigoUsuario, resultado);
         });
 
         if (!aplicacion.Environment.IsDevelopment())
@@ -33,16 +35,37 @@ public static class CuentasIniciales
             return;
         }
 
-        var cuentas_de_prueba = aplicacion.Configuration.GetSection("CuentasDePrueba").Get<CuentaInicial[]>() ?? [];
+        var cuentasDePrueba = aplicacion.Configuration.GetSection("CuentasDePrueba").GetChildren()
+            .Select(LeerCuenta)
+            .OfType<CuentaInicial>()
+            .ToList();
         await IntentarAsync(registro, "las cuentas de prueba", async () =>
         {
-            var resultados = await servicios.GetRequiredService<CrearCuentasDePruebaCasoDeUso>().EjecutarAsync(cuentas_de_prueba);
+            var resultados = await servicios.GetRequiredService<CrearCuentasDePruebaCasoDeUso>()
+                .EjecutarAsync(cuentasDePrueba);
             foreach (var (codigo, resultado) in resultados)
             {
                 Informar(registro, "Cuenta de prueba", codigo, resultado);
             }
         });
     }
+
+    // Las claves de los secretos de usuario conservan el nombre con guion bajo; se acepta también el nombre nuevo
+    // de la propiedad para no romper una configuración ya existente.
+    private static CuentaInicial? LeerCuenta(IConfigurationSection seccion) =>
+        seccion.Exists()
+            ? new CuentaInicial(
+                Valor(seccion, "Codigo_Usuario", "CodigoUsuario"),
+                Valor(seccion, "Nombre_Completo_Usuario", "NombreCompletoUsuario"),
+                Valor(seccion, "Correo_Usuario", "CorreoUsuario"),
+                Enum.TryParse<RolUsuario>(Valor(seccion, "Rol_Usuario", "RolUsuario"), ignoreCase: true, out var rol)
+                    ? rol
+                    : default,
+                Valor(seccion, "Contrasena_Usuario", "ContrasenaUsuario"))
+            : null;
+
+    private static string? Valor(IConfigurationSection seccion, params string[] claves) =>
+        claves.Select(clave => seccion[clave]).FirstOrDefault(valor => !string.IsNullOrEmpty(valor));
 
     private static async Task IntentarAsync(ILogger registro, string que, Func<Task> accion)
     {

@@ -7,5 +7,5 @@ namespace ReservaUPLA.Application.Interfaces;
 public interface IConsultaDeAmbientes
 {
     Task<IReadOnlyList<DatosDeAmbiente>> ListarAsync(
-        Estados_Ambiente? estado_ambiente, Guid? id_responsable_ambiente, CancellationToken cancelacion = default);
+        EstadoAmbiente? estadoAmbiente, Guid? idResponsableAmbiente, CancellationToken cancelacion = default);
 }

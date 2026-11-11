@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { bloquesDeLaAgenda, diasDeLaSemana, lunesDe, moverSemana, tituloDeLaSemana } from './agendaDeLaSemana'
+import {
+  HORAS_DE_LA_AGENDA,
+  bloquesDeLaAgenda,
+  diasDeLaSemana,
+  lunesDe,
+  moverSemana,
+  nombreDelDia,
+  tituloDeLaSemana,
+} from './agendaDeLaSemana'
 
 // RF-13 y diseño R01: la agenda de la semana de cada ambiente a cargo, de lunes a domingo (el sistema acepta reservas
 // cualquier día), con las aprobadas y las pendientes entre las 07:00 y las 22:00 (RN-04).
@@ -24,6 +32,19 @@ describe('semanas', () => {
     expect(tituloDeLaSemana('2026-11-09')).toBe('Semana del 9 al 15 de noviembre')
     expect(tituloDeLaSemana('2026-11-30')).toBe('Semana del 30 de noviembre al 6 de diciembre')
     expect(tituloDeLaSemana('2026-12-28')).toBe('Semana del 28 de diciembre de 2026 al 3 de enero de 2027')
+  })
+})
+
+describe('horas y nombres de la agenda', () => {
+  it('marca las horas de la apertura al cierre', () => {
+    expect(HORAS_DE_LA_AGENDA).toHaveLength(15)
+    expect(HORAS_DE_LA_AGENDA[0]).toBe('07:00')
+    expect(HORAS_DE_LA_AGENDA.at(-1)).toBe('21:00')
+  })
+
+  it('nombra el día como en la cuadrícula y en la lista', () => {
+    expect(nombreDelDia('2026-11-09', { weekday: 'short' })).toBe('lun')
+    expect(nombreDelDia('2026-11-09', { weekday: 'long', day: 'numeric' })).toBe('lunes 9')
   })
 })
 

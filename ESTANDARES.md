@@ -6,9 +6,9 @@ Reglas de construcción del proyecto: cómo se nombra, dónde va cada cosa y có
 
 | Elemento | Regla | Ejemplo |
 |---|---|---|
-| Atributos de las entidades | Nombre del dato + guion bajo + nombre de su entidad, sin abreviaturas | `Fecha_Reserva`, `Id_Ambiente`, `Correo_Usuario` |
-| Columnas de la base | El mismo nombre del atributo, en minúsculas | `fecha_reserva`, `id_ambiente` |
-| Campos del JSON | El mismo nombre del atributo, en minúsculas | `"fecha_reserva": "2026-11-10"` |
+| Atributos de las entidades | Nombre del dato + nombre de su entidad, en PascalCase y sin abreviaturas | `FechaReserva`, `IdAmbiente`, `CorreoUsuario` |
+| Columnas de la base | El nombre del atributo en snake_case | `fecha_reserva`, `id_ambiente` (`HasColumnName`) |
+| Campos del JSON | El mismo nombre de la columna, en snake_case | `"fecha_reserva": "2026-11-10"` (`JsonNamingPolicy.SnakeCaseLower`) |
 | Tablas | Plural, en minúsculas | `usuarios`, `ambientes`, `reservas` |
 | Clases de C# | PascalCase, sustantivo | `Reserva`, `ContextoDeReservaUPLA` |
 | Casos de uso y sus datos de entrada | Verbo + `CasoDeUso`; verbo + `Comando` | `RegistrarReservaCasoDeUso`, `RegistrarReservaComando` |
@@ -17,9 +17,9 @@ Reglas de construcción del proyecto: cómo se nombra, dónde va cada cosa y có
 | Controladores | Recurso + `Controlador`, con el atributo `[Controller]` y la ruta escrita | `ReservasControlador` |
 | Excepciones | Motivo + `Excepcion` | `ConflictoDeNegocioExcepcion` |
 | Interfaces | `I` + nombre del rol | `IRepositorioDeReservas`, `IConsultaDeReservas` |
-| Enumeraciones | Plural + guion bajo + entidad | `Estados_Reserva`, `Roles_Usuario` |
-| Variables y parámetros de C# | snake_case, palabras completas | `id_ambiente`, `hora_inicio` |
-| Campos privados de C# | `_` + snake_case | `_repositorio_de_reservas` |
+| Enumeraciones | Singular + entidad, en PascalCase | `EstadoReserva`, `RolUsuario`, `TipoAmbiente`, `EstadoAmbiente` |
+| Variables y parámetros de C# | camelCase, palabras completas | `idAmbiente`, `horaInicio` |
+| Campos privados de C# | `_` + camelCase | `_repositorioDeReservas` |
 | Componentes de React | PascalCase; los reutilizables con los nombres del caso | `TextInput`, `TableList`, `CardIndicador` |
 | Funciones, hooks y variables de JavaScript | camelCase; los hooks empiezan con `use` | `useFormulario`, `listarReservas` |
 | Archivos | Igual que lo que exportan | `Reserva.cs`, `TableList.jsx`, `reservasApi.js` |

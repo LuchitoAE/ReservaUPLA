@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ReservaUPLA.Application.CasosDeUso.Ambientes.RegistrarAmbiente;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.CasosDeUso.Ambientes.RegistrarAmbiente;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
@@ -25,14 +25,14 @@ public sealed class AmbientesControlador : ControllerBase
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public async Task<ActionResult<RespuestaApi<DatosDeAmbiente>>> Registrar(
         RegistrarAmbienteComando comando,
-        [FromServices] RegistrarAmbienteCasoDeUso caso_de_uso,
+        [FromServices] RegistrarAmbienteCasoDeUso casoDeUso,
         CancellationToken cancelacion)
     {
-        var ambiente = await caso_de_uso.EjecutarAsync(comando, cancelacion);
+        var ambiente = await casoDeUso.EjecutarAsync(comando, cancelacion);
 
         return StatusCode(
             StatusCodes.Status201Created,
-            RespuestaApi.Exito(ambiente, $"Ambiente {ambiente.Nombre_Ambiente} registrado correctamente."));
+            RespuestaApi.Exito(ambiente, $"Ambiente {ambiente.NombreAmbiente} registrado correctamente."));
     }
 
     // Lista de ambientes; con estado_ambiente=Disponible, los que se pueden reservar.
@@ -42,10 +42,10 @@ public sealed class AmbientesControlador : ControllerBase
     public async Task<ActionResult<RespuestaApi<IReadOnlyList<DatosDeAmbiente>>>> Listar(
         [FromServices] IConsultaDeAmbientes consulta,
         CancellationToken cancelacion,
-        [FromQuery] Estados_Ambiente? estado_ambiente = null,
-        [FromQuery] Guid? id_responsable_ambiente = null)
+        [FromQuery(Name = "estado_ambiente")] EstadoAmbiente? estadoAmbiente = null,
+        [FromQuery(Name = "id_responsable_ambiente")] Guid? idResponsableAmbiente = null)
     {
-        var ambientes = await consulta.ListarAsync(estado_ambiente, id_responsable_ambiente, cancelacion);
+        var ambientes = await consulta.ListarAsync(estadoAmbiente, idResponsableAmbiente, cancelacion);
 
         return RespuestaApi.Exito(ambientes, $"{ambientes.Count} ambientes.");
     }
