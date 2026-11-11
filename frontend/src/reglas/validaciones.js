@@ -39,13 +39,37 @@ export function esCorreo(correo) {
 
 // Arma el validador de un formulario a partir de sus reglas: { campo: (valor, valores) => mensaje | null }.
 // validarCampo revisa uno (al salir de él); validarTodo, todos (al enviar), en el orden en que se declararon.
+// «tiene» dice si el formulario valida ese campo: los errores que solo detecta el servidor (por ejemplo, un dato que
+// el formulario no pide) se conservan hasta el próximo envío en lugar de revisarse aquí.
 export function crearValidador(reglas) {
-  const validarCampo = (campo, valores) => reglas[campo](valores[campo], valores)
+  const tiene = (campo) => typeof reglas[campo] === 'function'
+  const validarCampo = (campo, valores) => (tiene(campo) ? reglas[campo](valores[campo], valores) : null)
   const validarTodo = (valores) =>
     Object.fromEntries(
       Object.keys(reglas)
         .map((campo) => [campo, validarCampo(campo, valores)])
         .filter(([, mensaje]) => mensaje),
     )
-  return { validarCampo, validarTodo }
+  return { tiene, validarCampo, validarTodo }
+}
+
+// Vuelve a revisar los errores que se ven (y «campo», el que se acaba de dejar), para que cada mensaje desaparezca en
+// cuanto se corrige, también si depende de otro campo. Un error que dio la API («delServidor»: el valor que tenía cada
+// campo cuando la API lo rechazó) no lo decide la regla del navegador: se mantiene mientras ese campo no cambie.
+export function revisarErrores({ anteriores, valores, reglas, campo = null, delServidor = {} }) {
+  const revisados = new Set([...Object.keys(anteriores), ...(campo ? [campo] : [])])
+  return Object.fromEntries(
+    [...revisados]
+      .map((nombre) => {
+        const errorDeLaApi = nombre in delServidor
+        if (errorDeLaApi && valores[nombre] === delServidor[nombre]) {
+          return [nombre, anteriores[nombre]]
+        }
+        if (reglas.tiene(nombre)) {
+          return [nombre, reglas.validarCampo(nombre, valores)]
+        }
+        return [nombre, errorDeLaApi ? null : anteriores[nombre]]
+      })
+      .filter(([, mensaje]) => mensaje),
+  )
 }

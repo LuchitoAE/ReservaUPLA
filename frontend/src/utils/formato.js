@@ -6,6 +6,14 @@ export const ROLES = {
   ResponsableDeAmbiente: 'Responsable de ambiente',
 }
 
+// Qué puede hacer cada rol: se muestra al elegirlo y junto al usuario actual (el usuario sabe qué puede hacer con
+// solo mirar la pantalla, Norman).
+export const QUE_HACE_EL_ROL = {
+  Solicitante: 'Pide ambientes y sigue sus reservas.',
+  Administrador: 'Aprueba o rechaza y registra ambientes y usuarios.',
+  ResponsableDeAmbiente: 'Consulta el uso de los ambientes a su cargo.',
+}
+
 export const TIPOS_AMBIENTE = {
   LaboratorioDeComputo: 'Laboratorio de cómputo',
   Auditorio: 'Auditorio',
@@ -28,4 +36,15 @@ export const ESTADOS_RESERVA = {
 
 export function opcionesDe(etiquetas) {
   return Object.entries(etiquetas).map(([valor, etiqueta]) => ({ valor, etiqueta }))
+}
+
+// Iniciales para el avatar (chip de la sesión y Mi cuenta): «Luis Aquino Espinoza» → «LA».
+export function inicialesDe(nombreCompleto) {
+  return nombreCompleto
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte[0])
+    .join('')
+    .toUpperCase()
 }

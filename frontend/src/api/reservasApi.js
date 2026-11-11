@@ -9,7 +9,7 @@ export function consultarDisponibilidad({ id_ambiente, fecha_reserva, hora_inici
   return pedir(conFiltros('/reservas/disponibilidad', { id_ambiente, fecha_reserva, hora_inicio_reserva, hora_fin_reserva }))
 }
 
-// filtros: { estado_reserva, id_ambiente, fecha_reserva, id_usuario, id_responsable_ambiente }
+// filtros: { estado_reserva, id_ambiente, fecha_reserva, fecha_desde, fecha_hasta, texto, id_usuario, id_responsable_ambiente }
 export function listarReservas(filtros = {}) {
   return pedir(conFiltros('/reservas', filtros))
 }
@@ -18,10 +18,7 @@ export function obtenerReserva(idReserva) {
   return pedir(`/reservas/${idReserva}`)
 }
 
-// RF-07: Aprobada, Rechazada o Cancelada. «idUsuario» es quien hace el cambio (el usuario actual).
-export function cambiarEstadoDeReserva(idReserva, estado, idUsuario) {
-  return pedir(`/reservas/${idReserva}/estado`, {
-    method: 'PATCH',
-    body: JSON.stringify({ estado_reserva: estado, id_usuario: idUsuario }),
-  })
+// RF-07: Aprobada, Rechazada o Cancelada. Quién hace el cambio lo sabe la API por la sesión.
+export function cambiarEstadoDeReserva(idReserva, estado) {
+  return pedir(`/reservas/${idReserva}/estado`, { method: 'PATCH', body: JSON.stringify({ estado_reserva: estado }) })
 }

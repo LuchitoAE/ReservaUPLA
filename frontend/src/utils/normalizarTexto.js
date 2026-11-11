@@ -19,3 +19,8 @@ export function normalizarParrafos(texto = '') {
 export function normalizarCorreo(correo = '') {
   return correo.trim().toLowerCase()
 }
+
+// El código de usuario (RN-14): sin espacios y en mayúsculas, como Domain/Common/CodigoDeUsuario.cs.
+export function normalizarCodigo(codigo = '') {
+  return codigo.replace(/\s+/g, '').toUpperCase()
+}

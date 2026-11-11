@@ -1,0 +1,24 @@
+using ReservaUPLA.Domain.Entidades;
+
+namespace ReservaUPLA.Application.Interfaces;
+
+// Lo que los casos de uso necesitan para guardar y leer usuarios. Lo implementa la Infraestructura.
+public interface IRepositorioDeUsuarios
+{
+    Task<Usuario?> ObtenerPorIdAsync(Guid idUsuario, CancellationToken cancelacion = default);
+
+    // Para ingresar (RF-09): el código ya normalizado.
+    Task<Usuario?> ObtenerPorCodigoAsync(string codigoUsuario, CancellationToken cancelacion = default);
+
+    Task<bool> ExisteCodigoAsync(string codigoUsuario, CancellationToken cancelacion = default);
+
+    Task<bool> ExisteCorreoAsync(string correoUsuario, CancellationToken cancelacion = default);
+
+    // Para crear el primer administrador solo si todavía no hay ninguno (RF-15).
+    Task<bool> ExisteAdministradorActivoAsync(CancellationToken cancelacion = default);
+
+    Task AgregarAsync(Usuario usuario, CancellationToken cancelacion = default);
+
+    // Guarda los cambios de un usuario que ya existe (su contraseña, RF-11).
+    Task ActualizarAsync(Usuario usuario, CancellationToken cancelacion = default);
+}

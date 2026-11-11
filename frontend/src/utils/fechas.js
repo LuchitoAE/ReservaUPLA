@@ -35,16 +35,28 @@ export function formatearFechaLarga(fecha) {
   })
 }
 
-// Momento en UTC → '03/11/2026, 17:45' en hora de Perú.
-export function formatearMomento(momento) {
-  return new Date(momento).toLocaleString('es-PE', {
+// '2026-11-09' → 'lunes 9 de noviembre' (en la tarjeta de disponibilidad, junto al ambiente y sin año)
+export function formatearFechaDelDia(fecha) {
+  return new Date(`${fecha}T12:00:00`)
+    .toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })
+    .replace(',', '')
+}
+
+// '2026-11-11' → 'miércoles 11/11' (en los avisos, donde el espacio es corto)
+export function formatearFechaCorta(fecha) {
+  const [, mes, dia] = fecha.split('-')
+  const diaDeLaSemana = new Date(`${fecha}T12:00:00`).toLocaleDateString('es-PE', { weekday: 'long' })
+  return `${diaDeLaSemana} ${dia}/${mes}`
+}
+
+// Momento en UTC → 'martes, 3 de noviembre de 2026' en hora de Perú (historial de la reserva, diseños AD06 y AD08).
+export function formatearFechaDeMomento(momento) {
+  return new Date(momento).toLocaleDateString('es-PE', {
     timeZone: ZONA,
-    day: '2-digit',
-    month: '2-digit',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
   })
 }
 

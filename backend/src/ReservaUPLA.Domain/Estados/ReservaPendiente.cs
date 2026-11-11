@@ -1,14 +1,14 @@
-using ReservaUPLA.Domain.Enums;
+using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Domain.Estados;
 
 // Toda reserva nace Pendiente: espera que un administrador la apruebe o la rechace, o que se cancele.
 public sealed class ReservaPendiente : EstadoDeReserva
 {
-    public override Estados_Reserva Valor => Estados_Reserva.Pendiente;
+    public override EstadoReserva Valor => EstadoReserva.Pendiente;
 
-    public override IReadOnlyList<Estados_Reserva> Siguientes { get; } =
-        [Estados_Reserva.Aprobada, Estados_Reserva.Rechazada, Estados_Reserva.Cancelada];
+    public override IReadOnlyList<EstadoReserva> Siguientes { get; } =
+        [EstadoReserva.Aprobada, EstadoReserva.Rechazada, EstadoReserva.Cancelada];
 
-    protected override string MotivoDeNoPermitir(Estados_Reserva destino) => "La reserva ya está pendiente.";
+    protected override string MotivoDeNoPermitir(EstadoReserva destino) => "La reserva ya está pendiente.";
 }

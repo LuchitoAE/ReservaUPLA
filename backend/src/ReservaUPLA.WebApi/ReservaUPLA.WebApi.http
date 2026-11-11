@@ -1,19 +1,32 @@
 # Pruebas de la API desde VS Code (extensión REST Client) o JetBrains: «Send Request» sobre cada petición.
 # Los identificadores son de ejemplo: cópielos de las respuestas de GET /api/usuarios y GET /api/ambientes.
+# Todo, salvo el ingreso, exige sesión: ejecute primero la petición «Ingresar».
 @api = http://localhost:5320/api
 @id_solicitante = 00000000-0000-0000-0000-000000000001
 @id_administrador = 00000000-0000-0000-0000-000000000002
 @id_ambiente = 00000000-0000-0000-0000-000000000003
 @id_reserva = 00000000-0000-0000-0000-000000000004
 
-### RF-01 Registrar un usuario
+### RF-09 Ingresar primero: la cookie de la sesión queda guardada para las demás peticiones.
+# Cuenta de prueba del administrador (sus datos están en los secretos de usuario; ver el README).
+POST {{api}}/autenticacion/ingreso
+Content-Type: application/json
+
+{
+  "codigo_usuario": "ADMIN01",
+  "contrasena_usuario": "<contraseña del administrador>"
+}
+
+### RF-01 Registrar un usuario (solo el administrador)
 POST {{api}}/usuarios
 Content-Type: application/json
 
 {
+  "codigo_usuario": "P00999X",
   "nombre_completo_usuario": "Nombre Apellido",
   "correo_usuario": "nombre.apellido@upla.edu.pe",
-  "rol_usuario": "Solicitante"
+  "rol_usuario": "Solicitante",
+  "contrasena_usuario": "Reserva2026"
 }
 
 ### Listar usuarios activos de un rol
@@ -79,5 +92,5 @@ Content-Type: application/json
   "id_usuario": "{{id_administrador}}"
 }
 
-### RF-08 Indicadores del dashboard
-GET {{api}}/dashboard/indicadores
+### RF-08 Indicadores del panel principal
+GET {{api}}/panel/indicadores

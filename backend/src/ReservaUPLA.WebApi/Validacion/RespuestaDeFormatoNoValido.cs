@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace ReservaUPLA.WebApi.Validacion;
 
@@ -9,7 +10,7 @@ namespace ReservaUPLA.WebApi.Validacion;
 // viaja en el JSON. Sirve para cualquier endpoint: el tipo de cada campo se lee del parámetro de la acción.
 internal static class RespuestaDeFormatoNoValido
 {
-    private const string Campo_Solicitud = "solicitud";
+    private const string CampoSolicitud = "solicitud";
 
     public static IActionResult Crear(ActionContext contexto)
     {
@@ -23,23 +24,24 @@ internal static class RespuestaDeFormatoNoValido
             }
 
             var campo = clave.TrimStart('$', '.');
-            var es_campo = campo.Length > 0 && campo != Campo_Solicitud;
+            var esCampo = campo.Length > 0 && campo != CampoSolicitud;
 
             // En el cuerpo, «could not be converted»: el JSON se leyó, pero el valor no es del tipo del campo.
             // En la dirección (?fecha=…), el error es del parámetro. Cualquier otro error del lector (JSON cortado o
             // mal escrito) es del cuerpo completo, aunque señale el último campo leído.
-            var valor_de_otro_tipo = entrada.Errors.Any(error =>
+            var valorDeOtroTipo = entrada.Errors.Any(error =>
                 error.ErrorMessage.Contains("could not be converted", StringComparison.Ordinal)
                 || error.ErrorMessage.Contains("is not valid", StringComparison.Ordinal));
 
             // Un parámetro obligatorio de la dirección que no llegó (?fecha_reserva=…).
-            var falta_el_valor = entrada.Errors.Any(error => error.ErrorMessage.Contains("was not provided", StringComparison.Ordinal));
+            var faltaElValor = entrada.Errors.Any(error =>
+                error.ErrorMessage.Contains("was not provided", StringComparison.Ordinal));
 
-            if (valor_de_otro_tipo && es_campo)
+            if (valorDeOtroTipo && esCampo)
             {
                 errores.AddModelError(campo, MensajeDeFormato(contexto, campo));
             }
-            else if (falta_el_valor && es_campo)
+            else if (faltaElValor && esCampo)
             {
                 errores.AddModelError(campo, $"Indique el valor de {campo}.");
             }
@@ -48,7 +50,7 @@ internal static class RespuestaDeFormatoNoValido
         // Si no se pudo señalar ningún campo, el problema es el cuerpo completo.
         if (errores.Count == 0)
         {
-            errores.AddModelError(Campo_Solicitud, "Envíe los datos en formato JSON válido.");
+            errores.AddModelError(CampoSolicitud, "Envíe los datos en formato JSON válido.");
         }
 
         var fabrica = contexto.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
@@ -82,15 +84,30 @@ internal static class RespuestaDeFormatoNoValido
         };
     }
 
-    // El campo puede ser un parámetro de la acción (?fecha=…) o una propiedad del cuerpo.
+    // El campo puede ser un parámetro de la acción (?fecha_reserva=…) o una propiedad del cuerpo. Se compara tanto
+    // el nombre de C# como el nombre con el que viaja en JSON y en la dirección (snake_case).
     private static Type? TipoDelCampo(ActionContext contexto, string campo)
     {
         var parametros = contexto.ActionDescriptor.Parameters;
 
-        return parametros.FirstOrDefault(parametro => string.Equals(parametro.Name, campo, StringComparison.OrdinalIgnoreCase))?.ParameterType
-            ?? parametros
-                .SelectMany(parametro => parametro.ParameterType.GetProperties())
-                .FirstOrDefault(propiedad => string.Equals(propiedad.Name, campo, StringComparison.OrdinalIgnoreCase))
-                ?.PropertyType;
+        var parametro = parametros.FirstOrDefault(parametro =>
+            Coincide(parametro.Name, campo) || Coincide(parametro.BindingInfo?.BinderModelName, campo));
+        if (parametro is not null)
+        {
+            return parametro.ParameterType;
+        }
+
+        var politica = contexto.HttpContext.RequestServices
+            .GetRequiredService<IOptions<JsonOptions>>()
+            .Value.JsonSerializerOptions.PropertyNamingPolicy;
+
+        return parametros
+            .SelectMany(parametro => parametro.ParameterType.GetProperties())
+            .FirstOrDefault(propiedad =>
+                Coincide(propiedad.Name, campo) || Coincide(politica?.ConvertName(propiedad.Name), campo))
+            ?.PropertyType;
     }
+
+    private static bool Coincide(string? nombre, string campo) =>
+        string.Equals(nombre, campo, StringComparison.OrdinalIgnoreCase);
 }

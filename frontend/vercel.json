@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/:ruta*",
+      "destination": "https://reservaupla-api-c3bz.onrender.com/api/:ruta*"
+    },
+    { "source": "/:ruta*", "destination": "/index.html" }
+  ]
+}

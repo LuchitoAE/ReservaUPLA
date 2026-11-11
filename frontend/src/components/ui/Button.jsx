@@ -2,16 +2,27 @@ import { Link } from 'react-router'
 
 // Botón reutilizable del sistema (componente «Button» del caso). Con «destino» se dibuja como enlace de la SPA
 // (para ir a otra página); sin él, como <button> (para actuar). Se ven igual, pero cada uno usa el elemento correcto.
-// «ocupado» lo desactiva y lo anuncia (aria-busy) mientras la acción está en curso: evita el doble envío.
+// Significante (Norman): forma de botón, relleno o borde, y cursor de mano. Feedback inmediato (Shneiderman): cambia
+// al pasar el puntero (hover), se hunde al pulsarlo (active) y, mientras la acción está en curso («ocupado»), muestra
+// un indicador, se desactiva y se anuncia (aria-busy): no se puede enviar dos veces.
 const BASE =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 font-semibold transition-colors ' +
-  'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foco disabled:cursor-not-allowed disabled:opacity-60'
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 font-semibold transition ' +
+  'active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-foco ' +
+  'disabled:cursor-not-allowed disabled:border-transparent disabled:bg-deshabilitado disabled:text-deshabilitado-texto ' +
+  'disabled:shadow-none disabled:active:translate-y-0'
 
 const VARIANTES = {
-  principal: 'bg-marca-700 text-white hover:bg-marca-800',
-  secundario: 'border border-borde-control bg-superficie text-texto hover:bg-superficie-tenue',
-  aprobar: 'bg-aprobar text-white hover:bg-aprobar-oscuro',
-  peligro: 'bg-peligro text-white hover:bg-peligro-oscuro',
+  principal: 'bg-marca-700 text-white shadow-sm hover:bg-marca-800 active:bg-marca-900',
+  blanco:
+    'border border-boton-claro-borde bg-boton-claro text-boton-claro-texto shadow-sm hover:bg-boton-claro-hover active:bg-boton-claro-hover focus-visible:outline-white focus-visible:outline-offset-4',
+  secundario: 'border border-borde-control bg-superficie text-texto hover:bg-superficie-tenue active:bg-seleccion',
+  aprobar: 'bg-aprobar text-white shadow-sm hover:bg-aprobar-oscuro active:bg-aprobar-oscuro',
+  peligro: 'bg-peligro text-white shadow-sm hover:bg-peligro-oscuro active:bg-peligro-oscuro',
+  'peligro-borde': 'border border-error bg-superficie text-error hover:bg-error-fondo active:bg-error-fondo',
+  acento: 'bg-acento text-acento-texto shadow-sm hover:brightness-95 active:translate-y-px',
+  enlace: 'px-2 text-enlace hover:underline underline-offset-2',
+  // Acción secundaria con el texto en azul, como «Reintentar» del error del panel (C04).
+  'enlace-borde': 'border border-borde-control bg-superficie text-enlace hover:bg-superficie-tenue active:bg-seleccion',
 }
 
 export function Button({

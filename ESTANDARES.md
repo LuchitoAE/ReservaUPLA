@@ -6,30 +6,42 @@ Reglas de construcción del proyecto: cómo se nombra, dónde va cada cosa y có
 
 | Elemento | Regla | Ejemplo |
 |---|---|---|
-| Atributos de las entidades | Nombre del dato + guion bajo + nombre de su entidad, sin abreviaturas | `Fecha_Reserva`, `Id_Ambiente`, `Correo_Usuario` |
-| Columnas de la base | El mismo nombre del atributo, en minúsculas | `fecha_reserva`, `id_ambiente` |
-| Campos del JSON | El mismo nombre del atributo, en minúsculas | `"fecha_reserva": "2026-11-10"` |
+| Atributos de las entidades | Nombre del dato + nombre de su entidad, en PascalCase y sin abreviaturas | `FechaReserva`, `IdAmbiente`, `CorreoUsuario` |
+| Columnas de la base | El nombre del atributo en snake_case | `fecha_reserva`, `id_ambiente` (`HasColumnName`) |
+| Campos del JSON | El mismo nombre de la columna, en snake_case | `"fecha_reserva": "2026-11-10"` (`JsonNamingPolicy.SnakeCaseLower`) |
 | Tablas | Plural, en minúsculas | `usuarios`, `ambientes`, `reservas` |
-| Clases de C# | PascalCase, sustantivo; casos de uso con verbo + `UseCase` | `Reserva`, `RegistrarReservaUseCase` |
-| Interfaces | `I` + nombre del rol | `IReservaRepository`, `IConsultaDeReservas` |
-| Enumeraciones | Plural + guion bajo + entidad | `Estados_Reserva`, `Roles_Usuario` |
-| Variables y parámetros de C# | snake_case, palabras completas | `id_ambiente`, `hora_inicio` |
-| Campos privados de C# | `_` + snake_case | `_reserva_repository` |
+| Clases de C# | PascalCase, sustantivo | `Reserva`, `ContextoDeReservaUPLA` |
+| Casos de uso y sus datos de entrada | Verbo + `CasoDeUso`; verbo + `Comando` | `RegistrarReservaCasoDeUso`, `RegistrarReservaComando` |
+| Datos de salida | `DatosDe` + nombre; `DetalleDe` o `ResumenDe` si es una vista de la entidad | `DatosDeAmbiente`, `DetalleDeReserva` |
+| Repositorios | `RepositorioDe` + entidad en plural | `RepositorioDeReservas` |
+| Controladores | Recurso + `Controlador`, con el atributo `[Controller]` y la ruta escrita | `ReservasControlador` |
+| Excepciones | Motivo + `Excepcion` | `ConflictoDeNegocioExcepcion` |
+| Interfaces | `I` + nombre del rol | `IRepositorioDeReservas`, `IConsultaDeReservas` |
+| Enumeraciones | Singular + entidad, en PascalCase | `EstadoReserva`, `RolUsuario`, `TipoAmbiente`, `EstadoAmbiente` |
+| Variables y parámetros de C# | camelCase, palabras completas | `idAmbiente`, `horaInicio` |
+| Campos privados de C# | `_` + camelCase | `_repositorioDeReservas` |
 | Componentes de React | PascalCase; los reutilizables con los nombres del caso | `TextInput`, `TableList`, `CardIndicador` |
 | Funciones, hooks y variables de JavaScript | camelCase; los hooks empiezan con `use` | `useFormulario`, `listarReservas` |
 | Archivos | Igual que lo que exportan | `Reserva.cs`, `TableList.jsx`, `reservasApi.js` |
 
-**Idioma:** español en el dominio, los mensajes y la interfaz. Se conservan en inglés las palabras del marco de trabajo (`UseCase`, `Repository`, `Controller`, `Dto`) y los nombres de componentes que propone el caso práctico.
+**Idioma:** todo el código en español: clases, carpetas, variables, mensajes e interfaz. Solo se conservan en inglés:
+
+- Los **9 componentes que nombra el caso práctico**, para que el evaluador los reconozca: `TextInput`, `SelectInput`, `DateInput`, `TimeInput`, `Button`, `AlertMessage`, `ModalConfirmacion`, `TableList` y `CardIndicador`.
+- Lo que **impone el marco de trabajo o su convención**: `Program.cs`, las clases base y lo que se hereda o se llama de ellas (`DbContext`, `ControllerBase`, `ModelSnapshot`), el prefijo `I` de las interfaces, el sufijo `Async` de los métodos asíncronos, los nombres de los proyectos (`ReservaUPLA.Domain`, `.Application`, `.Infrastructure`, `.WebApi`) y las carpetas habituales de React (`components/`, `hooks/`, `layouts/`, `api/`, `utils/`).
 
 ## 2. Carpetas
 
 ```
 ReservaUPLA/
   backend/                    API .NET 10 — arquitectura limpia en 4 proyectos
-    src/ReservaUPLA.Domain/          Entidades, enums, estados de la reserva, reglas y excepciones (no depende de nadie)
-    src/ReservaUPLA.Application/     Casos de uso, DTOs, comandos e interfaces (depende de Domain)
-    src/ReservaUPLA.Infrastructure/  PostgreSQL con EF Core: DbContext, mapeos, migraciones, repositorios, consultas
-    src/ReservaUPLA.WebApi/          Controladores, manejo de errores, formato JSON y Swagger (punto de composición)
+    src/ReservaUPLA.Domain/          Entidades/, Enumeraciones/, Estados/, Comun/ (objetos de valor) y Excepciones/
+                                     (no depende de nadie)
+    src/ReservaUPLA.Application/     CasosDeUso/ (con sus comandos), Datos/ (de salida) e Interfaces/ (depende de Domain)
+    src/ReservaUPLA.Infrastructure/  PostgreSQL con EF Core: Persistencia/ (contexto y Configuraciones/), Migraciones/,
+                                     Repositorios/, Consultas/ y Servicios/
+    src/ReservaUPLA.WebApi/          Controladores/, manejo de errores, formato JSON, Swagger y Arranque/ (punto de
+                                     composición)
+    tests/ReservaUPLA.Pruebas/       Pruebas unitarias (xUnit): Dominio/, CasosDeUso/ y Dobles/
   frontend/                   SPA React + Vite + Tailwind
     src/api/                  Un archivo por recurso sobre clienteApi.js
     src/components/ui/        Componentes reutilizables (TextInput, SelectInput, DateInput, TimeInput, Button…)
@@ -51,6 +63,13 @@ ReservaUPLA/
 5. **Sin secretos en el repositorio:** la cadena de conexión va en los user-secrets de .NET.
 6. **Respuestas de la API:** éxito `{ success, message, data }`; error en ProblemDetails (RFC 9457) con `success: false`, `message` y, si son datos, `errors` por campo.
 7. **Interfaz:** etiquetas visibles, errores junto a su campo, foco visible, controles de 44 px de alto, contraste AA (WCAG 2.2) y modo oscuro por tokens de color.
+8. **Diseño centrado en el usuario** (reglas de oro de Shneiderman y principios de Norman):
+   - Los campos se agrupan en tarjetas numeradas (`GrupoDeCampos`), en el orden en que el usuario piensa la tarea.
+   - El botón de enviar queda deshabilitado mientras falte un dato obligatorio o haya un impedimento, y dice qué falta.
+   - Los mensajes dicen qué corregir con palabras del usuario: nunca códigos de reglas, nombres técnicos ni códigos de rastreo.
+   - Toda acción tiene feedback (al pasar, al pulsar, mientras carga) y un final claro (confirmación o aviso de éxito).
+   - Toda acción se puede revertir antes de confirmarla: Cancelar, Volver, confirmar antes de salir con datos sin guardar.
+   - Los ejemplos van como ayuda bajo el campo, no como texto de ejemplo dentro de él.
 
 ## 4. Commits
 

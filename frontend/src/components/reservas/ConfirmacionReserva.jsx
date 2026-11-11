@@ -1,16 +1,21 @@
 import { formatearFechaLarga } from '../../utils/fechas'
 import { AlertMessage } from '../ui/AlertMessage'
 import { Button } from '../ui/Button'
-import { EstadoBadge } from '../ui/EstadoBadge'
+import { InsigniaDeEstado } from '../ui/InsigniaDeEstado'
 
-// Lo que ve el solicitante al registrar: el código para seguir su solicitud y que queda pendiente de aprobación.
+// Lo que ve el solicitante al registrar (diseño S08): el aviso verde con el código para seguir su solicitud, los datos
+// en una lista limpia y las dos salidas (ver el detalle o pedir otra). El aviso flotante ya confirmó el registro.
 export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
   return (
     <div className="flex flex-col gap-5">
-      <AlertMessage tipo="exito" titulo={`Reserva ${reserva.codigo_reserva} registrada.`}>
-        Queda pendiente hasta que un administrador la apruebe o la rechace.
+      <AlertMessage
+        tipo="exito"
+        titulo={`Reserva ${reserva.codigo_reserva} registrada.`}
+        anunciar={false}
+      >
+        <p className="text-sm">Queda pendiente hasta que un administrador la apruebe o la rechace.</p>
       </AlertMessage>
-      <dl className="grid gap-x-6 gap-y-3 rounded-xl border border-borde bg-superficie p-5 sm:grid-cols-[10rem_1fr]">
+      <dl className="grid gap-x-6 gap-y-3 rounded-xl border border-borde bg-superficie p-5 shadow-tarjeta sm:grid-cols-[10rem_1fr]">
         <dt className="text-texto-suave">Código</dt>
         <dd className="font-semibold">{reserva.codigo_reserva}</dd>
         <dt className="text-texto-suave">Ambiente</dt>
@@ -23,7 +28,7 @@ export function ConfirmacionReserva({ reserva, alSolicitarOtra }) {
         </dd>
         <dt className="text-texto-suave">Estado</dt>
         <dd>
-          <EstadoBadge estado={reserva.estado_reserva} />
+          <InsigniaDeEstado estado={reserva.estado_reserva} />
         </dd>
       </dl>
       <div className="flex flex-col gap-3 sm:flex-row">

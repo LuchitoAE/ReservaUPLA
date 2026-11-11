@@ -6,23 +6,58 @@
    Los pares de texto y fondo tienen al menos 4,5:1 de contraste y los bordes de los controles 3:1
    (WCAG 2.2, criterios 1.4.3 y 1.4.11), en los dos modos. */
 @theme {
-  --color-marca-100: #e0e7ff;
-  --color-marca-700: #4338ca;
-  --color-marca-800: #3730a3;
-  --color-marca-900: #1e1b4b;
+  /* Tipografía: el Manual de Marca UPLA pide Woodford Bourne y Geomanist (comerciales) y nombra Montserrat como
+     secundaria. Se usa Montserrat (libre, OFL, paquete @fontsource-variable/montserrat); Geomanist va primero por si
+     está instalada. */
+  --font-sans: 'Geomanist', 'Montserrat Variable', 'Montserrat', Arial, sans-serif;
 
-  --color-fondo: #f4f5fb;
+  /* Colores UPLA. #0063A8 es el azul oficial para web (Manual de Marca, 2.2.1, hoja 17), junto con el blanco.
+     El azul marino #1F365C y el dorado #FFCB70 vienen de la ficha de Brandfetch (upla.edu.pe), no del manual: se usan
+     como apoyo (barra lateral y acentos), nunca para texto pequeño sobre blanco. */
+  --color-marca-100: #dcebf7;
+  --color-marca-700: #0063a8;
+  --color-marca-800: #004f87;
+  --color-marca-900: #1f365c;
+  --color-acento: #ffcb70;
+  --color-acento-texto: #5a3a00;
+  /* Barra lateral (marca y menú): en modo oscuro se hunde en un azul casi negro (diseños AD18 y S17), así que no
+     reutiliza marca-900. «lateral-activo» es la fila de la sección actual: blanca en modo claro y gris azulada en el
+     oscuro. */
+  --color-lateral: #1f365c;
+  --color-lateral-activo: #ffffff;
+  --color-lateral-activo-texto: #1f365c;
+  /* Banda de bienvenida del panel: el degradado azul institucional (diseños S01, S17 y R06). */
+  --color-banda-1: #1f365c;
+  --color-banda-2: #004f87;
+  --color-banda-3: #0063a8;
+  /* Botón claro sobre la banda: blanco en modo claro; en el oscuro, azul de superficie con borde (S17 y R06). */
+  --color-boton-claro: #ffffff;
+  --color-boton-claro-texto: #0063a8;
+  --color-boton-claro-hover: #dcebf7;
+  --color-boton-claro-borde: transparent;
+  /* Azul noche del panel del ingreso: la rejilla de la agenda y los bloques bajo el texto. Igual en los dos modos. */
+  --color-noche: #0b1729;
+
+  --color-fondo: #f3f6fa;
   --color-superficie: #ffffff;
-  --color-superficie-tenue: #f8f9fc;
-  --color-borde: #e2e5f0;
-  --color-borde-fuerte: #c9cee0;
-  --color-borde-control: #646b85;
-  --color-texto: #111827;
-  --color-texto-suave: #4b5268;
-  --color-titulo: #1e1b4b;
-  --color-enlace: #4338ca;
-  --color-foco: #4338ca;
-  --color-seleccion: #eef0ff;
+  --color-superficie-tenue: #f7f9fc;
+  --color-borde: #dde4ee;
+  --color-borde-fuerte: #c4cfde;
+  --color-borde-control: #5f6f86;
+  --color-texto: #14213a;
+  --color-texto-suave: #4a5a72;
+  --color-titulo: #1f365c;
+  --color-enlace: #0063a8;
+  --color-foco: #0063a8;
+  --color-seleccion: #e6f0f9;
+
+  /* Elevación: una sombra corta y otra amplia y suave para que las tarjetas y los campos se lean sobre el fondo sin
+     competir con el borde. En modo oscuro la sombra es negra y algo más marcada. */
+  --shadow-tarjeta: 0 1px 3px rgb(15 23 42 / 0.1), 0 8px 18px -4px rgb(15 23 42 / 0.16);
+  --shadow-campo: 0 1px 2px rgb(15 23 42 / 0.08);
+  --shadow-tarjeta-alta: 0 2px 4px rgb(15 23 42 / 0.12), 0 14px 28px -6px rgb(15 23 42 / 0.2);
+  /* La barra superior blanca necesita una sombra propia, más marcada que la de las tarjetas, para separarse del fondo. */
+  --shadow-barra: 0 2px 4px rgb(15 23 42 / 0.06), 0 8px 20px -8px rgb(15 23 42 / 0.3);
 
   --color-error: #b91c1c;
   --color-error-fondo: #fef2f2;
@@ -33,9 +68,9 @@
   --color-aviso: #b45309;
   --color-aviso-fondo: #fffbeb;
   --color-aviso-texto: #78350f;
-  --color-info: #4338ca;
-  --color-info-fondo: #eef0ff;
-  --color-info-texto: #1e1b4b;
+  --color-info: #0063a8;
+  --color-info-fondo: #e6f0f9;
+  --color-info-texto: #1f365c;
 
   /* Botones de acción con significado (aprobar, rechazar): texto blanco en los dos modos. */
   --color-aprobar: #15803d;
@@ -43,8 +78,12 @@
   --color-peligro: #b91c1c;
   --color-peligro-oscuro: #991b1b;
 
-  /* Barras del dashboard: un solo tono (magnitud), el de la marca. */
-  --color-barra: #4338ca;
+  /* Barras del panel principal: un solo tono (magnitud), el azul UPLA. */
+  --color-barra: #0063a8;
+
+  /* Punto de quiebre propio: desde 1420 px el contenido deja sitio para las seis tarjetas de indicadores del panel
+     con el ancho del diseño (unos 170 px cada una). Con menos, se reparten en tres por fila. */
+  --breakpoint-3xl: 88.75rem;
 
   /* Estados de la reserva: cada uno con su fondo y su texto (la insignia lleva además el nombre del estado). */
   --color-pendiente-fondo: #fef3c7;
@@ -55,23 +94,46 @@
   --color-rechazada-texto: #7f1d1d;
   --color-cancelada-fondo: #e2e8f0;
   --color-cancelada-texto: #334155;
+  /* Botón deshabilitado: gris plano, sin sombra, para que se lea como «todavía no» y no como una acción azul apagada
+     (diseño AC01). */
+  --color-deshabilitado: #e6ebf3;
+  --color-deshabilitado-texto: #64748b;
+  /* Gris de la tarjeta «Canceladas» del panel: relleno sólido bajo un ícono blanco, igual en los dos modos (el texto
+     de arriba sí cambia con el tema, por eso no se reutiliza). */
+  --color-cancelada-solida: #475569;
 }
 
-/* Modo oscuro: sigue la preferencia del sistema operativo. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fondo: #0f1020;
-    --color-superficie: #1a1b33;
-    --color-superficie-tenue: #15162b;
-    --color-borde: #2e3055;
-    --color-borde-fuerte: #3f4270;
-    --color-borde-control: #8a8fb8;
-    --color-texto: #e8e9f5;
-    --color-texto-suave: #b8bbd6;
-    --color-titulo: #e0e7ff;
-    --color-enlace: #a5b4fc;
-    --color-foco: #a5b4fc;
-    --color-seleccion: #2a2c5a;
+/* Modo oscuro. Al abrir, index.html pone data-tema según la elección guardada o, si no la hay, según el sistema
+   operativo; el botón de sol y luna lo cambia (hooks/useTema.js). */
+:root[data-tema='oscuro'] {
+    color-scheme: dark;
+    --color-fondo: #070f1e;
+    --color-superficie: #16294a;
+    --color-superficie-tenue: #10203a;
+    --color-borde: #2d3e5d;
+    --color-borde-fuerte: #3b5478;
+    --color-borde-control: #7f94b3;
+    --color-texto: #e7eef7;
+    --color-texto-suave: #b5c3d6;
+    --color-titulo: #dcebf7;
+    --color-enlace: #7dbef0;
+    --color-foco: #7dbef0;
+    --color-seleccion: #1e3660;
+    --color-lateral: #091425;
+    --color-lateral-activo: #2d3645;
+    --color-lateral-activo-texto: #ffffff;
+    /* El azul de las acciones se aclara en modo oscuro para que el blanco siga leyéndose (diseño S18: el botón
+       principal es #0B74C4). */
+    --color-marca-700: #0b74c4;
+    --color-marca-800: #0d63a6;
+    --color-marca-900: #0f5489;
+    --color-banda-1: #0b2548;
+    --color-banda-2: #0b3059;
+    --color-banda-3: #0b4a83;
+    --color-boton-claro: #16294a;
+    --color-boton-claro-texto: #ffffff;
+    --color-boton-claro-hover: #1e3660;
+    --color-boton-claro-borde: #4a6a9e;
 
     --color-error: #fca5a5;
     --color-error-fondo: #3b1a1d;
@@ -82,11 +144,11 @@
     --color-aviso: #fcd34d;
     --color-aviso-fondo: #3a2a0c;
     --color-aviso-texto: #fde68a;
-    --color-info: #a5b4fc;
-    --color-info-fondo: #23254a;
-    --color-info-texto: #e0e7ff;
+    --color-info: #7dbef0;
+    --color-info-fondo: #1c3556;
+    --color-info-texto: #dcebf7;
 
-    --color-barra: #818cf8;
+    --color-barra: #5da9e0;
 
     --color-pendiente-fondo: #3a2a0c;
     --color-pendiente-texto: #fde68a;
@@ -96,16 +158,144 @@
     --color-rechazada-texto: #fecaca;
     --color-cancelada-fondo: #243241;
     --color-cancelada-texto: #cbd5e1;
+    --color-deshabilitado: #1d2f47;
+    --color-deshabilitado-texto: #93a4ba;
+    /* En oscuro se prueba un borde de luz blanco sobre el halo negro: el blanco solo no separa la tarjeta del fondo. */
+    --shadow-tarjeta: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(255 255 255 / 0.08), 0 10px 20px -4px rgb(0 0 0 / 0.55);
+    --shadow-campo: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(0 0 0 / 0.45);
+    --shadow-tarjeta-alta: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 2px 4px rgb(255 255 255 / 0.08), 0 16px 30px -6px rgb(0 0 0 / 0.6);
+    --shadow-barra: 0 2px 4px rgb(0 0 0 / 0.4), 0 8px 20px -8px rgb(0 0 0 / 0.7);
+}
+
+
+/* Login a pantalla completa: la foto manda y el formulario es un vidrio claro. Los tokens se redefinen solo dentro
+   del login para que los campos y los avisos se lean sobre la foto y el formulario quede siempre en modo claro. */
+.login-claro {
+  color-scheme: light;
+  --color-marca-700: #0063a8;
+  --color-marca-800: #004f87;
+  --color-marca-900: #1f365c;
+  --color-superficie: #ffffff;
+  --color-superficie-tenue: #f7f9fc;
+  --color-borde: #dde4ee;
+  --color-borde-fuerte: #c4cfde;
+  --color-borde-control: #5f6f86;
+  --color-texto: #14213a;
+  --color-texto-suave: #4a5a72;
+  --color-titulo: #1f365c;
+  --color-enlace: #0063a8;
+  --color-foco: #0063a8;
+  --color-seleccion: #e6f0f9;
+  --color-error: #b91c1c;
+  --color-error-fondo: #fef2f2;
+  --color-error-texto: #7f1d1d;
+  --color-info: #0063a8;
+  --color-info-fondo: #e6f0f9;
+  --color-info-texto: #1f365c;
+  --color-aviso: #b45309;
+  --color-aviso-fondo: #fffbeb;
+  --color-aviso-texto: #78350f;
+  --color-deshabilitado: #e6ebf3;
+  --color-deshabilitado-texto: #6b7a91;
+}
+
+/* Halos del ingreso: la foto queda nítida y solo se difumina detrás de la marca y alrededor del formulario. La máscara
+   radial desvanece el halo hacia afuera, así que no se ve un borde recortado. */
+.halo-de-ingreso {
+  backdrop-filter: blur(14px) saturate(0.97);
+  -webkit-backdrop-filter: blur(14px) saturate(0.97);
+  mask-image: radial-gradient(closest-side, #000 80%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 80%, transparent 100%);
+}
+
+@keyframes aparecer-login {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animar-login {
+  animation: aparecer-login 360ms ease-out both;
+}
+
+.animar-formulario {
+  animation: aparecer-login 220ms ease-out 120ms both;
+}
+
+/* Cambio de tema: los colores se funden en 200 ms; las imágenes y el fuego de fondo no se tocan. */
+.cambiando-tema *,
+.cambiando-tema *::before,
+.cambiando-tema *::after {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+@keyframes aparecer-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes escribir-titulo {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animar-pagina {
+  animation: aparecer-pagina 180ms ease-out;
+}
+
+.titulo-entrando {
+  display: inline-block;
+  animation: escribir-titulo 120ms ease-out;
+}
+
+.titulo-saliendo {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 70ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animar-pagina,
+  .animar-login,
+  .animar-formulario,
+  .titulo-entrando {
+    animation: none;
+  }
+
+  .titulo-saliendo,
+  .cambiando-tema *,
+  .cambiando-tema *::before,
+  .cambiando-tema *::after {
+    transition: none;
   }
 }
 
 @layer base {
-  /* Los controles nativos (calendario, reloj, listas desplegables) también cambian de modo. */
+  /* Los controles nativos (calendario, reloj, listas desplegables) siguen el modo elegido. */
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
   body {
-    @apply bg-fondo text-texto antialiased;
+    @apply bg-fondo font-sans text-texto antialiased;
   }
 }
