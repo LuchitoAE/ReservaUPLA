@@ -225,6 +225,7 @@ parámetros y locales en camelCase, columnas y JSON en snake_case mediante `HasC
 `MomentoActual`/`IReloj`, el objeto de valor `Agenda`, la copia defensiva del historial, la separación de
 `ValidarHorarioPermitido`/`ValidarNoEnElPasado` y el año del código desde Perú. El patrón State ahora tiene
 `Aprobar`, `Rechazar` y `Cancelar`. La migración `RefactorNombresSinCambioDeEsquema` no cambia el esquema (solo
-registra el renombrado del modelo). En el frontend se eliminó `AgendaDelCampus`, se dividieron los componentes
-grandes, se extrajeron hooks y constantes y se quitaron las tres supresiones de oxlint. Verificado con 51 xUnit,
+registra el renombrado del modelo). En el frontend se eliminó toda la cadena muerta del login anterior (`AgendaDelCampus`,
+`agendaDelCampus`, `useAgendaViva`, `useFotoDeLaVisita`, `usePestanaVisible` y sus estilos), se dividieron los
+componentes grandes, se extrajeron hooks y constantes y se quitaron las tres supresiones de oxlint. Verificado con 51 xUnit,
 119 Vitest, `dotnet build -warnaserror`, `pnpm build` y 81 de 81 de punta a punta.
