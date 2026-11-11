@@ -8,9 +8,9 @@ namespace ReservaUPLA.Infrastructure.Persistencia.Configuraciones;
 // UsuarioId, AmbienteId), más el código legible y las fechas de registro y de último cambio.
 // La base repite las reglas que no dependen de otras filas (RN-03 y RN-04) con restricciones CHECK; RN-01, que
 // compara filas, la garantiza la restricción de exclusión de la migración CrearReservas.
-internal sealed class Reserva_Configuracion : IEntityTypeConfiguration<Reserva>
+internal sealed class ReservaConfiguracion : IEntityTypeConfiguration<Reserva>
 {
-    public const string Restriccion_Sin_Cruce = "ex_reservas_aprobadas_sin_cruce";
+    public const string RestriccionSinCruce = "ex_reservas_aprobadas_sin_cruce";
 
     public void Configure(EntityTypeBuilder<Reserva> reserva)
     {
@@ -21,63 +21,64 @@ internal sealed class Reserva_Configuracion : IEntityTypeConfiguration<Reserva>
                 "hora_inicio_reserva >= TIME '07:00' AND hora_fin_reserva <= TIME '22:00'");
         });
 
-        reserva.HasKey(r => r.Id_Reserva).HasName("pk_reservas");
+        reserva.HasKey(r => r.IdReserva).HasName("pk_reservas");
 
-        reserva.Property(r => r.Id_Reserva).HasColumnName("id_reserva");
+        reserva.Property(r => r.IdReserva).HasColumnName("id_reserva");
 
-        reserva.Property(r => r.Codigo_Reserva)
+        reserva.Property(r => r.CodigoReserva)
             .HasColumnName("codigo_reserva")
-            .HasMaxLength(Reserva.Longitud_Maxima_Codigo)
+            .HasMaxLength(Reserva.LongitudMaximaCodigo)
             .IsRequired();
 
-        reserva.HasIndex(r => r.Codigo_Reserva).IsUnique().HasDatabaseName("ux_reservas_codigo_reserva");
+        reserva.HasIndex(r => r.CodigoReserva).IsUnique().HasDatabaseName("ux_reservas_codigo_reserva");
 
-        reserva.Property(r => r.Fecha_Reserva).HasColumnName("fecha_reserva").IsRequired();
-        reserva.Property(r => r.Hora_Inicio_Reserva).HasColumnName("hora_inicio_reserva").IsRequired();
-        reserva.Property(r => r.Hora_Fin_Reserva).HasColumnName("hora_fin_reserva").IsRequired();
+        reserva.Property(r => r.FechaReserva).HasColumnName("fecha_reserva").IsRequired();
+        reserva.Property(r => r.HoraInicioReserva).HasColumnName("hora_inicio_reserva").IsRequired();
+        reserva.Property(r => r.HoraFinReserva).HasColumnName("hora_fin_reserva").IsRequired();
 
-        reserva.Property(r => r.Motivo_Reserva)
+        reserva.Property(r => r.MotivoReserva)
             .HasColumnName("motivo_reserva")
             .HasColumnType("text")
             .IsRequired();
 
         // Los enums se guardan como texto: la fila se entiende al leerla, sin traducir números.
-        reserva.Property(r => r.Estado_Reserva)
+        reserva.Property(r => r.EstadoReserva)
             .HasColumnName("estado_reserva")
             .HasConversion<string>()
             .HasMaxLength(30)
             .IsRequired();
 
-        reserva.Property(r => r.Id_Usuario).HasColumnName("id_usuario").IsRequired();
-        reserva.Property(r => r.Id_Ambiente).HasColumnName("id_ambiente").IsRequired();
-        reserva.Property(r => r.Fecha_Registro_Reserva).HasColumnName("fecha_registro_reserva").IsRequired();
-        reserva.Property(r => r.Fecha_Actualizacion_Reserva).HasColumnName("fecha_actualizacion_reserva");
+        reserva.Property(r => r.IdUsuario).HasColumnName("id_usuario").IsRequired();
+        reserva.Property(r => r.IdAmbiente).HasColumnName("id_ambiente").IsRequired();
+        reserva.Property(r => r.FechaRegistroReserva).HasColumnName("fecha_registro_reserva").IsRequired();
+        reserva.Property(r => r.FechaActualizacionReserva).HasColumnName("fecha_actualizacion_reserva");
 
         // Toda reserva apunta a un solicitante y a un ambiente existentes; no se pueden borrar si tienen reservas.
         reserva.HasOne<Usuario>()
             .WithMany()
-            .HasForeignKey(r => r.Id_Usuario)
+            .HasForeignKey(r => r.IdUsuario)
             .HasConstraintName("fk_reservas_usuarios")
             .OnDelete(DeleteBehavior.Restrict);
 
         reserva.HasOne<Ambiente>()
             .WithMany()
-            .HasForeignKey(r => r.Id_Ambiente)
+            .HasForeignKey(r => r.IdAmbiente)
             .HasConstraintName("fk_reservas_ambientes")
             .OnDelete(DeleteBehavior.Restrict);
 
         // RF-06: la reserva es dueña de su historial (campo _historial). Al cambiar de estado, la entrada nueva se
         // inserta con la reserva aunque el historial no se haya leído.
-        reserva.HasMany(r => r.Historial_Reserva)
+        reserva.HasMany(r => r.HistorialReserva)
             .WithOne()
-            .HasForeignKey(h => h.Id_Reserva)
+            .HasForeignKey(h => h.IdReserva)
             .HasConstraintName("fk_historiales_reservas")
             .OnDelete(DeleteBehavior.Cascade);
-        reserva.Navigation(r => r.Historial_Reserva).HasField("_historial");
+        reserva.Navigation(r => r.HistorialReserva).HasField("_historial");
 
         // La disponibilidad se consulta por ambiente y fecha; el listado y el dashboard filtran por estado.
-        reserva.HasIndex(r => new { r.Id_Ambiente, r.Fecha_Reserva }).HasDatabaseName("ix_reservas_id_ambiente_fecha_reserva");
-        reserva.HasIndex(r => r.Estado_Reserva).HasDatabaseName("ix_reservas_estado_reserva");
-        reserva.HasIndex(r => r.Id_Usuario).HasDatabaseName("ix_reservas_id_usuario");
+        reserva.HasIndex(r => new { r.IdAmbiente, r.FechaReserva })
+            .HasDatabaseName("ix_reservas_id_ambiente_fecha_reserva");
+        reserva.HasIndex(r => r.EstadoReserva).HasDatabaseName("ix_reservas_estado_reserva");
+        reserva.HasIndex(r => r.IdUsuario).HasDatabaseName("ix_reservas_id_usuario");
     }
 }

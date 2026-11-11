@@ -7,10 +7,10 @@ namespace ReservaUPLA.Application.Datos;
 public sealed record DatosDeDisponibilidad(
     bool Disponible,
     string Mensaje,
-    IReadOnlyList<DatosDeHorarioOcupado> Reservas_Del_Dia);
+    IReadOnlyList<DatosDeHorarioOcupado> ReservasDelDia);
 
 public sealed record DatosDeHorarioOcupado(
-    string Codigo_Reserva,
-    TimeOnly Hora_Inicio_Reserva,
-    TimeOnly Hora_Fin_Reserva,
-    Estados_Reserva Estado_Reserva);
+    string CodigoReserva,
+    TimeOnly HoraInicioReserva,
+    TimeOnly HoraFinReserva,
+    EstadoReserva EstadoReserva);

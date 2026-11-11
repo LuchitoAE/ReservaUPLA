@@ -20,10 +20,10 @@ public sealed class CuentaControlador : ControllerBase
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public async Task<ActionResult<RespuestaApi<string>>> CambiarContrasena(
         CambiarContrasenaComando comando,
-        [FromServices] CambiarContrasenaCasoDeUso caso_de_uso,
+        [FromServices] CambiarContrasenaCasoDeUso casoDeUso,
         CancellationToken cancelacion)
     {
-        await caso_de_uso.EjecutarAsync(comando, User.IdUsuario(), cancelacion);
+        await casoDeUso.EjecutarAsync(comando, User.IdUsuario(), cancelacion);
 
         return RespuestaApi.Exito("", "Contraseña cambiada. La próxima vez ingrese con la nueva.");
     }

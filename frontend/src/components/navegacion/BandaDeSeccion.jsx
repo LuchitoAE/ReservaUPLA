@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useConsultaDeMedio } from '../../hooks/useConsultaDeMedio'
+import { DURACION_DE_BORRADO_MS } from '../../utils/tiempos'
 
 // Rejilla decorativa de la banda (diseño AD01): cuadros redondeados apenas más claros que el fondo azul, con uno
 // dorado que rompe la trama. Es adorno: no dice nada que el texto no diga, así que va oculta al lector de pantalla.
@@ -14,32 +16,27 @@ const TONOS = {
   dorado: 'bg-acento',
 }
 
+const MENOS_MOVIMIENTO = '(prefers-reduced-motion: reduce)'
+
 // El título se borra y se vuelve a escribir al cambiar de sección (70 ms + 120 ms). La banda y su fondo no se mueven:
 // solo el texto. Con «menos movimiento» el cambio es inmediato.
 function useTituloAnimado(titulo) {
   const [visible, setVisible] = useState(titulo)
-  const [saliendo, setSaliendo] = useState(false)
+  const menosMovimiento = useConsultaDeMedio(MENOS_MOVIMIENTO)
 
   useEffect(() => {
     if (titulo === visible) {
       return undefined
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      // eslint-disable-next-line react/set-state-in-effect
-      setVisible(titulo)
-      setSaliendo(false)
-      return undefined
-    }
-    // El estado solo dispara la animación de salida; no hay otra forma de retener el título anterior.
-    setSaliendo(true)
-    const temporizador = setTimeout(() => {
-      setVisible(titulo)
-      setSaliendo(false)
-    }, 70)
+    const temporizador = setTimeout(() => setVisible(titulo), DURACION_DE_BORRADO_MS)
     return () => clearTimeout(temporizador)
   }, [titulo, visible])
 
-  return { visible, saliendo }
+  // Con «menos movimiento» se muestra el título nuevo en el acto; si no, mientras no coincidan, el viejo se borra.
+  return {
+    visible: menosMovimiento ? titulo : visible,
+    saliendo: !menosMovimiento && visible !== titulo,
+  }
 }
 
 // Banda azul de todas las páginas del sistema (diseños AD01, S01 y R01, extendida al resto por decisión del alumno):

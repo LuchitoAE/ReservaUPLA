@@ -14,6 +14,17 @@ const minutos = (hora) => {
   return h * 60 + m
 }
 
+// Las horas que marcan la cuadrícula, de la apertura al cierre («07:00» … «21:00»).
+export const HORAS_DE_LA_AGENDA = Array.from(
+  { length: (minutos(CIERRE) - minutos(APERTURA)) / 60 },
+  (_, indice) => `${String(Number(APERTURA.slice(0, 2)) + indice).padStart(2, '0')}:00`,
+)
+
+// «lunes 9», «lun 9»: el nombre del día en la cuadrícula y en la lista del teléfono.
+export function nombreDelDia(fecha, formato) {
+  return new Date(`${fecha}T12:00:00`).toLocaleDateString('es-PE', formato).replace('.', '')
+}
+
 export function lunesDe(fecha) {
   const desdeElLunes = (aFecha(fecha).getUTCDay() + 6) % 7
   return sumarDias(fecha, -desdeElLunes)

@@ -10,13 +10,13 @@ namespace ReservaUPLA.WebApi.Seguridad;
 // Guarda quién es el usuario y su rol; el dominio vuelve a leer el rol de la base antes de aprobar o rechazar.
 public static class Sesion
 {
-    public const string Administrador = nameof(Roles_Usuario.Administrador);
+    public const string Administrador = nameof(RolUsuario.Administrador);
 
     public static ClaimsPrincipal CrearPrincipal(DatosDeUsuario usuario) => new(new ClaimsIdentity(
         [
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id_Usuario.ToString()),
-            new Claim(ClaimTypes.Name, usuario.Nombre_Completo_Usuario),
-            new Claim(ClaimTypes.Role, usuario.Rol_Usuario.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, usuario.IdUsuario.ToString()),
+            new Claim(ClaimTypes.Name, usuario.NombreCompletoUsuario),
+            new Claim(ClaimTypes.Role, usuario.RolUsuario.ToString()),
         ],
         CookieAuthenticationDefaults.AuthenticationScheme));
 

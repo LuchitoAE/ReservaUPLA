@@ -16,33 +16,36 @@ internal sealed class ConsultaDeUsuarios : IConsultaDeUsuarios
         _contexto = contexto;
     }
 
-    public async Task<DatosDeUsuario?> ObtenerActivoAsync(Guid id_usuario, CancellationToken cancelacion = default)
+    public async Task<DatosDeUsuario?> ObtenerActivoAsync(
+        Guid idUsuario, CancellationToken cancelacion = default)
     {
         return await _contexto.Usuarios
             .AsNoTracking()
-            .Where(u => u.Id_Usuario == id_usuario && u.Activo_Usuario)
-            .Select(u => new DatosDeUsuario(u.Id_Usuario, u.Codigo_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
+            .Where(u => u.IdUsuario == idUsuario && u.ActivoUsuario)
+            .Select(u => new DatosDeUsuario(
+                u.IdUsuario, u.CodigoUsuario, u.NombreCompletoUsuario, u.CorreoUsuario, u.RolUsuario, u.ActivoUsuario))
             .FirstOrDefaultAsync(cancelacion);
     }
 
     public async Task<IReadOnlyList<DatosDeUsuario>> ListarAsync(
-        Roles_Usuario? rol_usuario, bool? activo_usuario, CancellationToken cancelacion = default)
+        RolUsuario? rolUsuario, bool? activoUsuario, CancellationToken cancelacion = default)
     {
         var usuarios = _contexto.Usuarios.AsNoTracking();
 
-        if (rol_usuario is not null)
+        if (rolUsuario is not null)
         {
-            usuarios = usuarios.Where(u => u.Rol_Usuario == rol_usuario);
+            usuarios = usuarios.Where(u => u.RolUsuario == rolUsuario);
         }
 
-        if (activo_usuario is not null)
+        if (activoUsuario is not null)
         {
-            usuarios = usuarios.Where(u => u.Activo_Usuario == activo_usuario);
+            usuarios = usuarios.Where(u => u.ActivoUsuario == activoUsuario);
         }
 
         return await usuarios
-            .OrderBy(u => u.Nombre_Completo_Usuario)
-            .Select(u => new DatosDeUsuario(u.Id_Usuario, u.Codigo_Usuario, u.Nombre_Completo_Usuario, u.Correo_Usuario, u.Rol_Usuario, u.Activo_Usuario))
+            .OrderBy(u => u.NombreCompletoUsuario)
+            .Select(u => new DatosDeUsuario(
+                u.IdUsuario, u.CodigoUsuario, u.NombreCompletoUsuario, u.CorreoUsuario, u.RolUsuario, u.ActivoUsuario))
             .ToListAsync(cancelacion);
     }
 }

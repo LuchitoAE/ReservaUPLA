@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
 using ReservaUPLA.Domain.Enumeraciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
@@ -26,14 +26,14 @@ public sealed class UsuariosControlador : ControllerBase
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public async Task<ActionResult<RespuestaApi<DatosDeUsuario>>> Registrar(
         RegistrarUsuarioComando comando,
-        [FromServices] RegistrarUsuarioCasoDeUso caso_de_uso,
+        [FromServices] RegistrarUsuarioCasoDeUso casoDeUso,
         CancellationToken cancelacion)
     {
-        var usuario = await caso_de_uso.EjecutarAsync(comando, cancelacion);
+        var usuario = await casoDeUso.EjecutarAsync(comando, cancelacion);
 
         return StatusCode(
             StatusCodes.Status201Created,
-            RespuestaApi.Exito(usuario, $"Usuario {usuario.Nombre_Completo_Usuario} registrado correctamente."));
+            RespuestaApi.Exito(usuario, $"Usuario {usuario.NombreCompletoUsuario} registrado correctamente."));
     }
 
     // Lista de usuarios, para la página de usuarios y para elegir al usuario actual o a un responsable.
@@ -43,10 +43,10 @@ public sealed class UsuariosControlador : ControllerBase
     public async Task<ActionResult<RespuestaApi<IReadOnlyList<DatosDeUsuario>>>> Listar(
         [FromServices] IConsultaDeUsuarios consulta,
         CancellationToken cancelacion,
-        [FromQuery] Roles_Usuario? rol_usuario = null,
-        [FromQuery] bool? activo_usuario = null)
+        [FromQuery(Name = "rol_usuario")] RolUsuario? rolUsuario = null,
+        [FromQuery(Name = "activo_usuario")] bool? activoUsuario = null)
     {
-        var usuarios = await consulta.ListarAsync(rol_usuario, activo_usuario, cancelacion);
+        var usuarios = await consulta.ListarAsync(rolUsuario, activoUsuario, cancelacion);
 
         return RespuestaApi.Exito(usuarios, $"{usuarios.Count} usuarios.");
     }

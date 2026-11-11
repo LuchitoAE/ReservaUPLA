@@ -18,11 +18,11 @@ public sealed class PanelControlador : ControllerBase
     [HttpGet("indicadores")]
     [ProducesResponseType<RespuestaApi<DatosDeIndicadores>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<RespuestaApi<DatosDeIndicadores>>> ObtenerIndicadores(
-        [FromServices] ObtenerIndicadoresDelPanelCasoDeUso caso_de_uso,
+        [FromServices] ObtenerIndicadoresDelPanelCasoDeUso casoDeUso,
         CancellationToken cancelacion)
     {
-        var indicadores = await caso_de_uso.EjecutarAsync(User.IdUsuario(), cancelacion);
+        var indicadores = await casoDeUso.EjecutarAsync(User.IdUsuario(), cancelacion);
 
-        return RespuestaApi.Exito(indicadores, $"Indicadores de {indicadores.Total_Reservas} reservas.");
+        return RespuestaApi.Exito(indicadores, $"Indicadores de {indicadores.TotalReservas} reservas.");
     }
 }

@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ESTADOS_RESERVA } from '../../utils/formato'
+import { ESPERA_DE_ESCRITURA_MS } from '../../utils/tiempos'
 import { Button } from '../ui/Button'
 import { ChipsDeFiltro } from '../ui/ChipsDeFiltro'
 import { DateInput } from '../ui/DateInput'
 import { Icono } from '../ui/Icono'
 import { SelectInput } from '../ui/SelectInput'
 import { TextInput } from '../ui/TextInput'
+import { ESTADOS_EN_PLURAL } from './modeloDeFiltros'
 
-const ESPERA_MS = 350
-
-const ESTADOS_EN_PLURAL = {
-  Pendiente: 'Pendientes',
-  Aprobada: 'Aprobadas',
-  Rechazada: 'Rechazadas',
-  Cancelada: 'Canceladas',
-}
+const BASE_DEL_CHIP =
+  'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 font-semibold transition focus-visible:outline-3 focus-visible:outline-foco'
+const CHIP_ACTIVO = 'border-marca-700 bg-seleccion text-enlace hover:bg-superficie-tenue'
+const CHIP_INACTIVO = 'border-borde-control bg-superficie text-texto hover:bg-superficie-tenue'
 
 // Filtros del listado (RF-05, diseños S09 y AD04): chips por estado con su conteo, ambiente, rango de fechas y búsqueda
 // por código o solicitante. Cada cambio se aplica al momento; la búsqueda espera a que la persona deje de escribir.
@@ -27,22 +25,23 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
   // (un filtro o el alcance cambiado a «ver todas»).
   const hayFiltros = Object.values(filtros).some(Boolean) || alcance?.activo === false
   const [texto, setTexto] = useState(filtros.texto)
-  const [textoAplicado, setTextoAplicado] = useState(filtros.texto)
+  const textoExternoAnterior = useRef(filtros.texto)
 
   // Si el filtro cambia desde afuera (Limpiar filtros, «atrás»), el buscador lo muestra. Si cambió porque se aplicó lo
   // que la persona escribe, se deja tal cual (con su espacio final, si sigue escribiendo).
-  if (filtros.texto !== textoAplicado) {
-    setTextoAplicado(filtros.texto)
-    if (filtros.texto !== texto.trim()) {
-      setTexto(filtros.texto)
+  useEffect(() => {
+    if (filtros.texto === textoExternoAnterior.current) {
+      return
     }
-  }
+    textoExternoAnterior.current = filtros.texto
+    setTexto((actual) => (filtros.texto === actual.trim() ? actual : filtros.texto))
+  }, [filtros.texto])
 
   useEffect(() => {
     if (texto.trim() === filtros.texto) {
       return undefined
     }
-    const temporizador = setTimeout(() => alCambiar('texto', texto.trim()), ESPERA_MS)
+    const temporizador = setTimeout(() => alCambiar('texto', texto.trim()), ESPERA_DE_ESCRITURA_MS)
     return () => clearTimeout(temporizador)
   }, [texto, filtros.texto, alCambiar])
 
@@ -69,11 +68,7 @@ export function FiltrosDeReservas({ filtros, ambientes, conteos, alcance, alCamb
             type="button"
             aria-pressed={alcance.activo}
             onClick={() => alcance.alCambiar(!alcance.activo)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 font-semibold transition focus-visible:outline-3 focus-visible:outline-foco ${
-              alcance.activo
-                ? 'border-marca-700 bg-seleccion text-enlace hover:bg-superficie-tenue'
-                : 'border-borde-control bg-superficie text-texto hover:bg-superficie-tenue'
-            }`}
+            className={`${BASE_DEL_CHIP} ${alcance.activo ? CHIP_ACTIVO : CHIP_INACTIVO}`}
           >
             {alcance.texto}
             {alcance.activo && <Icono nombre="cerrar" className="size-4" />}

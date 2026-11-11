@@ -12,20 +12,20 @@ internal sealed class RepositorioDeUsuariosEnMemoria : IRepositorioDeUsuarios
     // Cuántas veces se guardó un cambio: un intento rechazado no debe guardar nada.
     public int Actualizaciones { get; private set; }
 
-    public Task<Usuario?> ObtenerPorIdAsync(Guid id_usuario, CancellationToken cancelacion = default) =>
-        Task.FromResult(Usuarios.FirstOrDefault(u => u.Id_Usuario == id_usuario));
+    public Task<Usuario?> ObtenerPorIdAsync(Guid idUsuario, CancellationToken cancelacion = default) =>
+        Task.FromResult(Usuarios.FirstOrDefault(u => u.IdUsuario == idUsuario));
 
-    public Task<Usuario?> ObtenerPorCodigoAsync(string codigo_usuario, CancellationToken cancelacion = default) =>
-        Task.FromResult(Usuarios.FirstOrDefault(u => u.Codigo_Usuario == codigo_usuario));
+    public Task<Usuario?> ObtenerPorCodigoAsync(string codigoUsuario, CancellationToken cancelacion = default) =>
+        Task.FromResult(Usuarios.FirstOrDefault(u => u.CodigoUsuario == codigoUsuario));
 
-    public Task<bool> ExisteCodigoAsync(string codigo_usuario, CancellationToken cancelacion = default) =>
-        Task.FromResult(Usuarios.Any(u => u.Codigo_Usuario == codigo_usuario));
+    public Task<bool> ExisteCodigoAsync(string codigoUsuario, CancellationToken cancelacion = default) =>
+        Task.FromResult(Usuarios.Any(u => u.CodigoUsuario == codigoUsuario));
 
-    public Task<bool> ExisteCorreoAsync(string correo_usuario, CancellationToken cancelacion = default) =>
-        Task.FromResult(Usuarios.Any(u => u.Correo_Usuario == correo_usuario));
+    public Task<bool> ExisteCorreoAsync(string correoUsuario, CancellationToken cancelacion = default) =>
+        Task.FromResult(Usuarios.Any(u => u.CorreoUsuario == correoUsuario));
 
     public Task<bool> ExisteAdministradorActivoAsync(CancellationToken cancelacion = default) =>
-        Task.FromResult(Usuarios.Any(u => u.Activo_Usuario && u.Rol_Usuario == Roles_Usuario.Administrador));
+        Task.FromResult(Usuarios.Any(u => u.ActivoUsuario && u.RolUsuario == RolUsuario.Administrador));
 
     public Task AgregarAsync(Usuario usuario, CancellationToken cancelacion = default)
     {

@@ -27,50 +27,50 @@ namespace ReservaUPLA.Infrastructure.Migraciones
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Ambiente", b =>
                 {
-                    b.Property<Guid>("Id_Ambiente")
+                    b.Property<Guid>("IdAmbiente")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id_ambiente");
 
-                    b.Property<int>("Capacidad_Ambiente")
+                    b.Property<int>("CapacidadAmbiente")
                         .HasColumnType("integer")
                         .HasColumnName("capacidad_ambiente");
 
-                    b.Property<string>("Estado_Ambiente")
+                    b.Property<string>("EstadoAmbiente")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("estado_ambiente");
 
-                    b.Property<Guid?>("Id_Responsable_Ambiente")
+                    b.Property<Guid?>("IdResponsableAmbiente")
                         .HasColumnType("uuid")
                         .HasColumnName("id_responsable_ambiente");
 
-                    b.Property<string>("Nombre_Ambiente")
+                    b.Property<string>("NombreAmbiente")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("nombre_ambiente");
 
-                    b.Property<string>("Tipo_Ambiente")
+                    b.Property<string>("TipoAmbiente")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("tipo_ambiente");
 
-                    b.Property<string>("Ubicacion_Ambiente")
+                    b.Property<string>("UbicacionAmbiente")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("ubicacion_ambiente");
 
-                    b.HasKey("Id_Ambiente")
+                    b.HasKey("IdAmbiente")
                         .HasName("pk_ambientes");
 
-                    b.HasIndex("Id_Responsable_Ambiente")
+                    b.HasIndex("IdResponsableAmbiente")
                         .HasDatabaseName("ix_ambientes_id_responsable_ambiente");
 
-                    b.HasIndex("Nombre_Ambiente")
+                    b.HasIndex("NombreAmbiente")
                         .IsUnique()
                         .HasDatabaseName("ux_ambientes_nombre_ambiente");
 
@@ -82,35 +82,35 @@ namespace ReservaUPLA.Infrastructure.Migraciones
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Historial", b =>
                 {
-                    b.Property<Guid>("Id_Historial")
+                    b.Property<Guid>("IdHistorial")
                         .HasColumnType("uuid")
                         .HasColumnName("id_historial");
 
-                    b.Property<string>("Estado_Historial")
+                    b.Property<string>("EstadoHistorial")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("estado_historial");
 
-                    b.Property<DateTime>("Fecha_Historial")
+                    b.Property<DateTime>("FechaHistorial")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_historial");
 
-                    b.Property<Guid>("Id_Reserva")
+                    b.Property<Guid>("IdReserva")
                         .HasColumnType("uuid")
                         .HasColumnName("id_reserva");
 
-                    b.Property<Guid?>("Id_Usuario")
+                    b.Property<Guid?>("IdUsuario")
                         .HasColumnType("uuid")
                         .HasColumnName("id_usuario");
 
-                    b.HasKey("Id_Historial")
+                    b.HasKey("IdHistorial")
                         .HasName("pk_historiales");
 
-                    b.HasIndex("Id_Usuario")
+                    b.HasIndex("IdUsuario")
                         .HasDatabaseName("ix_historiales_id_usuario");
 
-                    b.HasIndex("Id_Reserva", "Fecha_Historial")
+                    b.HasIndex("IdReserva", "FechaHistorial")
                         .HasDatabaseName("ix_historiales_id_reserva_fecha_historial");
 
                     b.ToTable("historiales", (string)null);
@@ -118,70 +118,70 @@ namespace ReservaUPLA.Infrastructure.Migraciones
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
-                    b.Property<Guid>("Id_Reserva")
+                    b.Property<Guid>("IdReserva")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id_reserva");
 
-                    b.Property<string>("Codigo_Reserva")
+                    b.Property<string>("CodigoReserva")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("codigo_reserva");
 
-                    b.Property<string>("Estado_Reserva")
+                    b.Property<string>("EstadoReserva")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("estado_reserva");
 
-                    b.Property<DateTime?>("Fecha_Actualizacion_Reserva")
+                    b.Property<DateTime?>("FechaActualizacionReserva")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_actualizacion_reserva");
 
-                    b.Property<DateTime>("Fecha_Registro_Reserva")
+                    b.Property<DateTime>("FechaRegistroReserva")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("fecha_registro_reserva");
 
-                    b.Property<DateOnly>("Fecha_Reserva")
+                    b.Property<DateOnly>("FechaReserva")
                         .HasColumnType("date")
                         .HasColumnName("fecha_reserva");
 
-                    b.Property<TimeOnly>("Hora_Fin_Reserva")
+                    b.Property<TimeOnly>("HoraFinReserva")
                         .HasColumnType("time without time zone")
                         .HasColumnName("hora_fin_reserva");
 
-                    b.Property<TimeOnly>("Hora_Inicio_Reserva")
+                    b.Property<TimeOnly>("HoraInicioReserva")
                         .HasColumnType("time without time zone")
                         .HasColumnName("hora_inicio_reserva");
 
-                    b.Property<Guid>("Id_Ambiente")
+                    b.Property<Guid>("IdAmbiente")
                         .HasColumnType("uuid")
                         .HasColumnName("id_ambiente");
 
-                    b.Property<Guid>("Id_Usuario")
+                    b.Property<Guid>("IdUsuario")
                         .HasColumnType("uuid")
                         .HasColumnName("id_usuario");
 
-                    b.Property<string>("Motivo_Reserva")
+                    b.Property<string>("MotivoReserva")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("motivo_reserva");
 
-                    b.HasKey("Id_Reserva")
+                    b.HasKey("IdReserva")
                         .HasName("pk_reservas");
 
-                    b.HasIndex("Codigo_Reserva")
+                    b.HasIndex("CodigoReserva")
                         .IsUnique()
                         .HasDatabaseName("ux_reservas_codigo_reserva");
 
-                    b.HasIndex("Estado_Reserva")
+                    b.HasIndex("EstadoReserva")
                         .HasDatabaseName("ix_reservas_estado_reserva");
 
-                    b.HasIndex("Id_Usuario")
+                    b.HasIndex("IdUsuario")
                         .HasDatabaseName("ix_reservas_id_usuario");
 
-                    b.HasIndex("Id_Ambiente", "Fecha_Reserva")
+                    b.HasIndex("IdAmbiente", "FechaReserva")
                         .HasDatabaseName("ix_reservas_id_ambiente_fecha_reserva");
 
                     b.ToTable("reservas", null, t =>
@@ -194,57 +194,57 @@ namespace ReservaUPLA.Infrastructure.Migraciones
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Usuario", b =>
                 {
-                    b.Property<Guid>("Id_Usuario")
+                    b.Property<Guid>("IdUsuario")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id_usuario");
 
-                    b.Property<bool>("Activo_Usuario")
+                    b.Property<bool>("ActivoUsuario")
                         .HasColumnType("boolean")
                         .HasColumnName("activo_usuario");
 
-                    b.Property<string>("Codigo_Usuario")
+                    b.Property<string>("CodigoUsuario")
                         .IsRequired()
                         .HasMaxLength(7)
                         .HasColumnType("character varying(7)")
                         .HasColumnName("codigo_usuario");
 
-                    b.Property<string>("Correo_Usuario")
+                    b.Property<string>("CorreoUsuario")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("correo_usuario");
 
-                    b.Property<byte[]>("Hash_Contrasena_Usuario")
+                    b.Property<byte[]>("HashContrasenaUsuario")
                         .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("hash_contrasena_usuario");
 
-                    b.Property<string>("Nombre_Completo_Usuario")
+                    b.Property<string>("NombreCompletoUsuario")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("nombre_completo_usuario");
 
-                    b.Property<string>("Rol_Usuario")
+                    b.Property<string>("RolUsuario")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("rol_usuario");
 
-                    b.Property<byte[]>("Sal_Contrasena_Usuario")
+                    b.Property<byte[]>("SalContrasenaUsuario")
                         .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("sal_contrasena_usuario");
 
-                    b.HasKey("Id_Usuario")
+                    b.HasKey("IdUsuario")
                         .HasName("pk_usuarios");
 
-                    b.HasIndex("Codigo_Usuario")
+                    b.HasIndex("CodigoUsuario")
                         .IsUnique()
                         .HasDatabaseName("ux_usuarios_codigo_usuario");
 
-                    b.HasIndex("Correo_Usuario")
+                    b.HasIndex("CorreoUsuario")
                         .IsUnique()
                         .HasDatabaseName("ux_usuarios_correo_usuario");
 
@@ -255,7 +255,7 @@ namespace ReservaUPLA.Infrastructure.Migraciones
                 {
                     b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("Id_Responsable_Ambiente")
+                        .HasForeignKey("IdResponsableAmbiente")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_ambientes_usuarios_responsable");
                 });
@@ -263,15 +263,15 @@ namespace ReservaUPLA.Infrastructure.Migraciones
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Historial", b =>
                 {
                     b.HasOne("ReservaUPLA.Domain.Entidades.Reserva", null)
-                        .WithMany("Historial_Reserva")
-                        .HasForeignKey("Id_Reserva")
+                        .WithMany("HistorialReserva")
+                        .HasForeignKey("IdReserva")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_historiales_reservas");
 
                     b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("Id_Usuario")
+                        .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_historiales_usuarios");
                 });
@@ -280,14 +280,14 @@ namespace ReservaUPLA.Infrastructure.Migraciones
                 {
                     b.HasOne("ReservaUPLA.Domain.Entidades.Ambiente", null)
                         .WithMany()
-                        .HasForeignKey("Id_Ambiente")
+                        .HasForeignKey("IdAmbiente")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reservas_ambientes");
 
                     b.HasOne("ReservaUPLA.Domain.Entidades.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("Id_Usuario")
+                        .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_reservas_usuarios");
@@ -295,7 +295,7 @@ namespace ReservaUPLA.Infrastructure.Migraciones
 
             modelBuilder.Entity("ReservaUPLA.Domain.Entidades.Reserva", b =>
                 {
-                    b.Navigation("Historial_Reserva");
+                    b.Navigation("HistorialReserva");
                 });
 #pragma warning restore 612, 618
         }

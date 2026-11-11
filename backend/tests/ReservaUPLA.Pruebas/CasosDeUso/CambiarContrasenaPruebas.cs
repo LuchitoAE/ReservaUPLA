@@ -12,26 +12,28 @@ namespace ReservaUPLA.Pruebas.CasosDeUso;
 public sealed class CambiarContrasenaPruebas
 {
     private readonly RepositorioDeUsuariosEnMemoria _repositorio = new();
-    private readonly ProtectorDeContrasenasFalso _protector_de_contrasenas = new();
+    private readonly ProtectorDeContrasenasFalso _protectorDeContrasenas = new();
 
     private async Task<Guid> RegistrarLuisAsync()
     {
-        var luis = await new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas).EjecutarAsync(new RegistrarUsuarioComando(
-            "P00914K", "Luis Aquino Espinoza", "luis.aquino@upla.edu.pe", Roles_Usuario.Solicitante, "Reserva2026"));
-        return luis.Id_Usuario;
+        var luis = await new RegistrarUsuarioCasoDeUso(_repositorio, _protectorDeContrasenas)
+            .EjecutarAsync(new RegistrarUsuarioComando(
+                "P00914K", "Luis Aquino Espinoza", "luis.aquino@upla.edu.pe", RolUsuario.Solicitante, "Reserva2026"));
+        return luis.IdUsuario;
     }
 
-    private CambiarContrasenaCasoDeUso CasoDeUso() => new(_repositorio, _protector_de_contrasenas);
+    private CambiarContrasenaCasoDeUso CasoDeUso() => new(_repositorio, _protectorDeContrasenas);
 
     private Task Ingresar(string contrasena) =>
-        new IniciarSesionCasoDeUso(_repositorio, _protector_de_contrasenas).EjecutarAsync(new IniciarSesionComando("P00914K", contrasena));
+        new IniciarSesionCasoDeUso(_repositorio, _protectorDeContrasenas)
+            .EjecutarAsync(new IniciarSesionComando("P00914K", contrasena));
 
     [Fact]
     public async Task Con_la_actual_correcta_cambia_y_se_ingresa_con_la_nueva()
     {
-        var id_luis = await RegistrarLuisAsync();
+        var idLuis = await RegistrarLuisAsync();
 
-        await CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "Nueva2027"), id_luis);
+        await CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "Nueva2027"), idLuis);
 
         await Ingresar("Nueva2027");
         await Assert.ThrowsAsync<SesionNoValidaExcepcion>(() => Ingresar("Reserva2026"));
@@ -41,12 +43,12 @@ public sealed class CambiarContrasenaPruebas
     [Fact]
     public async Task Si_la_actual_no_coincide_no_cambia_nada()
     {
-        var id_luis = await RegistrarLuisAsync();
+        var idLuis = await RegistrarLuisAsync();
 
         var error = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("OtraClave1", "Nueva2027"), id_luis));
+            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("OtraClave1", "Nueva2027"), idLuis));
 
-        Assert.Equal(["La contraseña actual no es correcta."], error.Errores["Contrasena_Actual"]);
+        Assert.Equal(["La contraseña actual no es correcta."], error.Errores["ContrasenaActual"]);
         await Ingresar("Reserva2026");
         Assert.Equal(0, _repositorio.Actualizaciones);
     }
@@ -54,27 +56,27 @@ public sealed class CambiarContrasenaPruebas
     [Fact]
     public async Task La_nueva_cumple_RN13_y_no_repite_la_actual()
     {
-        var id_luis = await RegistrarLuisAsync();
+        var idLuis = await RegistrarLuisAsync();
 
         var debil = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "corta"), id_luis));
+            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "corta"), idLuis));
         var repetida = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "Reserva2026"), id_luis));
+            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("Reserva2026", "Reserva2026"), idLuis));
 
-        Assert.Contains("Contrasena_Nueva", debil.Errores.Keys);
-        Assert.Equal(["Debe ser distinta de la actual."], repetida.Errores["Contrasena_Nueva"]);
+        Assert.Contains("ContrasenaNueva", debil.Errores.Keys);
+        Assert.Equal(["Debe ser distinta de la actual."], repetida.Errores["ContrasenaNueva"]);
     }
 
     [Fact]
     public async Task Junta_los_errores_de_los_dos_campos()
     {
-        var id_luis = await RegistrarLuisAsync();
+        var idLuis = await RegistrarLuisAsync();
 
         var error = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
-            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("", ""), id_luis));
+            CasoDeUso().EjecutarAsync(new CambiarContrasenaComando("", ""), idLuis));
 
-        Assert.Equal(["Escriba su contraseña actual."], error.Errores["Contrasena_Actual"]);
-        Assert.Contains("Contrasena_Nueva", error.Errores.Keys);
+        Assert.Equal(["Escriba su contraseña actual."], error.Errores["ContrasenaActual"]);
+        Assert.Contains("ContrasenaNueva", error.Errores.Keys);
     }
 
     [Fact]

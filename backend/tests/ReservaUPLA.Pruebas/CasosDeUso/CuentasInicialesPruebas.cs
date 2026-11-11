@@ -9,16 +9,16 @@ namespace ReservaUPLA.Pruebas.CasosDeUso;
 public sealed class CuentasInicialesPruebas
 {
     private readonly RepositorioDeUsuariosEnMemoria _repositorio = new();
-    private readonly ProtectorDeContrasenasFalso _protector_de_contrasenas = new();
+    private readonly ProtectorDeContrasenasFalso _protectorDeContrasenas = new();
 
     private static readonly CuentaInicial Admin =
-        new("ADMIN01", "Administrador UPLA", "admin@upla.edu.pe", Roles_Usuario.Administrador, "Admin2026");
+        new("ADMIN01", "Administrador UPLA", "admin@upla.edu.pe", RolUsuario.Administrador, "Admin2026");
 
     private CrearPrimerAdministradorCasoDeUso PrimerAdministrador() =>
-        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas));
+        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protectorDeContrasenas));
 
     private CrearCuentasDePruebaCasoDeUso CuentasDePrueba() =>
-        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas));
+        new(_repositorio, new RegistrarUsuarioCasoDeUso(_repositorio, _protectorDeContrasenas));
 
     [Fact]
     public async Task Crea_el_primer_administrador_si_no_hay_ninguno()
@@ -27,8 +27,8 @@ public sealed class CuentasInicialesPruebas
 
         Assert.Equal(ResultadoDeCuentaInicial.Creada, resultado);
         var admin = Assert.Single(_repositorio.Usuarios);
-        Assert.Equal(Roles_Usuario.Administrador, admin.Rol_Usuario);
-        Assert.Equal("ADMIN01", admin.Codigo_Usuario);
+        Assert.Equal(RolUsuario.Administrador, admin.RolUsuario);
+        Assert.Equal("ADMIN01", admin.CodigoUsuario);
     }
 
     [Fact]
@@ -36,7 +36,8 @@ public sealed class CuentasInicialesPruebas
     {
         await PrimerAdministrador().EjecutarAsync(Admin);
 
-        var resultado = await PrimerAdministrador().EjecutarAsync(Admin with { Codigo_Usuario = "ADMIN02", Correo_Usuario = "otro@upla.edu.pe" });
+        var resultado = await PrimerAdministrador().EjecutarAsync(
+            Admin with { CodigoUsuario = "ADMIN02", CorreoUsuario = "otro@upla.edu.pe" });
 
         Assert.Equal(ResultadoDeCuentaInicial.YaExistia, resultado);
         Assert.Single(_repositorio.Usuarios);
@@ -45,7 +46,7 @@ public sealed class CuentasInicialesPruebas
     [Fact]
     public async Task Avisa_si_faltan_los_datos_configurados()
     {
-        var resultado = await PrimerAdministrador().EjecutarAsync(Admin with { Contrasena_Usuario = "" });
+        var resultado = await PrimerAdministrador().EjecutarAsync(Admin with { ContrasenaUsuario = "" });
 
         Assert.Equal(ResultadoDeCuentaInicial.FaltanDatos, resultado);
         Assert.Empty(_repositorio.Usuarios);
@@ -54,9 +55,9 @@ public sealed class CuentasInicialesPruebas
     [Fact]
     public async Task El_primer_administrador_siempre_es_administrador()
     {
-        await PrimerAdministrador().EjecutarAsync(Admin with { Rol_Usuario = Roles_Usuario.Solicitante });
+        await PrimerAdministrador().EjecutarAsync(Admin with { RolUsuario = RolUsuario.Solicitante });
 
-        Assert.Equal(Roles_Usuario.Administrador, Assert.Single(_repositorio.Usuarios).Rol_Usuario);
+        Assert.Equal(RolUsuario.Administrador, Assert.Single(_repositorio.Usuarios).RolUsuario);
     }
 
     [Fact]
@@ -66,13 +67,14 @@ public sealed class CuentasInicialesPruebas
         CuentaInicial[] cuentas =
         [
             Admin,
-            new("SOLIC01", "Solicitante de prueba", "solicitante@upla.edu.pe", Roles_Usuario.Solicitante, "Solic2026"),
-            new("RESPO01", "Responsable de prueba", "responsable@upla.edu.pe", Roles_Usuario.ResponsableDeAmbiente, "Respo2026"),
+            new("SOLIC01", "Solicitante de prueba", "solicitante@upla.edu.pe", RolUsuario.Solicitante, "Solic2026"),
+            new("RESPO01", "Responsable de prueba", "responsable@upla.edu.pe", RolUsuario.ResponsableDeAmbiente, "Respo2026"),
         ];
 
         var resultados = await CuentasDePrueba().EjecutarAsync(cuentas);
 
-        Assert.Equal([ResultadoDeCuentaInicial.YaExistia, ResultadoDeCuentaInicial.Creada, ResultadoDeCuentaInicial.Creada],
+        Assert.Equal(
+            [ResultadoDeCuentaInicial.YaExistia, ResultadoDeCuentaInicial.Creada, ResultadoDeCuentaInicial.Creada],
             resultados.Select(r => r.Resultado));
         Assert.Equal(3, _repositorio.Usuarios.Count);
     }

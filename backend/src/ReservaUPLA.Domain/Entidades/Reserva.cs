@@ -11,14 +11,14 @@ namespace ReservaUPLA.Domain.Entidades;
 // Solo se crea con Solicitar y solo cambia de estado con CambiarEstado.
 public sealed class Reserva
 {
-    public static readonly TimeOnly Hora_Apertura = new(7, 0);
-    public static readonly TimeOnly Hora_Cierre = new(22, 0);
-    public const int Longitud_Maxima_Codigo = 20;
-    public const int Longitud_Minima_Motivo = 10;
-    public const int Longitud_Maxima_Motivo = 500;
+    public static readonly TimeOnly HoraApertura = new(7, 0);
+    public static readonly TimeOnly HoraCierre = new(22, 0);
+    public const int LongitudMaximaCodigo = 20;
+    public const int LongitudMinimaMotivo = 10;
+    public const int LongitudMaximaMotivo = 500;
 
-    private static readonly ReglaDeTexto Regla_Motivo = new(
-        "El motivo", Longitud_Minima_Motivo, Longitud_Maxima_Motivo, "Explique para qué necesita el ambiente.");
+    private static readonly ReglaDeTexto ReglaMotivo = new(
+        "El motivo", LongitudMinimaMotivo, LongitudMaximaMotivo, "Explique para qué necesita el ambiente.");
 
     // RF-06: cada estado por el que pasó, con la fecha y quién hizo el cambio. Solo la reserva lo escribe.
     private readonly List<Historial> _historial = [];
@@ -27,185 +27,194 @@ public sealed class Reserva
     {
     }
 
-    public Guid Id_Reserva { get; private set; }
+    public Guid IdReserva { get; private set; }
 
-    public string Codigo_Reserva { get; private set; } = string.Empty;
+    public string CodigoReserva { get; private set; } = string.Empty;
 
-    public DateOnly Fecha_Reserva { get; private set; }
+    public DateOnly FechaReserva { get; private set; }
 
-    public TimeOnly Hora_Inicio_Reserva { get; private set; }
+    public TimeOnly HoraInicioReserva { get; private set; }
 
-    public TimeOnly Hora_Fin_Reserva { get; private set; }
+    public TimeOnly HoraFinReserva { get; private set; }
 
-    public string Motivo_Reserva { get; private set; } = string.Empty;
+    public string MotivoReserva { get; private set; } = string.Empty;
 
-    public Estados_Reserva Estado_Reserva { get; private set; }
+    public EstadoReserva EstadoReserva { get; private set; }
 
-    public Guid Id_Usuario { get; private set; }
+    public Guid IdUsuario { get; private set; }
 
-    public Guid Id_Ambiente { get; private set; }
+    public Guid IdAmbiente { get; private set; }
 
-    public DateTime Fecha_Registro_Reserva { get; private set; }
+    public DateTime FechaRegistroReserva { get; private set; }
 
-    public DateTime? Fecha_Actualizacion_Reserva { get; private set; }
+    public DateTime? FechaActualizacionReserva { get; private set; }
 
-    public IReadOnlyList<Historial> Historial_Reserva => _historial;
+    // Copia defensiva: quien lo lee no puede alterar el historial por la espalda de la entidad.
+    public IReadOnlyList<Historial> HistorialReserva => _historial.AsReadOnly();
 
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
-    // El solicitante y el ambiente llegan ya buscados; «ahora_en_peru» decide qué es «pasado».
-    public static Reserva Solicitar(
-        Usuario? solicitante,
-        Ambiente? ambiente,
-        DateOnly? fecha,
-        TimeOnly? hora_inicio,
-        TimeOnly? hora_fin,
-        string? motivo,
-        DateTime ahora_en_peru,
-        DateTime ahora_utc)
+    // El solicitante y el ambiente llegan ya buscados; el momento decide qué es «pasado» y de qué año es el código.
+    public static Reserva Solicitar(DatosDeSolicitud datos)
     {
         var errores = new ErroresDeValidacion();
 
-        if (solicitante is null || !solicitante.Activo_Usuario)
+        if (datos.Solicitante is null || !datos.Solicitante.ActivoUsuario)
         {
-            errores.Agregar(nameof(Id_Usuario), "Inicie sesión con un usuario activo para solicitar la reserva.");
+            errores.Agregar(nameof(IdUsuario), "Inicie sesión con un usuario activo para solicitar la reserva.");
         }
 
-        if (ambiente is null)
+        if (datos.Ambiente is null)
         {
-            errores.Agregar(nameof(Id_Ambiente), "Elija el ambiente que necesita.");
+            errores.Agregar(nameof(IdAmbiente), "Elija el ambiente que necesita.");
         }
-        else if (!ambiente.AdmiteReservas())
+        else if (!datos.Ambiente.AdmiteReservas())
         {
-            errores.Agregar(nameof(Id_Ambiente), $"{ambiente.Nombre_Ambiente} no recibe reservas: está {ambiente.DescribirEstado()}.");
-        }
-
-        var hoy = DateOnly.FromDateTime(ahora_en_peru);
-        if (fecha is null)
-        {
-            errores.Agregar(nameof(Fecha_Reserva), "Elija la fecha de la reserva.");
-        }
-        else if (fecha < hoy)
-        {
-            errores.Agregar(nameof(Fecha_Reserva), $"La fecha no puede ser anterior a hoy ({hoy:dd/MM/yyyy}).");
+            errores.Agregar(nameof(IdAmbiente),
+                $"{datos.Ambiente.NombreAmbiente} no recibe reservas: está {datos.Ambiente.DescribirEstado()}.");
         }
 
-        ValidarHoras(errores, fecha, hora_inicio, hora_fin, ahora_en_peru);
+        var hoy = datos.Momento.FechaEnPeru;
+        if (datos.Fecha is null)
+        {
+            errores.Agregar(nameof(FechaReserva), "Elija la fecha de la reserva.");
+        }
+        else if (datos.Fecha < hoy)
+        {
+            errores.Agregar(nameof(FechaReserva), $"La fecha no puede ser anterior a hoy ({hoy:dd/MM/yyyy}).");
+        }
 
-        var motivo_normalizado = errores.ValidarTexto(nameof(Motivo_Reserva), Texto.NormalizarParrafos(motivo), Regla_Motivo);
+        ValidarHorarioPermitido(errores, datos.HoraInicio, datos.HoraFin);
+        ValidarNoEnElPasado(errores, datos.Fecha, datos.HoraInicio, datos.Momento);
+
+        var motivoNormalizado = errores.ValidarTexto(nameof(MotivoReserva), Texto.NormalizarParrafos(datos.Motivo), ReglaMotivo);
 
         errores.LanzarSiHay();
 
         var reserva = new Reserva
         {
-            Id_Reserva = Guid.CreateVersion7(),
-            Fecha_Reserva = fecha!.Value,
-            Hora_Inicio_Reserva = hora_inicio!.Value,
-            Hora_Fin_Reserva = hora_fin!.Value,
-            Motivo_Reserva = motivo_normalizado,
-            Estado_Reserva = Estados_Reserva.Pendiente,
-            Id_Usuario = solicitante!.Id_Usuario,
-            Id_Ambiente = ambiente!.Id_Ambiente,
-            Fecha_Registro_Reserva = ahora_utc,
+            IdReserva = Guid.CreateVersion7(),
+            FechaReserva = datos.Fecha!.Value,
+            HoraInicioReserva = datos.HoraInicio!.Value,
+            HoraFinReserva = datos.HoraFin!.Value,
+            MotivoReserva = motivoNormalizado,
+            EstadoReserva = EstadoReserva.Pendiente,
+            IdUsuario = datos.Solicitante!.IdUsuario,
+            IdAmbiente = datos.Ambiente!.IdAmbiente,
+            FechaRegistroReserva = datos.Momento.EnUtc,
         };
 
         // Toda reserva nace Pendiente, registrada por quien la solicita: es la primera entrada de su historial.
-        reserva._historial.Add(Historial.Registrar(reserva.Id_Reserva, Estados_Reserva.Pendiente, reserva.Id_Usuario, ahora_utc));
+        reserva._historial.Add(Historial.Registrar(
+            reserva.IdReserva, EstadoReserva.Pendiente, reserva.IdUsuario, datos.Momento.EnUtc));
 
         return reserva;
     }
 
-    // RN-03 y RN-04, y que la reserva no empiece en el pasado. Un error por campo.
-    private static void ValidarHoras(ErroresDeValidacion errores, DateOnly? fecha, TimeOnly? inicio, TimeOnly? fin, DateTime ahora_en_peru)
+    // RN-03 y RN-04. La apertura y el cierre son asimétricos a propósito: el inicio debe cumplir
+    // 07:00 <= inicio < 22:00, mientras que el fin puede llegar hasta las 22:00 (nunca pasarse). Así una reserva
+    // puede terminar justo al cierre, pero ninguna puede empezar a esa hora.
+    private static void ValidarHorarioPermitido(ErroresDeValidacion errores, TimeOnly? inicio, TimeOnly? fin)
     {
         if (inicio is null)
         {
-            errores.Agregar(nameof(Hora_Inicio_Reserva), "Indique la hora de inicio.");
+            errores.Agregar(nameof(HoraInicioReserva), "Indique la hora de inicio.");
         }
-        else if (inicio < Hora_Apertura || inicio >= Hora_Cierre)
+        else if (inicio < HoraApertura || inicio >= HoraCierre)
         {
-            errores.Agregar(nameof(Hora_Inicio_Reserva), "La hora de inicio debe estar entre las 07:00 y las 22:00.");
-        }
-        else if (fecha == DateOnly.FromDateTime(ahora_en_peru) && inicio <= TimeOnly.FromDateTime(ahora_en_peru))
-        {
-            errores.Agregar(nameof(Hora_Inicio_Reserva), $"Esa hora ya pasó: hoy elija una hora posterior a las {ahora_en_peru:HH\\:mm}.");
+            errores.Agregar(nameof(HoraInicioReserva), "La hora de inicio debe estar entre las 07:00 y las 22:00.");
         }
 
         if (fin is null)
         {
-            errores.Agregar(nameof(Hora_Fin_Reserva), "Indique la hora de fin.");
+            errores.Agregar(nameof(HoraFinReserva), "Indique la hora de fin.");
         }
-        else if (fin > Hora_Cierre)
+        else if (fin > HoraCierre)
         {
-            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin no puede pasar de las 22:00.");
+            errores.Agregar(nameof(HoraFinReserva), "La hora de fin no puede pasar de las 22:00.");
         }
         else if (inicio is not null && fin <= inicio)
         {
-            errores.Agregar(nameof(Hora_Fin_Reserva), "La hora de fin debe ser mayor que la hora de inicio.");
+            errores.Agregar(nameof(HoraFinReserva), "La hora de fin debe ser mayor que la hora de inicio.");
+        }
+    }
+
+    // La fecha de hoy ya no puede quedar atrás, pero la hora solo se compara cuando la reserva es para hoy: para
+    // otro día, la hora de inicio se juzga solo con RN-03 y RN-04. Por eso esta validación va aparte.
+    private static void ValidarNoEnElPasado(
+        ErroresDeValidacion errores, DateOnly? fecha, TimeOnly? inicio, MomentoActual momento)
+    {
+        if (fecha == momento.FechaEnPeru
+            && inicio is { } hora
+            && hora >= HoraApertura
+            && hora < HoraCierre
+            && hora <= momento.HoraEnPeru)
+        {
+            errores.Agregar(nameof(HoraInicioReserva),
+                $"Esa hora ya pasó: hoy elija una hora posterior a las {momento.HoraEnPeru:HH\\:mm}.");
         }
     }
 
     // El código se asigna después de validar: un registro rechazado no consume un número. RES-2026-0001.
-    public void AsignarCodigo(int numero_correlativo)
+    // El año sale de la fecha de Perú, no de UTC: cerca de la medianoche del 31 de diciembre no se adelanta el año.
+    public void AsignarCodigo(int numeroCorrelativo, DateOnly fechaEnPeru)
     {
-        if (numero_correlativo <= 0 || Codigo_Reserva.Length > 0)
+        if (numeroCorrelativo <= 0 || !string.IsNullOrEmpty(CodigoReserva))
         {
             throw new InvalidOperationException("El código de la reserva ya se asignó o el número no es válido.");
         }
 
-        Codigo_Reserva = $"RES-{Fecha_Registro_Reserva:yyyy}-{numero_correlativo:D4}";
+        CodigoReserva = $"RES-{fechaEnPeru:yyyy}-{numeroCorrelativo:D4}";
     }
 
-    public Horario ObtenerHorario() => new(Fecha_Reserva, Hora_Inicio_Reserva, Hora_Fin_Reserva);
+    public Horario ObtenerHorario() => new(FechaReserva, HoraInicioReserva, HoraFinReserva);
 
     // El estado actual como objeto (patrón State), creado por la fábrica.
-    public EstadoDeReserva ObtenerEstado() => FabricaDeEstadosDeReserva.Crear(Estado_Reserva);
+    public EstadoDeReserva ObtenerEstado() => FabricaDeEstadosDeReserva.Crear(EstadoReserva);
 
-    // RF-04 / RN-01: no puede haber otra reserva aprobada del mismo ambiente que se cruce con este horario.
-    // «reservas_del_ambiente» son las del mismo ambiente y la misma fecha, que trae el caso de uso.
-    public void VerificarDisponibilidad(IEnumerable<Reserva> reservas_del_ambiente)
+    // RF-04 / RN-01: no puede haber otra reserva aprobada de la misma agenda que se cruce con este horario.
+    // La agenda ya viene acotada al ambiente y a la fecha; aquí no se vuelve a filtrar por ambiente.
+    public void VerificarDisponibilidad(Agenda agenda)
     {
-        var cruce = BuscarCruceAprobado(Id_Ambiente, ObtenerHorario(), reservas_del_ambiente, Id_Reserva);
+        var cruce = agenda.CruceAprobadoCon(ObtenerHorario(), IdReserva);
 
         if (cruce is not null)
         {
             throw new ConflictoDeNegocioExcepcion(
-                $"El ambiente ya está reservado {cruce.ObtenerHorario()} ({cruce.Codigo_Reserva}, aprobada). " +
+                $"El ambiente ya está reservado {cruce.ObtenerHorario()} ({cruce.CodigoReserva}, aprobada). " +
                 "Elija otro horario u otro ambiente.");
         }
     }
 
-    // La reserva aprobada que ocupa ese horario en ese ambiente, o null si está libre. La usa también la consulta de
-    // disponibilidad, antes de que exista la reserva.
-    public static Reserva? BuscarCruceAprobado(Guid id_ambiente, Horario horario, IEnumerable<Reserva> reservas, Guid? excepto = null) =>
-        reservas.FirstOrDefault(otra =>
-            otra.Id_Ambiente == id_ambiente
-            && otra.Id_Reserva != excepto
-            && otra.Estado_Reserva == Estados_Reserva.Aprobada
-            && otra.ObtenerHorario().SeCruzaCon(horario));
-
     // RF-07: el estado actual decide si admite el cambio y si el usuario puede hacerlo (RN-05, RN-06).
     // Para aprobar se vuelve a revisar la disponibilidad: otra pudo aprobarse mientras esta esperaba (RN-01).
-    public void CambiarEstado(Estados_Reserva nuevo_estado, Usuario? usuario, IEnumerable<Reserva> reservas_del_ambiente, DateTime ahora_utc)
+    public void CambiarEstado(DatosDeCambioDeEstado datos)
     {
-        if (usuario is null || !usuario.Activo_Usuario)
+        if (datos.Usuario is null || !datos.Usuario.ActivoUsuario)
         {
             throw new AccionNoPermitidaExcepcion("Inicie sesión con un usuario activo para cambiar el estado.");
         }
 
-        if (!Enum.IsDefined(nuevo_estado))
+        if (!Enum.IsDefined(datos.NuevoEstado))
         {
-            throw new DatosNoValidosExcepcion(nameof(Estado_Reserva), "Elija el nuevo estado: aprobada, rechazada o cancelada.");
+            throw new DatosNoValidosExcepcion(nameof(EstadoReserva), "Elija el nuevo estado: aprobada, rechazada o cancelada.");
         }
 
-        ObtenerEstado().ValidarCambio(nuevo_estado, this, usuario);
-
-        if (nuevo_estado == Estados_Reserva.Aprobada)
+        var estadoActual = ObtenerEstado();
+        var nuevoEstado = datos.NuevoEstado switch
         {
-            VerificarDisponibilidad(reservas_del_ambiente);
+            EstadoReserva.Aprobada => estadoActual.Aprobar(this, datos.Usuario),
+            EstadoReserva.Rechazada => estadoActual.Rechazar(this, datos.Usuario),
+            EstadoReserva.Cancelada => estadoActual.Cancelar(this, datos.Usuario),
+            _ => throw new DatosNoValidosExcepcion(nameof(EstadoReserva), "Elija el nuevo estado: aprobada, rechazada o cancelada."),
+        };
+
+        if (nuevoEstado == EstadoReserva.Aprobada)
+        {
+            VerificarDisponibilidad(datos.ReservasDelAmbiente);
         }
 
-        Estado_Reserva = nuevo_estado;
-        Fecha_Actualizacion_Reserva = ahora_utc;
-        _historial.Add(Historial.Registrar(Id_Reserva, nuevo_estado, usuario.Id_Usuario, ahora_utc));
+        EstadoReserva = nuevoEstado;
+        FechaActualizacionReserva = datos.Momento.EnUtc;
+        _historial.Add(Historial.Registrar(IdReserva, nuevoEstado, datos.Usuario.IdUsuario, datos.Momento.EnUtc));
     }
 }

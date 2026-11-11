@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ReservaUPLA.Application.CasosDeUso.Autenticacion.IniciarSesion;
 using ReservaUPLA.Application.Datos;
 using ReservaUPLA.Application.Interfaces;
-using ReservaUPLA.Application.CasosDeUso.Autenticacion.IniciarSesion;
 using ReservaUPLA.Domain.Excepciones;
 using ReservaUPLA.WebApi.Respuestas;
 using ReservaUPLA.WebApi.Seguridad;
@@ -25,13 +25,13 @@ public sealed class AutenticacionControlador : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
     public async Task<ActionResult<RespuestaApi<DatosDeUsuario>>> IniciarSesion(
         IniciarSesionComando comando,
-        [FromServices] IniciarSesionCasoDeUso caso_de_uso,
+        [FromServices] IniciarSesionCasoDeUso casoDeUso,
         CancellationToken cancelacion)
     {
-        var usuario = await caso_de_uso.EjecutarAsync(comando, cancelacion);
+        var usuario = await casoDeUso.EjecutarAsync(comando, cancelacion);
         await HttpContext.SignInAsync(Sesion.CrearPrincipal(usuario));
 
-        return RespuestaApi.Exito(usuario, $"Bienvenido, {usuario.Nombre_Completo_Usuario}.");
+        return RespuestaApi.Exito(usuario, $"Bienvenido, {usuario.NombreCompletoUsuario}.");
     }
 
     // La SPA pregunta al abrirse si ya hay una sesión (por ejemplo, después de recargar la página).
@@ -49,7 +49,7 @@ public sealed class AutenticacionControlador : ControllerBase
             throw new SesionNoValidaExcepcion("Su sesión ya no es válida. Vuelva a ingresar.");
         }
 
-        return RespuestaApi.Exito(usuario, $"Sesión de {usuario.Nombre_Completo_Usuario}.");
+        return RespuestaApi.Exito(usuario, $"Sesión de {usuario.NombreCompletoUsuario}.");
     }
 
     [HttpPost("salida")]

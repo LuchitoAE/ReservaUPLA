@@ -6,10 +6,12 @@ namespace ReservaUPLA.Application.Interfaces;
 public interface IRepositorioDeReservas
 {
     // Para cambiarla: la entidad queda en seguimiento y GuardarCambiosAsync guarda lo que cambió.
-    Task<Reserva?> ObtenerPorIdAsync(Guid id_reserva, CancellationToken cancelacion = default);
+    Task<Reserva?> ObtenerPorIdAsync(Guid idReserva, CancellationToken cancelacion = default);
 
-    // Reservas del mismo ambiente en la misma fecha: con ellas la entidad revisa la disponibilidad (RN-01).
-    Task<IReadOnlyList<Reserva>> ListarDelAmbienteEnLaFechaAsync(Guid id_ambiente, DateOnly fecha_reserva, CancellationToken cancelacion = default);
+    // Reservas del mismo ambiente en la misma fecha: con ellas se arma la agenda con la que la entidad revisa
+    // la disponibilidad (RN-01).
+    Task<IReadOnlyList<Reserva>> ListarDelAmbienteEnLaFechaAsync(
+        Guid idAmbiente, DateOnly fechaReserva, CancellationToken cancelacion = default);
 
     Task<int> ObtenerSiguienteNumeroAsync(CancellationToken cancelacion = default);
 

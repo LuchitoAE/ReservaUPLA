@@ -17,16 +17,17 @@ internal sealed class RepositorioDeAmbientes : IRepositorioDeAmbientes
         _contexto = contexto;
     }
 
-    public async Task<Ambiente?> ObtenerPorIdAsync(Guid id_ambiente, CancellationToken cancelacion = default)
+    public async Task<Ambiente?> ObtenerPorIdAsync(Guid idAmbiente, CancellationToken cancelacion = default)
     {
-        return await _contexto.Ambientes.AsNoTracking().FirstOrDefaultAsync(a => a.Id_Ambiente == id_ambiente, cancelacion);
+        return await _contexto.Ambientes.AsNoTracking()
+            .FirstOrDefaultAsync(a => a.IdAmbiente == idAmbiente, cancelacion);
     }
 
-    public async Task<bool> ExisteNombreAsync(string nombre_ambiente, CancellationToken cancelacion = default)
+    public async Task<bool> ExisteNombreAsync(string nombreAmbiente, CancellationToken cancelacion = default)
     {
-        var nombre = nombre_ambiente.ToLower();
+        var nombre = nombreAmbiente.ToLower();
 
-        return await _contexto.Ambientes.AnyAsync(a => a.Nombre_Ambiente.ToLower() == nombre, cancelacion);
+        return await _contexto.Ambientes.AnyAsync(a => a.NombreAmbiente.ToLower() == nombre, cancelacion);
     }
 
     public async Task AgregarAsync(Ambiente ambiente, CancellationToken cancelacion = default)
@@ -37,9 +38,9 @@ internal sealed class RepositorioDeAmbientes : IRepositorioDeAmbientes
         {
             await _contexto.SaveChangesAsync(cancelacion);
         }
-        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, Ambiente_Configuracion.Indice_Nombre))
+        catch (DbUpdateException error) when (ErroresDePostgres.EsValorRepetido(error, AmbienteConfiguracion.IndiceNombre))
         {
-            throw new DatosNoValidosExcepcion(nameof(Ambiente.Nombre_Ambiente), "Ya existe un ambiente con este nombre.");
+            throw new DatosNoValidosExcepcion(nameof(Ambiente.NombreAmbiente), "Ya existe un ambiente con este nombre.");
         }
     }
 }

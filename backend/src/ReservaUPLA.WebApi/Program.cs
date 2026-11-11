@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -15,12 +14,12 @@ using ReservaUPLA.WebApi.Validacion;
 var builder = WebApplication.CreateBuilder(args);
 
 // La cadena de conexión no va en el repositorio: se lee de los user-secrets de .NET.
-var cadena_conexion = builder.Configuration.GetConnectionString("ReservaUPLA")
+var cadenaConexion = builder.Configuration.GetConnectionString("ReservaUPLA")
     ?? throw new InvalidOperationException("Falta la cadena de conexión 'ReservaUPLA' en los user-secrets.");
 
 // Punto de composición: aquí se eligen las implementaciones concretas de cada contrato.
 builder.Services.AgregarAplicacion();
-builder.Services.AgregarInfraestructura(cadena_conexion);
+builder.Services.AgregarInfraestructura(cadenaConexion);
 
 // La API responde solo JSON: sin el formateador de texto, Swagger no ofrece text/plain. Los controladores se llaman
 // «…Controlador» (ESTANDARES.md): la convención les quita el sufijo para que Swagger los agrupe como Reservas, Usuarios…
@@ -29,7 +28,7 @@ builder.Services.AddControllers(opciones =>
         opciones.OutputFormatters.RemoveType<StringOutputFormatter>();
         opciones.Conventions.Add(new ConvencionDeNombresDeControladores());
     })
-    .AddJsonOptions(opciones => ConfigurarJson(opciones.JsonSerializerOptions))
+    .AddJsonOptions(opciones => ConfiguracionDeJson.Aplicar(opciones.JsonSerializerOptions))
     .ConfigureApiBehaviorOptions(opciones =>
     {
         // JSON ilegible o valores de otro tipo: la respuesta en español, con el campo que falló.
@@ -39,7 +38,7 @@ builder.Services.AddControllers(opciones =>
 
 // La misma configuración para el documento de OpenAPI, que se genera aparte: así Swagger muestra
 // los nombres y los valores tal como los espera la API.
-builder.Services.ConfigureHttpJsonOptions(opciones => ConfigurarJson(opciones.SerializerOptions));
+builder.Services.ConfigureHttpJsonOptions(opciones => ConfiguracionDeJson.Aplicar(opciones.SerializerOptions));
 
 // Todos los errores salen como ProblemDetails (RFC 9457). El estándar admite campos extra: se agregan
 // success y message, los mismos que llevan las respuestas exitosas, para que el cliente lea siempre igual.
@@ -77,20 +76,20 @@ builder.Services.AddOpenApi(opciones =>
 {
     opciones.AddSchemaTransformer((esquema, contexto, _) =>
     {
-        // Los campos opcionales (TimeOnly?, Estados_Reserva?) se describen igual que los obligatorios.
+        // Los campos opcionales (TimeOnly?, EstadoReserva?) se describen igual que los obligatorios.
         var tipo = Nullable.GetUnderlyingType(contexto.JsonTypeInfo.Type) ?? contexto.JsonTypeInfo.Type;
-        var admite_nulo = tipo != contexto.JsonTypeInfo.Type;
+        var admiteNulo = tipo != contexto.JsonTypeInfo.Type;
 
         // Los enums viajan como texto: sin esto Swagger los muestra como "any".
         if (tipo.IsEnum)
         {
-            esquema.Type = admite_nulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
+            esquema.Type = admiteNulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
         }
 
-        // Las horas viajan como «HH:mm» (Convertidor_Hora): el ejemplo de Swagger debe decir lo mismo.
+        // Las horas viajan como «HH:mm» (ConvertidorHora): el ejemplo de Swagger debe decir lo mismo.
         if (tipo == typeof(TimeOnly))
         {
-            esquema.Type = admite_nulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
+            esquema.Type = admiteNulo ? JsonSchemaType.String | JsonSchemaType.Null : JsonSchemaType.String;
             esquema.Format = null;
             esquema.Pattern = "^([01][0-9]|2[0-3]):[0-5][0-9]$";
             esquema.Examples = [System.Text.Json.Nodes.JsonValue.Create("09:00")];
@@ -130,11 +129,3 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.Run();
-
-// Nombres en minúsculas con guion bajo, enums como texto y horas «HH:mm», en la API y en Swagger.
-static void ConfigurarJson(System.Text.Json.JsonSerializerOptions opciones)
-{
-    opciones.PropertyNamingPolicy = new Politica_Nombres_Json();
-    opciones.Converters.Add(new JsonStringEnumConverter(namingPolicy: null, allowIntegerValues: false));
-    opciones.Converters.Add(new Convertidor_Hora());
-}

@@ -11,9 +11,9 @@ namespace ReservaUPLA.Infrastructure;
 // Conecta los contratos de la capa de Aplicación con su implementación en PostgreSQL.
 public static class RegistroDeServicios
 {
-    public static IServiceCollection AgregarInfraestructura(this IServiceCollection servicios, string cadena_conexion)
+    public static IServiceCollection AgregarInfraestructura(this IServiceCollection servicios, string cadenaConexion)
     {
-        servicios.AddDbContext<ContextoDeReservaUPLA>(opciones => opciones.UseNpgsql(cadena_conexion));
+        servicios.AddDbContext<ContextoDeReservaUPLA>(opciones => opciones.UseNpgsql(cadenaConexion));
 
         servicios.AddSingleton<IReloj, RelojDelSistema>();
         servicios.AddSingleton<IProtectorDeContrasenas, ProtectorPbkdf2>();

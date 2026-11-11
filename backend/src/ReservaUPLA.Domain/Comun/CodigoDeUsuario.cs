@@ -21,14 +21,14 @@ public sealed partial record CodigoDeUsuario
         EspaciosEnCualquierParte().Replace(texto ?? string.Empty, string.Empty).ToUpperInvariant();
 
     // Revisa un código ya normalizado. Devuelve qué falta, o null si cumple.
-    public static string? Revisar(string codigo_normalizado)
+    public static string? Revisar(string codigoNormalizado)
     {
-        if (codigo_normalizado.Length == 0)
+        if (codigoNormalizado.Length == 0)
         {
             return "Escriba el código del usuario.";
         }
 
-        return FormatoDeCodigo().IsMatch(codigo_normalizado)
+        return FormatoDeCodigo().IsMatch(codigoNormalizado)
             ? null
             : $"El código debe tener {Longitud} letras o números, por ejemplo P00914K.";
     }
@@ -38,7 +38,7 @@ public sealed partial record CodigoDeUsuario
         var normalizado = Normalizar(texto);
         var mensaje = Revisar(normalizado);
 
-        return mensaje is null ? new CodigoDeUsuario(normalizado) : throw new DatosNoValidosExcepcion("Codigo_Usuario", mensaje);
+        return mensaje is null ? new CodigoDeUsuario(normalizado) : throw new DatosNoValidosExcepcion("CodigoUsuario", mensaje);
     }
 
     public override string ToString() => Valor;

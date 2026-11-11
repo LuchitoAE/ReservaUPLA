@@ -15,31 +15,32 @@ namespace ReservaUPLA.WebApi.Middleware;
 //                                               servidor y nunca al cliente: no se exponen consultas, tablas ni rutas.
 internal sealed class ManejadorDeErrores : IExceptionHandler
 {
-    private readonly IProblemDetailsService _problem_details_service;
-    private readonly JsonOptions _opciones_json;
+    private readonly IProblemDetailsService _problemDetailsService;
+    private readonly JsonOptions _opcionesJson;
     private readonly ILogger<ManejadorDeErrores> _registro;
 
     public ManejadorDeErrores(
-        IProblemDetailsService problem_details_service,
-        IOptions<JsonOptions> opciones_json,
+        IProblemDetailsService problemDetailsService,
+        IOptions<JsonOptions> opcionesJson,
         ILogger<ManejadorDeErrores> registro)
     {
-        _problem_details_service = problem_details_service;
-        _opciones_json = opciones_json.Value;
+        _problemDetailsService = problemDetailsService;
+        _opcionesJson = opcionesJson.Value;
         _registro = registro;
     }
 
-    public async ValueTask<bool> TryHandleAsync(HttpContext contexto, Exception excepcion, CancellationToken cancelacion)
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext contexto, Exception excepcion, CancellationToken cancelacion)
     {
         var problema = excepcion switch
         {
-            DatosNoValidosExcepcion datos_no_validos => DatosNoValidos(datos_no_validos),
+            DatosNoValidosExcepcion datosNoValidos => DatosNoValidos(datosNoValidos),
             SesionNoValidaExcepcion sesion =>
                 Problema(StatusCodes.Status401Unauthorized, "No se pudo iniciar sesión.", sesion.Message),
-            AccionNoPermitidaExcepcion no_permitida =>
-                Problema(StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", no_permitida.Message),
-            RecursoNoEncontradoExcepcion no_encontrado =>
-                Problema(StatusCodes.Status404NotFound, "No se encontró lo que se buscaba.", no_encontrado.Message),
+            AccionNoPermitidaExcepcion noPermitida =>
+                Problema(StatusCodes.Status403Forbidden, "Acción no permitida para este usuario.", noPermitida.Message),
+            RecursoNoEncontradoExcepcion noEncontrado =>
+                Problema(StatusCodes.Status404NotFound, "No se encontró lo que se buscaba.", noEncontrado.Message),
             ConflictoDeNegocioExcepcion conflicto =>
                 Problema(StatusCodes.Status409Conflict, "La operación choca con los datos registrados.", conflicto.Message),
             _ => ErrorInesperado(contexto, excepcion),
@@ -51,7 +52,7 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
         // RFC 9457 y con su detalle, en lugar de un «Bad Request» sin explicación.
         contexto.Request.Headers.Accept = "application/problem+json";
 
-        return await _problem_details_service.TryWriteAsync(new ProblemDetailsContext
+        return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = contexto,
             Exception = excepcion,
@@ -62,12 +63,13 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
     private static ProblemDetails Problema(int estado, string titulo, string detalle) =>
         new() { Status = estado, Title = titulo, Detail = detalle };
 
-    // Las claves llegan con el nombre de la propiedad (Fecha_Reserva) y salen como viajan en el JSON
+    // Las claves llegan con el nombre de la propiedad (FechaReserva) y salen como viajan en el JSON
     // (fecha_reserva): el frontend muestra cada mensaje junto a su campo.
     private ValidationProblemDetails DatosNoValidos(DatosNoValidosExcepcion excepcion)
     {
-        var politica = _opciones_json.JsonSerializerOptions.PropertyNamingPolicy;
-        var errores = excepcion.Errores.ToDictionary(error => politica?.ConvertName(error.Key) ?? error.Key, error => error.Value);
+        var politica = _opcionesJson.JsonSerializerOptions.PropertyNamingPolicy;
+        var errores = excepcion.Errores.ToDictionary(
+            error => politica?.ConvertName(error.Key) ?? error.Key, error => error.Value);
 
         return new ValidationProblemDetails(errores)
         {
@@ -79,7 +81,8 @@ internal sealed class ManejadorDeErrores : IExceptionHandler
 
     private ProblemDetails ErrorInesperado(HttpContext contexto, Exception excepcion)
     {
-        _registro.LogError(excepcion, "Error no controlado en {Metodo} {Ruta}", contexto.Request.Method, contexto.Request.Path);
+        _registro.LogError(
+            excepcion, "Error no controlado en {Metodo} {Ruta}", contexto.Request.Method, contexto.Request.Path);
 
         return Problema(
             StatusCodes.Status500InternalServerError,

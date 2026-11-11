@@ -17,34 +17,35 @@ internal sealed class ConsultaDeAmbientes : IConsultaDeAmbientes
     }
 
     public async Task<IReadOnlyList<DatosDeAmbiente>> ListarAsync(
-        Estados_Ambiente? estado_ambiente, Guid? id_responsable_ambiente, CancellationToken cancelacion = default)
+        EstadoAmbiente? estadoAmbiente, Guid? idResponsableAmbiente, CancellationToken cancelacion = default)
     {
         var ambientes = _contexto.Ambientes.AsNoTracking();
 
-        if (estado_ambiente is not null)
+        if (estadoAmbiente is not null)
         {
-            ambientes = ambientes.Where(a => a.Estado_Ambiente == estado_ambiente);
+            ambientes = ambientes.Where(a => a.EstadoAmbiente == estadoAmbiente);
         }
 
-        if (id_responsable_ambiente is not null)
+        if (idResponsableAmbiente is not null)
         {
-            ambientes = ambientes.Where(a => a.Id_Responsable_Ambiente == id_responsable_ambiente);
+            ambientes = ambientes.Where(a => a.IdResponsableAmbiente == idResponsableAmbiente);
         }
 
         return await (
                 from ambiente in ambientes
-                join responsable in _contexto.Usuarios on ambiente.Id_Responsable_Ambiente equals responsable.Id_Usuario into responsables
+                join responsable in _contexto.Usuarios
+                    on ambiente.IdResponsableAmbiente equals responsable.IdUsuario into responsables
                 from responsable in responsables.DefaultIfEmpty()
-                orderby ambiente.Nombre_Ambiente
+                orderby ambiente.NombreAmbiente
                 select new DatosDeAmbiente(
-                    ambiente.Id_Ambiente,
-                    ambiente.Nombre_Ambiente,
-                    ambiente.Tipo_Ambiente,
-                    ambiente.Capacidad_Ambiente,
-                    ambiente.Ubicacion_Ambiente,
-                    ambiente.Estado_Ambiente,
-                    ambiente.Id_Responsable_Ambiente,
-                    responsable == null ? null : responsable.Nombre_Completo_Usuario))
+                    ambiente.IdAmbiente,
+                    ambiente.NombreAmbiente,
+                    ambiente.TipoAmbiente,
+                    ambiente.CapacidadAmbiente,
+                    ambiente.UbicacionAmbiente,
+                    ambiente.EstadoAmbiente,
+                    ambiente.IdResponsableAmbiente,
+                    responsable == null ? null : responsable.NombreCompletoUsuario))
             .ToListAsync(cancelacion);
     }
 }

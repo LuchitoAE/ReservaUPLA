@@ -9,34 +9,37 @@ namespace ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
 // Es la única forma de crear usuarios: la usan el administrador y las cuentas iniciales (no hay registro propio, RN-07).
 public sealed class RegistrarUsuarioCasoDeUso
 {
-    private readonly IRepositorioDeUsuarios _repositorio_de_usuarios;
-    private readonly IProtectorDeContrasenas _protector_de_contrasenas;
+    private readonly IRepositorioDeUsuarios _repositorioDeUsuarios;
+    private readonly IProtectorDeContrasenas _protectorDeContrasenas;
 
-    public RegistrarUsuarioCasoDeUso(IRepositorioDeUsuarios repositorio_de_usuarios, IProtectorDeContrasenas protector_de_contrasenas)
+    public RegistrarUsuarioCasoDeUso(
+        IRepositorioDeUsuarios repositorioDeUsuarios, IProtectorDeContrasenas protectorDeContrasenas)
     {
-        _repositorio_de_usuarios = repositorio_de_usuarios;
-        _protector_de_contrasenas = protector_de_contrasenas;
+        _repositorioDeUsuarios = repositorioDeUsuarios;
+        _protectorDeContrasenas = protectorDeContrasenas;
     }
 
-    public async Task<DatosDeUsuario> EjecutarAsync(RegistrarUsuarioComando comando, CancellationToken cancelacion = default)
+    public async Task<DatosDeUsuario> EjecutarAsync(
+        RegistrarUsuarioComando comando, CancellationToken cancelacion = default)
     {
-        var codigo = CodigoDeUsuario.Normalizar(comando.Codigo_Usuario);
-        var codigo_ya_registrado = CodigoDeUsuario.Revisar(codigo) is null
-            && await _repositorio_de_usuarios.ExisteCodigoAsync(codigo, cancelacion);
-        var correo = Texto.NormalizarCorreo(comando.Correo_Usuario);
-        var correo_ya_registrado = correo.Length > 0 && await _repositorio_de_usuarios.ExisteCorreoAsync(correo, cancelacion);
+        var codigo = CodigoDeUsuario.Normalizar(comando.CodigoUsuario);
+        var codigoYaRegistrado = CodigoDeUsuario.Revisar(codigo) is null
+            && await _repositorioDeUsuarios.ExisteCodigoAsync(codigo, cancelacion);
+        var correo = Texto.NormalizarCorreo(comando.CorreoUsuario);
+        var correoYaRegistrado = correo.Length > 0
+            && await _repositorioDeUsuarios.ExisteCorreoAsync(correo, cancelacion);
 
-        var usuario = Usuario.Registrar(
-            comando.Codigo_Usuario,
-            comando.Nombre_Completo_Usuario,
-            comando.Correo_Usuario,
-            comando.Rol_Usuario,
-            comando.Contrasena_Usuario,
-            codigo_ya_registrado,
-            correo_ya_registrado,
-            _protector_de_contrasenas.Cifrar);
+        var usuario = Usuario.Registrar(new DatosDeRegistroDeUsuario(
+            comando.CodigoUsuario,
+            comando.NombreCompletoUsuario,
+            comando.CorreoUsuario,
+            comando.RolUsuario,
+            comando.ContrasenaUsuario,
+            codigoYaRegistrado,
+            correoYaRegistrado,
+            _protectorDeContrasenas.Cifrar));
 
-        await _repositorio_de_usuarios.AgregarAsync(usuario, cancelacion);
+        await _repositorioDeUsuarios.AgregarAsync(usuario, cancelacion);
 
         return DatosDeUsuario.DesdeEntidad(usuario);
     }

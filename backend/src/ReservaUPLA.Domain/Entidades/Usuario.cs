@@ -8,107 +8,101 @@ namespace ReservaUPLA.Domain.Entidades;
 // (RN-14) y guarda la sal y el hash de su contraseña (el modelo del caso se amplía con esos tres campos).
 public sealed class Usuario
 {
-    public const int Longitud_Minima_Nombre = 5;
-    public const int Longitud_Maxima_Nombre = 150;
-    public const int Longitud_Maxima_Correo = 150;
-    public const int Longitud_Minima_Contrasena = 8;
-    public const int Longitud_Maxima_Contrasena = 64;
+    public const int LongitudMinimaNombre = 5;
+    public const int LongitudMaximaNombre = 150;
+    public const int LongitudMaximaCorreo = 150;
+    public const int LongitudMinimaContrasena = 8;
+    public const int LongitudMaximaContrasena = 64;
 
-    private static readonly ReglaDeTexto Regla_Nombre = new(
-        "El nombre completo", Longitud_Minima_Nombre, Longitud_Maxima_Nombre, "Escriba el nombre y los apellidos del usuario.");
+    private static readonly ReglaDeTexto ReglaNombre = new(
+        "El nombre completo", LongitudMinimaNombre, LongitudMaximaNombre, "Escriba el nombre y los apellidos del usuario.");
 
     private Usuario()
     {
     }
 
-    public Guid Id_Usuario { get; private set; }
+    public Guid IdUsuario { get; private set; }
 
-    public string Codigo_Usuario { get; private set; } = string.Empty;
+    public string CodigoUsuario { get; private set; } = string.Empty;
 
-    public string Nombre_Completo_Usuario { get; private set; } = string.Empty;
+    public string NombreCompletoUsuario { get; private set; } = string.Empty;
 
-    public string Correo_Usuario { get; private set; } = string.Empty;
+    public string CorreoUsuario { get; private set; } = string.Empty;
 
-    public Roles_Usuario Rol_Usuario { get; private set; }
+    public RolUsuario RolUsuario { get; private set; }
 
-    public bool Activo_Usuario { get; private set; }
+    public bool ActivoUsuario { get; private set; }
 
-    public byte[] Sal_Contrasena_Usuario { get; private set; } = [];
+    public byte[] SalContrasenaUsuario { get; private set; } = [];
 
-    public byte[] Hash_Contrasena_Usuario { get; private set; } = [];
+    public byte[] HashContrasenaUsuario { get; private set; } = [];
 
     // Revisa todos los datos y, si alguno falla, informa todos los errores juntos, cada uno con su campo.
-    // «codigo_ya_registrado» y «correo_ya_registrado» los averigua el caso de uso en la base, con el dato ya
+    // «codigoYaRegistrado» y «correoYaRegistrado» los averigua el caso de uso en la base, con el dato ya
     // normalizado. «cifrar» lo da la Infraestructura (PBKDF2): la entidad solo decide si la contraseña cumple las reglas.
-    public static Usuario Registrar(
-        string? codigo,
-        string? nombre_completo,
-        string? correo,
-        Roles_Usuario rol,
-        string? contrasena,
-        bool codigo_ya_registrado,
-        bool correo_ya_registrado,
-        Func<string, ContrasenaCifrada> cifrar)
+    public static Usuario Registrar(DatosDeRegistroDeUsuario datos)
     {
         var errores = new ErroresDeValidacion();
 
-        var codigo_normalizado = CodigoDeUsuario.Normalizar(codigo);
-        var mensaje_codigo = CodigoDeUsuario.Revisar(codigo_normalizado);
-        if (mensaje_codigo is not null)
+        var codigoNormalizado = CodigoDeUsuario.Normalizar(datos.Codigo);
+        var mensajeCodigo = CodigoDeUsuario.Revisar(codigoNormalizado);
+        if (mensajeCodigo is not null)
         {
-            errores.Agregar(nameof(Codigo_Usuario), mensaje_codigo);
+            errores.Agregar(nameof(CodigoUsuario), mensajeCodigo);
         }
-        else if (codigo_ya_registrado)
+        else if (datos.CodigoYaRegistrado)
         {
-            errores.Agregar(nameof(Codigo_Usuario), "Este código ya existe.");
-        }
-
-        var nombre = errores.ValidarTexto(nameof(Nombre_Completo_Usuario), Texto.NormalizarLinea(nombre_completo), Regla_Nombre);
-        if (!errores.TieneErrorEn(nameof(Nombre_Completo_Usuario)) && !nombre.Contains(' '))
-        {
-            errores.Agregar(nameof(Nombre_Completo_Usuario), "Escriba el nombre y al menos un apellido.");
+            errores.Agregar(nameof(CodigoUsuario), "Este código ya existe.");
         }
 
-        var correo_normalizado = Texto.NormalizarCorreo(correo);
-        if (correo_normalizado.Length == 0)
+        var nombre = errores.ValidarTexto(
+            nameof(NombreCompletoUsuario), Texto.NormalizarLinea(datos.NombreCompleto), ReglaNombre);
+        if (!errores.TieneErrorEn(nameof(NombreCompletoUsuario)) && !nombre.Contains(' '))
         {
-            errores.Agregar(nameof(Correo_Usuario), "Escriba el correo del usuario.");
-        }
-        else if (correo_normalizado.Length > Longitud_Maxima_Correo)
-        {
-            errores.Agregar(nameof(Correo_Usuario), $"El correo no puede superar los {Longitud_Maxima_Correo} caracteres.");
-        }
-        else if (!Texto.EsCorreo(correo_normalizado))
-        {
-            errores.Agregar(nameof(Correo_Usuario), "Escriba un correo válido, por ejemplo nombre.apellido@upla.edu.pe.");
-        }
-        else if (correo_ya_registrado)
-        {
-            errores.Agregar(nameof(Correo_Usuario), "Ya existe un usuario con este correo.");
+            errores.Agregar(nameof(NombreCompletoUsuario), "Escriba el nombre y al menos un apellido.");
         }
 
-        errores.ValidarOpcion(nameof(Rol_Usuario), rol, "Elija el rol: Solicitante, Administrador o Responsable de ambiente.");
-
-        var mensaje_contrasena = RevisarContrasena(contrasena);
-        if (mensaje_contrasena is not null)
+        var correoNormalizado = Texto.NormalizarCorreo(datos.Correo);
+        if (correoNormalizado.Length == 0)
         {
-            errores.Agregar("Contrasena_Usuario", mensaje_contrasena);
+            errores.Agregar(nameof(CorreoUsuario), "Escriba el correo del usuario.");
+        }
+        else if (correoNormalizado.Length > LongitudMaximaCorreo)
+        {
+            errores.Agregar(nameof(CorreoUsuario), $"El correo no puede superar los {LongitudMaximaCorreo} caracteres.");
+        }
+        else if (!Texto.EsCorreo(correoNormalizado))
+        {
+            errores.Agregar(nameof(CorreoUsuario), "Escriba un correo válido, por ejemplo nombre.apellido@upla.edu.pe.");
+        }
+        else if (datos.CorreoYaRegistrado)
+        {
+            errores.Agregar(nameof(CorreoUsuario), "Ya existe un usuario con este correo.");
+        }
+
+        errores.ValidarOpcion(nameof(RolUsuario), datos.Rol,
+            "Elija el rol: Solicitante, Administrador o Responsable de ambiente.");
+
+        var mensajeContrasena = RevisarContrasena(datos.Contrasena);
+        if (mensajeContrasena is not null)
+        {
+            errores.Agregar("ContrasenaUsuario", mensajeContrasena);
         }
 
         errores.LanzarSiHay();
 
-        var cifrada = cifrar(contrasena!);
+        var cifrada = datos.Cifrar(datos.Contrasena!);
 
         return new Usuario
         {
-            Id_Usuario = Guid.CreateVersion7(),
-            Codigo_Usuario = codigo_normalizado,
-            Nombre_Completo_Usuario = nombre,
-            Correo_Usuario = correo_normalizado,
-            Rol_Usuario = rol,
-            Activo_Usuario = true,
-            Sal_Contrasena_Usuario = cifrada.Sal,
-            Hash_Contrasena_Usuario = cifrada.Hash,
+            IdUsuario = Guid.CreateVersion7(),
+            CodigoUsuario = codigoNormalizado,
+            NombreCompletoUsuario = nombre,
+            CorreoUsuario = correoNormalizado,
+            RolUsuario = datos.Rol,
+            ActivoUsuario = true,
+            SalContrasenaUsuario = cifrada.Sal,
+            HashContrasenaUsuario = cifrada.Hash,
         };
     }
 
@@ -120,9 +114,9 @@ public sealed class Usuario
             return "Escriba una contraseña.";
         }
 
-        if (contrasena.Length < Longitud_Minima_Contrasena || contrasena.Length > Longitud_Maxima_Contrasena)
+        if (contrasena.Length < LongitudMinimaContrasena || contrasena.Length > LongitudMaximaContrasena)
         {
-            return $"La contraseña debe tener entre {Longitud_Minima_Contrasena} y {Longitud_Maxima_Contrasena} caracteres.";
+            return $"La contraseña debe tener entre {LongitudMinimaContrasena} y {LongitudMaximaContrasena} caracteres.";
         }
 
         return contrasena.Any(char.IsUpper) && contrasena.Any(char.IsLower) && contrasena.Any(char.IsDigit)
@@ -142,30 +136,30 @@ public sealed class Usuario
 
         if (string.IsNullOrEmpty(actual))
         {
-            errores.Agregar("Contrasena_Actual", "Escriba su contraseña actual.");
+            errores.Agregar("ContrasenaActual", "Escriba su contraseña actual.");
         }
-        else if (!verificar(actual, new ContrasenaCifrada(Sal_Contrasena_Usuario, Hash_Contrasena_Usuario)))
+        else if (!verificar(actual, new ContrasenaCifrada(SalContrasenaUsuario, HashContrasenaUsuario)))
         {
-            errores.Agregar("Contrasena_Actual", "La contraseña actual no es correcta.");
+            errores.Agregar("ContrasenaActual", "La contraseña actual no es correcta.");
         }
 
-        var mensaje_nueva = RevisarContrasena(nueva);
-        if (mensaje_nueva is not null)
+        var mensajeNueva = RevisarContrasena(nueva);
+        if (mensajeNueva is not null)
         {
-            errores.Agregar("Contrasena_Nueva", mensaje_nueva);
+            errores.Agregar("ContrasenaNueva", mensajeNueva);
         }
         else if (nueva == actual)
         {
-            errores.Agregar("Contrasena_Nueva", "Debe ser distinta de la actual.");
+            errores.Agregar("ContrasenaNueva", "Debe ser distinta de la actual.");
         }
 
         errores.LanzarSiHay();
 
         var cifrada = cifrar(nueva!);
-        Sal_Contrasena_Usuario = cifrada.Sal;
-        Hash_Contrasena_Usuario = cifrada.Hash;
+        SalContrasenaUsuario = cifrada.Sal;
+        HashContrasenaUsuario = cifrada.Hash;
     }
 
     // RN-05: solo un administrador activo aprueba o rechaza reservas.
-    public bool EsAdministrador() => Activo_Usuario && Rol_Usuario == Roles_Usuario.Administrador;
+    public bool EsAdministrador() => ActivoUsuario && RolUsuario == Enumeraciones.RolUsuario.Administrador;
 }

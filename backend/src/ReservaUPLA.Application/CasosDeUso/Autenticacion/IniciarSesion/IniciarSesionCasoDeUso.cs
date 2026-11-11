@@ -9,38 +9,44 @@ namespace ReservaUPLA.Application.CasosDeUso.Autenticacion.IniciarSesion;
 // los casos: no se revela qué dato falló ni si el código existe.
 public sealed class IniciarSesionCasoDeUso
 {
-    private const string Mensaje_Generico = "El código o la contraseña no son correctos. Revíselos e inténtelo de nuevo.";
+    private const string MensajeGenerico = "El código o la contraseña no son correctos. Revíselos e inténtelo de nuevo.";
 
-    private readonly IRepositorioDeUsuarios _repositorio_de_usuarios;
-    private readonly IProtectorDeContrasenas _protector_de_contrasenas;
+    private readonly IRepositorioDeUsuarios _repositorioDeUsuarios;
+    private readonly IProtectorDeContrasenas _protectorDeContrasenas;
 
-    public IniciarSesionCasoDeUso(IRepositorioDeUsuarios repositorio_de_usuarios, IProtectorDeContrasenas protector_de_contrasenas)
+    public IniciarSesionCasoDeUso(
+        IRepositorioDeUsuarios repositorioDeUsuarios, IProtectorDeContrasenas protectorDeContrasenas)
     {
-        _repositorio_de_usuarios = repositorio_de_usuarios;
-        _protector_de_contrasenas = protector_de_contrasenas;
+        _repositorioDeUsuarios = repositorioDeUsuarios;
+        _protectorDeContrasenas = protectorDeContrasenas;
     }
 
-    public async Task<DatosDeUsuario> EjecutarAsync(IniciarSesionComando comando, CancellationToken cancelacion = default)
+    public async Task<DatosDeUsuario> EjecutarAsync(
+        IniciarSesionComando comando, CancellationToken cancelacion = default)
     {
         var errores = new ErroresDeValidacion();
-        var codigo = CodigoDeUsuario.Normalizar(comando.Codigo_Usuario);
+        var codigo = CodigoDeUsuario.Normalizar(comando.CodigoUsuario);
         if (codigo.Length == 0)
         {
-            errores.Agregar("Codigo_Usuario", "Escriba su código.");
+            errores.Agregar("CodigoUsuario", "Escriba su código.");
         }
 
-        if (string.IsNullOrEmpty(comando.Contrasena_Usuario))
+        if (string.IsNullOrEmpty(comando.ContrasenaUsuario))
         {
-            errores.Agregar("Contrasena_Usuario", "Escriba su contraseña.");
+            errores.Agregar("ContrasenaUsuario", "Escriba su contraseña.");
         }
 
         errores.LanzarSiHay();
 
-        var usuario = await _repositorio_de_usuarios.ObtenerPorCodigoAsync(codigo, cancelacion);
+        var usuario = await _repositorioDeUsuarios.ObtenerPorCodigoAsync(codigo, cancelacion);
         var valida = usuario is not null
-            && usuario.Activo_Usuario
-            && _protector_de_contrasenas.Verificar(comando.Contrasena_Usuario!, new ContrasenaCifrada(usuario.Sal_Contrasena_Usuario, usuario.Hash_Contrasena_Usuario));
+            && usuario.ActivoUsuario
+            && _protectorDeContrasenas.Verificar(
+                comando.ContrasenaUsuario!,
+                new ContrasenaCifrada(usuario.SalContrasenaUsuario, usuario.HashContrasenaUsuario));
 
-        return valida ? DatosDeUsuario.DesdeEntidad(usuario!) : throw new SesionNoValidaExcepcion(Mensaje_Generico);
+        return valida
+            ? DatosDeUsuario.DesdeEntidad(usuario!)
+            : throw new SesionNoValidaExcepcion(MensajeGenerico);
     }
 }

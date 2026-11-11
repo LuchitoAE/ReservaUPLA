@@ -12,15 +12,16 @@ public sealed class IniciarSesionPruebas
     private const string Mensaje = "El código o la contraseña no son correctos. Revíselos e inténtelo de nuevo.";
 
     private readonly RepositorioDeUsuariosEnMemoria _repositorio = new();
-    private readonly ProtectorDeContrasenasFalso _protector_de_contrasenas = new();
+    private readonly ProtectorDeContrasenasFalso _protectorDeContrasenas = new();
 
     private async Task RegistrarLuisAsync()
     {
-        await new RegistrarUsuarioCasoDeUso(_repositorio, _protector_de_contrasenas).EjecutarAsync(new RegistrarUsuarioComando(
-            "P00914K", "Luis Aquino Espinoza", "luis.aquino@upla.edu.pe", Roles_Usuario.Solicitante, "Reserva2026"));
+        await new RegistrarUsuarioCasoDeUso(_repositorio, _protectorDeContrasenas)
+            .EjecutarAsync(new RegistrarUsuarioComando(
+                "P00914K", "Luis Aquino Espinoza", "luis.aquino@upla.edu.pe", RolUsuario.Solicitante, "Reserva2026"));
     }
 
-    private IniciarSesionCasoDeUso CasoDeUso() => new(_repositorio, _protector_de_contrasenas);
+    private IniciarSesionCasoDeUso CasoDeUso() => new(_repositorio, _protectorDeContrasenas);
 
     [Fact]
     public async Task Ingresa_con_el_codigo_aunque_lo_escriba_en_minusculas()
@@ -29,7 +30,7 @@ public sealed class IniciarSesionPruebas
 
         var usuario = await CasoDeUso().EjecutarAsync(new IniciarSesionComando(" p00914k", "Reserva2026"));
 
-        Assert.Equal("P00914K", usuario.Codigo_Usuario);
+        Assert.Equal("P00914K", usuario.CodigoUsuario);
     }
 
     [Theory]
@@ -51,7 +52,7 @@ public sealed class IniciarSesionPruebas
         var error = await Assert.ThrowsAsync<DatosNoValidosExcepcion>(() =>
             CasoDeUso().EjecutarAsync(new IniciarSesionComando("", "")));
 
-        Assert.Equal(["Escriba su código."], error.Errores["Codigo_Usuario"]);
-        Assert.Equal(["Escriba su contraseña."], error.Errores["Contrasena_Usuario"]);
+        Assert.Equal(["Escriba su código."], error.Errores["CodigoUsuario"]);
+        Assert.Equal(["Escriba su contraseña."], error.Errores["ContrasenaUsuario"]);
     }
 }

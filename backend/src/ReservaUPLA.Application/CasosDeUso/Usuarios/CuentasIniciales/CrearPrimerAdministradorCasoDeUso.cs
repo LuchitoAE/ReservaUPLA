@@ -1,5 +1,5 @@
-using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Application.CasosDeUso.Usuarios.RegistrarUsuario;
+using ReservaUPLA.Application.Interfaces;
 using ReservaUPLA.Domain.Enumeraciones;
 
 namespace ReservaUPLA.Application.CasosDeUso.Usuarios.CuentasIniciales;
@@ -9,18 +9,20 @@ namespace ReservaUPLA.Application.CasosDeUso.Usuarios.CuentasIniciales;
 // mismas reglas que cualquier usuario (RegistrarUsuario), y siempre con el rol de administrador.
 public sealed class CrearPrimerAdministradorCasoDeUso
 {
-    private readonly IRepositorioDeUsuarios _repositorio_de_usuarios;
-    private readonly RegistrarUsuarioCasoDeUso _registrar_usuario;
+    private readonly IRepositorioDeUsuarios _repositorioDeUsuarios;
+    private readonly RegistrarUsuarioCasoDeUso _registrarUsuario;
 
-    public CrearPrimerAdministradorCasoDeUso(IRepositorioDeUsuarios repositorio_de_usuarios, RegistrarUsuarioCasoDeUso registrar_usuario)
+    public CrearPrimerAdministradorCasoDeUso(
+        IRepositorioDeUsuarios repositorioDeUsuarios, RegistrarUsuarioCasoDeUso registrarUsuario)
     {
-        _repositorio_de_usuarios = repositorio_de_usuarios;
-        _registrar_usuario = registrar_usuario;
+        _repositorioDeUsuarios = repositorioDeUsuarios;
+        _registrarUsuario = registrarUsuario;
     }
 
-    public async Task<ResultadoDeCuentaInicial> EjecutarAsync(CuentaInicial? cuenta, CancellationToken cancelacion = default)
+    public async Task<ResultadoDeCuentaInicial> EjecutarAsync(
+        CuentaInicial? cuenta, CancellationToken cancelacion = default)
     {
-        if (await _repositorio_de_usuarios.ExisteAdministradorActivoAsync(cancelacion))
+        if (await _repositorioDeUsuarios.ExisteAdministradorActivoAsync(cancelacion))
         {
             return ResultadoDeCuentaInicial.YaExistia;
         }
@@ -30,7 +32,7 @@ public sealed class CrearPrimerAdministradorCasoDeUso
             return ResultadoDeCuentaInicial.FaltanDatos;
         }
 
-        await _registrar_usuario.EjecutarAsync(cuenta.ComoRegistro(Roles_Usuario.Administrador), cancelacion);
+        await _registrarUsuario.EjecutarAsync(cuenta.ComoRegistro(RolUsuario.Administrador), cancelacion);
 
         return ResultadoDeCuentaInicial.Creada;
     }

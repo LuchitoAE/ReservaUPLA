@@ -7,26 +7,32 @@ namespace ReservaUPLA.Application.CasosDeUso.Cuenta.CambiarContrasena;
 // solo si todo está bien, se guarda. Nadie cambia la contraseña de otro por esta vía.
 public sealed class CambiarContrasenaCasoDeUso
 {
-    private readonly IRepositorioDeUsuarios _repositorio_de_usuarios;
-    private readonly IProtectorDeContrasenas _protector_de_contrasenas;
+    private readonly IRepositorioDeUsuarios _repositorioDeUsuarios;
+    private readonly IProtectorDeContrasenas _protectorDeContrasenas;
 
-    public CambiarContrasenaCasoDeUso(IRepositorioDeUsuarios repositorio_de_usuarios, IProtectorDeContrasenas protector_de_contrasenas)
+    public CambiarContrasenaCasoDeUso(
+        IRepositorioDeUsuarios repositorioDeUsuarios, IProtectorDeContrasenas protectorDeContrasenas)
     {
-        _repositorio_de_usuarios = repositorio_de_usuarios;
-        _protector_de_contrasenas = protector_de_contrasenas;
+        _repositorioDeUsuarios = repositorioDeUsuarios;
+        _protectorDeContrasenas = protectorDeContrasenas;
     }
 
-    public async Task EjecutarAsync(CambiarContrasenaComando comando, Guid id_usuario_sesion, CancellationToken cancelacion = default)
+    public async Task EjecutarAsync(
+        CambiarContrasenaComando comando, Guid idUsuarioSesion, CancellationToken cancelacion = default)
     {
-        var usuario = await _repositorio_de_usuarios.ObtenerPorIdAsync(id_usuario_sesion, cancelacion);
-        if (usuario is null || !usuario.Activo_Usuario)
+        var usuario = await _repositorioDeUsuarios.ObtenerPorIdAsync(idUsuarioSesion, cancelacion);
+        if (usuario is null || !usuario.ActivoUsuario)
         {
-            throw new SesionNoValidaExcepcion("Su sesión ya no es válida. Vuelva a ingresar para cambiar su contraseña.");
+            throw new SesionNoValidaExcepcion(
+                "Su sesión ya no es válida. Vuelva a ingresar para cambiar su contraseña.");
         }
 
         usuario.CambiarContrasena(
-            comando.Contrasena_Actual, comando.Contrasena_Nueva, _protector_de_contrasenas.Verificar, _protector_de_contrasenas.Cifrar);
+            comando.ContrasenaActual,
+            comando.ContrasenaNueva,
+            _protectorDeContrasenas.Verificar,
+            _protectorDeContrasenas.Cifrar);
 
-        await _repositorio_de_usuarios.ActualizarAsync(usuario, cancelacion);
+        await _repositorioDeUsuarios.ActualizarAsync(usuario, cancelacion);
     }
 }
