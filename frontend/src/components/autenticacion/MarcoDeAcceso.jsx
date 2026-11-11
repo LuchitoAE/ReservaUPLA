@@ -38,7 +38,7 @@ export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, saliendo = f
           </div>
         </header>
 
-        <main className="flex flex-1 items-center justify-center py-8 lg:justify-end lg:pr-16">
+        <main className="flex flex-1 items-center justify-center py-8 lg:justify-end lg:pr-24">
           <div className="relative w-full max-w-lg">
             <div
               aria-hidden="true"
