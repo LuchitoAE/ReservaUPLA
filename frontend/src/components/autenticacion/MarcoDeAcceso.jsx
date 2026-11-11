@@ -39,10 +39,10 @@ export function MarcoDeAcceso({ titulo, descripcion, tituloPestana, saliendo = f
         </header>
 
         <main className="flex flex-1 items-center justify-center py-8 lg:justify-end lg:pr-24">
-          <div className="relative w-full max-w-lg">
+          <div className="relative w-full max-w-[30rem]">
             <div
               aria-hidden="true"
-              className="halo-de-ingreso absolute -inset-20 -z-10 rounded-[2.5rem]"
+              className="halo-de-ingreso absolute -inset-24 -z-10 rounded-[2.5rem]"
             />
             <section className="animar-formulario relative w-full rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
               <h1 id="titulo-pagina" tabIndex={-1} className="text-2xl font-bold text-titulo focus:outline-none">

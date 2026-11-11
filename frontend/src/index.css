@@ -202,10 +202,10 @@
 /* Halos del ingreso: la foto queda nítida y solo se difumina detrás de la marca y alrededor del formulario. La máscara
    radial desvanece el halo hacia afuera, así que no se ve un borde recortado. */
 .halo-de-ingreso {
-  backdrop-filter: blur(10px) saturate(0.97);
-  -webkit-backdrop-filter: blur(10px) saturate(0.97);
-  mask-image: radial-gradient(closest-side, #000 60%, transparent 100%);
-  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%);
+  backdrop-filter: blur(14px) saturate(0.97);
+  -webkit-backdrop-filter: blur(14px) saturate(0.97);
+  mask-image: radial-gradient(closest-side, #000 80%, transparent 100%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 80%, transparent 100%);
 }
 
 @keyframes aparecer-login {
